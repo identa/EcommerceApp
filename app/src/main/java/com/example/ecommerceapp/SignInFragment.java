@@ -49,6 +49,7 @@ public class SignInFragment extends Fragment {
 
     private void setFragment(Fragment fragment) {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.slide_right, R.anim.slideout_left);
         transaction.replace(parentFrameLayout.getId(), fragment);
         transaction.commit();
     }
