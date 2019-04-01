@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SystemClock.sleep(3000);
-        Intent signInIntent = new Intent(MainActivity.this, SignInActivity.class);
+        Intent signInIntent = new Intent(MainActivity.this, SignUpActivity.class);
         startActivity(signInIntent);
         finish();
     }
