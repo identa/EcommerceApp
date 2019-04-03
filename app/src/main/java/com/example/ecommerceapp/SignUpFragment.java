@@ -3,6 +3,7 @@ package com.example.ecommerceapp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -52,6 +58,7 @@ public class SignUpFragment extends Fragment {
     private ProgressBar progressBar;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firebaseFirestore;
     private FirebaseUser firebaseUser;
     private FirebaseAuth.AuthStateListener authStateListener;
 
@@ -73,6 +80,7 @@ public class SignUpFragment extends Fragment {
         progressBar = view.findViewById(R.id.sign_up_progress_bar);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
         return view;
     }
 
@@ -211,6 +219,8 @@ public class SignUpFragment extends Fragment {
     }
 
     private void checkEmailAndPassword(){
+        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.caution);
+        customWarningIcon.setBounds(0,0,customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
         if (email.getText().toString().matches(ValidationConst.EMAIL)){
             if (password.getText().toString().equals(confirmPassword.getText().toString())){
                 progressBar.setVisibility(View.VISIBLE);
@@ -222,9 +232,25 @@ public class SignUpFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
-                            startActivity(homeIntent);
-                            getActivity().finish();
+                            Map<Object, String> userData = new HashMap<>();
+                            userData.put("fullName", fullName.getText().toString());
+                            firebaseFirestore.collection("USERS").add(userData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                    if (task.isSuccessful()){
+                                        Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
+                                        startActivity(homeIntent);
+                                        getActivity().finish();
+                                    }else {
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        signUpBtn.setEnabled(true);
+                                        signUpBtn.setTextColor(Color.rgb(255,255,255));
+                                        String error = task.getException().getMessage();
+                                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
                         }else {
                             progressBar.setVisibility(View.INVISIBLE);
                             signUpBtn.setEnabled(true);
@@ -235,10 +261,10 @@ public class SignUpFragment extends Fragment {
                     }
                 });
             }else {
-                confirmPassword.setError(ValidationConst.PWD_ERROR);
+                confirmPassword.setError(ValidationConst.PWD_ERROR, customWarningIcon);
             }
         }else {
-            email.setError(ValidationConst.EMAIL_ERROR);
+            email.setError(ValidationConst.EMAIL_ERROR, customWarningIcon);
         }
     }
 }
