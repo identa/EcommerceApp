@@ -15,7 +15,7 @@ import retrofit2.Response;
 public class SignInServiceImpl implements SignInService {
     @Override
     public void doSignIn(SignInRequest request) {
-        SignInAPI api = RetrofitClient.getClient(BaseURLConst.baseURL).create(SignInAPI.class);
+        SignInAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(SignInAPI.class);
         Call<SignInResponse> call = api.signIn(request);
         call.enqueue(new Callback<SignInResponse>() {
             @Override
