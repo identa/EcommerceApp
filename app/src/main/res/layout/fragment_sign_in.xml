@@ -11,13 +11,22 @@
        android:layout_width="match_parent"
        android:layout_height="match_parent">
 
+      <ImageButton
+          android:id="@+id/sign_in_close_btn"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="@android:color/transparent"
+          android:padding="16dp"
+          android:src="@mipmap/error"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
       <ImageView
           android:id="@+id/imageView2"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginStart="8dp"
           android:layout_marginLeft="8dp"
-          android:layout_marginTop="8dp"
           android:layout_marginEnd="8dp"
           android:layout_marginRight="8dp"
           android:layout_marginBottom="8dp"
@@ -89,15 +98,16 @@
           android:layout_marginRight="16dp"
           android:layout_marginBottom="8dp"
           android:background="@color/btnRed"
+          android:enabled="false"
           android:text="Sign in"
           android:textAllCaps="false"
-          android:textColor="@color/colorAccent"
+          android:textColor="#50ffffff"
           android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/sign_in_forget_password"
-          app:layout_constraintVertical_bias="0.63" />
+          app:layout_constraintVertical_bias="0.65" />
 
       <TextView
           android:id="@+id/textView3"

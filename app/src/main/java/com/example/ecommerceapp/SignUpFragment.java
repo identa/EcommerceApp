@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +55,7 @@ public class SignUpFragment extends Fragment {
     private EditText confirmPassword;
 
     private Button signUpBtn;
-
+    private ImageButton closeBtn;
     private ProgressBar progressBar;
 
     private FirebaseAuth firebaseAuth;
@@ -76,7 +77,7 @@ public class SignUpFragment extends Fragment {
         confirmPassword = view.findViewById(R.id.sign_up_confirm);
 
         signUpBtn = view.findViewById(R.id.sign_up_btn);
-
+        closeBtn = view.findViewById(R.id.sign_up_close_btn);
         progressBar = view.findViewById(R.id.sign_up_progress_bar);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -165,6 +166,12 @@ public class SignUpFragment extends Fragment {
                 checkEmailAndPassword();
             }
         });
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goHome();
+            }
+        });
     }
 
     private void setFragment(Fragment fragment) {
@@ -219,7 +226,7 @@ public class SignUpFragment extends Fragment {
     }
 
     private void checkEmailAndPassword(){
-        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.caution);
+        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
         customWarningIcon.setBounds(0,0,customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
         if (email.getText().toString().matches(ValidationConst.EMAIL)){
             if (password.getText().toString().equals(confirmPassword.getText().toString())){
@@ -266,5 +273,11 @@ public class SignUpFragment extends Fragment {
         }else {
             email.setError(ValidationConst.EMAIL_ERROR, customWarningIcon);
         }
+    }
+
+    private void goHome(){
+        Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
+        startActivity(homeIntent);
+        getActivity().finish();
     }
 }
