@@ -76,16 +76,16 @@
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/sign_in_email" />
 
-      <TextView
-          android:id="@+id/sign_in_forget_password"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="4dp"
-          android:layout_marginLeft="4dp"
-          android:text="Forgot password?"
-          android:textColor="@color/colorAccent"
-          app:layout_constraintStart_toStartOf="@+id/sign_in_password"
-          app:layout_constraintTop_toBottomOf="@+id/sign_in_password" />
+       <TextView
+           android:id="@+id/sign_in_forgot_password"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginStart="4dp"
+           android:layout_marginLeft="4dp"
+           android:text="Forgot password?"
+           android:textColor="@color/colorAccent"
+           app:layout_constraintStart_toStartOf="@+id/sign_in_password"
+           app:layout_constraintTop_toBottomOf="@+id/sign_in_password" />
 
       <Button
           android:id="@+id/sign_in_btn"
@@ -106,7 +106,7 @@
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/sign_in_forget_password"
+          app:layout_constraintTop_toBottomOf="@+id/sign_in_forgot_password"
           app:layout_constraintVertical_bias="0.65" />
 
       <TextView
@@ -182,7 +182,7 @@
           app:layout_constraintBottom_toTopOf="@+id/sign_in_btn"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/sign_in_forget_password"
+          app:layout_constraintTop_toBottomOf="@+id/sign_in_forgot_password"
           app:layout_constraintVertical_bias="0.75" />
    </android.support.constraint.ConstraintLayout>
 </FrameLayout>
