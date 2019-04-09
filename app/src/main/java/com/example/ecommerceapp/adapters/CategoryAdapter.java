@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.adapters;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.ecommerceapp.CategoryActivity;
 import com.example.ecommerceapp.R;
 import com.example.ecommerceapp.models.CategoryModel;
 
@@ -32,7 +36,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     public void onBindViewHolder(@NonNull CategoryAdapter.ViewHolder viewHolder, int position) {
         String icon = categoryModelList.get(position).getIconLink();
         String name = categoryModelList.get(position).getName();
-        viewHolder.setCatName(name);
+        viewHolder.setCat(name, position);
+        viewHolder.setCatIcon(icon);
     }
 
     @Override
@@ -51,11 +56,24 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             catName = itemView.findViewById(R.id.cat_name);
         }
 
-        private void setCatIcon() {
+        private void setCatIcon(String icon) {
+            if (!icon.equals("null")) {
+                Glide.with(itemView.getContext()).load(icon).apply(new RequestOptions().placeholder(R.mipmap.warning)).into(catIcon);
+            }
         }
 
-        private void setCatName(String name) {
+        private void setCat(final String name, final int position){
             catName.setText(name);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    if (position != 0) {
+                        Intent catIntent = new Intent(itemView.getContext(), CategoryActivity.class);
+                        catIntent.putExtra("CategoryName", name);
+                        itemView.getContext().startActivity(catIntent);
+//                    }
+                }
+            });
         }
     }
 }
