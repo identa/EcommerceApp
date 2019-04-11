@@ -13,10 +13,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.CategoryAdapter;
+import com.example.ecommerceapp.adapters.GridProductLayoutAdapter;
 import com.example.ecommerceapp.adapters.HorizontalProductScrollAdapter;
 import com.example.ecommerceapp.models.CategoryModel;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
@@ -55,6 +57,10 @@ public class HomeFragment extends Fragment {
     private TextView horizontalLayoutTitle;
     private Button horizontalViewAllBtn;
     private RecyclerView horizontalRecyclerView;
+
+    private TextView gridLayoutTitle;
+    private Button gridLayoutViewAllBtn;
+    private GridView gridView;
 
     private FirebaseFirestore firebaseFirestore;
 
@@ -136,6 +142,12 @@ public class HomeFragment extends Fragment {
         horizontalRecyclerView.setLayoutManager(horizontalProductLayoutManager);
         horizontalRecyclerView.setAdapter(horizontalProductScrollAdapter);
         horizontalProductScrollAdapter.notifyDataSetChanged();
+
+        gridLayoutTitle = view.findViewById(R.id.grid_product_layout_title);
+        gridLayoutViewAllBtn = view.findViewById(R.id.grid_product_layout_btn);
+        gridView = view.findViewById(R.id.grid_product_layout_view);
+
+        gridView.setAdapter(new GridProductLayoutAdapter(horizontalProductScrollModelList));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
