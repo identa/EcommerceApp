@@ -12,10 +12,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.CategoryAdapter;
+import com.example.ecommerceapp.adapters.HorizontalProductScrollAdapter;
 import com.example.ecommerceapp.models.CategoryModel;
+import com.example.ecommerceapp.models.HorizontalProductScrollModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -47,6 +51,10 @@ public class HomeFragment extends Fragment {
     private int currentPage = 0;
     private Timer timer;
     private ViewPager bannerSliderViewPager;
+
+    private TextView horizontalLayoutTitle;
+    private Button horizontalViewAllBtn;
+    private RecyclerView horizontalRecyclerView;
 
     private FirebaseFirestore firebaseFirestore;
 
@@ -92,7 +100,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onPageScrollStateChanged(int i) {
                 if (i == ViewPager.SCROLL_STATE_IDLE){
-                    pageLooper();
+//                    pageLooper();
                 }
             }
         };
@@ -110,6 +118,24 @@ public class HomeFragment extends Fragment {
                 return false;
             }
         });
+
+        horizontalLayoutTitle = view.findViewById(R.id.horizontal_scroll_layout_title);
+        horizontalViewAllBtn = view.findViewById(R.id.horizontal_scroll_layout_view_all);
+        horizontalRecyclerView = view.findViewById(R.id.horizontal_scroll_layout_recycler_view);
+
+        List<HorizontalProductScrollModel> horizontalProductScrollModelList = new ArrayList<>();
+        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
+        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
+        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
+        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
+        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
+
+        HorizontalProductScrollAdapter horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
+        LinearLayoutManager horizontalProductLayoutManager = new LinearLayoutManager(getContext());
+        horizontalProductLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        horizontalRecyclerView.setLayoutManager(horizontalProductLayoutManagergit a);
+        horizontalRecyclerView.setAdapter(horizontalProductScrollAdapter);
+        horizontalProductScrollAdapter.notifyDataSetChanged();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -138,7 +164,7 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void pageLooper(){
+//    private void pageLooper(){
 //        if (currentPage == sliderModelList.size() - 2){
 //            currentPage = 2;
 //            bannerSliderViewPager.setCurrentItem(currentPage, false);
@@ -147,7 +173,7 @@ public class HomeFragment extends Fragment {
 //            currentPage = sliderModelList.size() - 3;
 //            bannerSliderViewPager.setCurrentItem(currentPage, false);
 //        }
-    }
+//    }
 
     private void startBannerSlide(){
         final Handler handler = new Handler();
