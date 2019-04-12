@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.adapters;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.ecommerceapp.ProductDetailActivity;
 import com.example.ecommerceapp.R;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
 
@@ -51,12 +53,20 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
         private TextView productDesc;
         private TextView productPrice;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             productImage = itemView.findViewById(R.id.h_s_product_image);
             productTitle = itemView.findViewById(R.id.h_s_product_title);
             productDesc = itemView.findViewById(R.id.h_s_product_desc);
             productPrice = itemView.findViewById(R.id.h_s_product_price);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent productDetailIntent = new Intent(itemView.getContext(), ProductDetailActivity.class);
+                    itemView.getContext().startActivity(productDetailIntent);
+                }
+            });
         }
 
         private void setProductImage(int resource){
