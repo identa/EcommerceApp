@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.ecommerceapp.adapters.ProductDetailsAdapter;
 import com.example.ecommerceapp.adapters.ProductImageAdapter;
 
 import java.util.ArrayList;
@@ -21,6 +22,10 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private ViewPager productImageViewPager;
     private TabLayout viewPagerIndicator;
+
+    private ViewPager productDetailsViewPager;
+    private TabLayout productDetailsTabLayout;
+
     private static boolean isAddedToWishlist = false;
     private FloatingActionButton addToWishlistBtn;
 
@@ -36,6 +41,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         productImageViewPager = findViewById(R.id.product_image_view_pager);
         viewPagerIndicator = findViewById(R.id.view_pager_indicator);
         addToWishlistBtn = findViewById(R.id.add_to_wishlist_btn);
+        productDetailsViewPager = findViewById(R.id.product_details_view_pager);
+        productDetailsTabLayout = findViewById(R.id.product_details_tab_layout);
 
         List<Integer> productImage = new ArrayList<>();
         productImage.add(R.mipmap.steakhouse);
@@ -57,6 +64,25 @@ public class ProductDetailActivity extends AppCompatActivity {
                     isAddedToWishlist = true;
                     addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
                 }
+            }
+        });
+
+        productDetailsViewPager.setAdapter(new ProductDetailsAdapter(getSupportFragmentManager(), productDetailsTabLayout.getTabCount()));
+        productDetailsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(productDetailsTabLayout));
+        productDetailsTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                productDetailsViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
     }
