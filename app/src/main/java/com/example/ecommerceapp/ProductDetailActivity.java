@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.ecommerceapp.adapters.ProductDetailsAdapter;
 import com.example.ecommerceapp.adapters.ProductImageAdapter;
@@ -25,6 +27,8 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private ViewPager productDetailsViewPager;
     private TabLayout productDetailsTabLayout;
+
+    private LinearLayout rateNowContainer;
 
     private static boolean isAddedToWishlist = false;
     private FloatingActionButton addToWishlistBtn;
@@ -57,10 +61,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         addToWishlistBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isAddedToWishlist){
+                if (isAddedToWishlist) {
                     isAddedToWishlist = false;
                     addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
-                }else {
+                } else {
                     isAddedToWishlist = true;
                     addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
                 }
@@ -85,6 +89,27 @@ public class ProductDetailActivity extends AppCompatActivity {
 
             }
         });
+
+        rateNowContainer = findViewById(R.id.rating_now_container);
+        for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
+            final int starPosition = x;
+            rateNowContainer.getChildAt(x).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setRating(starPosition);
+                }
+            });
+        }
+    }
+
+    private void setRating(int starPosition) {
+        for (int x = 0; x < rateNowContainer.getChildCount(); x ++){
+            ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
+            starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
+            if (x <= starPosition){
+                starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
+            }
+        }
     }
 
     @Override
@@ -104,9 +129,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             return true;
-        }else if (id == R.id.home_search_icon){
+        } else if (id == R.id.home_search_icon) {
             return true;
-        }else if (id == R.id.home_cart_icon){
+        } else if (id == R.id.home_cart_icon) {
             return true;
         }
 
