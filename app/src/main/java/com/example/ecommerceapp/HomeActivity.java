@@ -19,6 +19,12 @@ import android.widget.FrameLayout;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int HOME_FRAGMENT = 0;
+    private static final int CART_FRAGMENT = 1;
+
+    private static int currentFragment;
+    private NavigationView navigationView;
+
     private FrameLayout frameLayout;
 
     @Override
@@ -44,11 +50,11 @@ public class HomeActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
         frameLayout = findViewById(R.id.home_frame_layout);
-        setFragment(new HomeFragment());
+        setFragment(new HomeFragment(), HOME_FRAGMENT);
     }
 
     @Override
@@ -64,7 +70,9 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
+        if (currentFragment == HOME_FRAGMENT){
+            getMenuInflater().inflate(R.menu.home, menu);
+        }
         return true;
     }
 
@@ -81,10 +89,17 @@ public class HomeActivity extends AppCompatActivity
         }else if (id == R.id.home_notification_icon){
             return true;
         }else if (id == R.id.home_cart_icon){
+            myCart();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void myCart() {
+        invalidateOptionsMenu();
+        setFragment(new MyCartFragment(), CART_FRAGMENT);
+        navigationView.getMenu().getItem(2).setChecked(true);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -93,11 +108,11 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_home){
-
+            setFragment(new HomeFragment(), HOME_FRAGMENT);
         } else if (id == R.id.nav_orders) {
             // Handle the camera action
         } else if (id == R.id.nav_cart) {
-
+            myCart();
         } else if (id == R.id.nav_wishlist) {
 
         } else if (id == R.id.nav_account) {
@@ -116,7 +131,8 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    private void setFragment(Fragment fragment){
+    private void setFragment(Fragment fragment, int fragmentNo){
+        currentFragment = fragmentNo;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameLayout.getId(), fragment);
         transaction.commit();

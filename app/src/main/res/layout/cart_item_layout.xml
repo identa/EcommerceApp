@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/colorAccent"
-    android:elevation="3dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@color/colorAccent"
+    android:elevation="3dp">
 
     <ImageView
         android:id="@+id/product_image"
@@ -25,8 +24,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Samsung Galaxy S10"
-        android:textSize="16sp"
         android:textColor="#000000"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/product_image"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,8 +43,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="free 2 coupons"
-        android:textSize="12sp"
         android:textColor="#8000FF"
+        android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/free_coupon_icon"
         app:layout_constraintTop_toBottomOf="@+id/product_title" />
 
@@ -86,8 +85,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="Offers applied"
-        android:textSize="12sp"
         android:textColor="@color/successGreen"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/product_price" />
 
@@ -97,8 +96,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="Coupons applied"
-        android:textSize="12sp"
         android:textColor="@color/colorPrimary"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/offer_applied" />
 
@@ -107,13 +106,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Qty: 1"
-        android:textColor="#000000"
         android:background="@drawable/border_background"
         android:backgroundTint="#000000"
-        android:padding="3dp"
         android:drawableEnd="@mipmap/down_arrow"
         android:drawablePadding="8dp"
+        android:padding="3dp"
+        android:text="Qty: 1"
+        android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="@+id/textView20"
         app:layout_constraintStart_toEndOf="@+id/product_image"
         app:layout_constraintTop_toBottomOf="@+id/price_cut_divider" />
@@ -160,12 +159,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/coupon_redemption">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Remove item"
-            android:gravity="center"
+            android:drawableStart="@mipmap/bin"
             android:drawablePadding="4dp"
-            android:drawableStart="@mipmap/bin"/>
+            android:gravity="center"
+            android:text="Remove item" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
