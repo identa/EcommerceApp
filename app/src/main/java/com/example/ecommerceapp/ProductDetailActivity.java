@@ -128,6 +128,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
+            finish();
             return true;
         } else if (id == R.id.home_search_icon) {
             return true;

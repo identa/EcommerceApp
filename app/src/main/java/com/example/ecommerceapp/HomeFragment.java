@@ -41,33 +41,16 @@ import java.util.TimerTask;
  */
 public class HomeFragment extends Fragment {
 
-
     public HomeFragment() {
         // Required empty public constructor
     }
 
     private RecyclerView catRecyclerView;
     private CategoryAdapter categoryAdapter;
-
+    private RecyclerView testing;
     private List<CategoryModel> categoryModelList;
-    private List<SliderModel> sliderModelList;
-
-    private int currentPage = 0;
-    private Timer timer;
-    private ViewPager bannerSliderViewPager;
-
-    private TextView horizontalLayoutTitle;
-    private Button horizontalViewAllBtn;
-    private RecyclerView horizontalRecyclerView;
-
-    private TextView gridLayoutTitle;
-    private Button gridLayoutViewAllBtn;
-    private GridView gridView;
 
     private FirebaseFirestore firebaseFirestore;
-
-    private final long DELAY_TIME = 3000;
-    private final long PERIOD_TIME = 3000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,9 +59,8 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         catRecyclerView = view.findViewById(R.id.cat_recycler_view);
-        bannerSliderViewPager = view.findViewById(R.id.banner_slider_view_pager);
 
-        sliderModelList = new ArrayList<>();
+        List<SliderModel> sliderModelList = new ArrayList<>();
         sliderModelList.add(new SliderModel(R.mipmap.cancel));
         sliderModelList.add(new SliderModel(R.mipmap.email));
         sliderModelList.add(new SliderModel(R.mipmap.caution));
@@ -88,51 +70,6 @@ public class HomeFragment extends Fragment {
         sliderModelList.add(new SliderModel(R.mipmap.plus));
         sliderModelList.add(new SliderModel(R.mipmap.email));
         sliderModelList.add(new SliderModel(R.mipmap.steakhouse));
-
-
-        SliderAdapter sliderAdapter = new SliderAdapter(sliderModelList);
-        bannerSliderViewPager.setAdapter(sliderAdapter);
-        bannerSliderViewPager.setClipToPadding(false);
-        bannerSliderViewPager.setPageMargin(20);
-
-        bannerSliderViewPager.setCurrentItem(currentPage);
-
-        ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                currentPage = i;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-                if (i == ViewPager.SCROLL_STATE_IDLE){
-//                    pageLooper();
-                }
-            }
-        };
-        bannerSliderViewPager.addOnPageChangeListener(pageChangeListener);
-
-        startBannerSlide();
-        bannerSliderViewPager.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-//                pageLooper();
-                stopBannerSlide();
-                if (event.getAction() == MotionEvent.ACTION_UP){
-                    startBannerSlide();
-                }
-                return false;
-            }
-        });
-
-        horizontalLayoutTitle = view.findViewById(R.id.horizontal_scroll_layout_title);
-        horizontalViewAllBtn = view.findViewById(R.id.horizontal_scroll_layout_view_all);
-        horizontalRecyclerView = view.findViewById(R.id.horizontal_scroll_layout_recycler_view);
 
         List<HorizontalProductScrollModel> horizontalProductScrollModelList = new ArrayList<>();
         horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
@@ -146,22 +83,8 @@ public class HomeFragment extends Fragment {
         horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
         horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
 
-        HorizontalProductScrollAdapter horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
-        LinearLayoutManager horizontalProductLayoutManager = new LinearLayoutManager(getContext());
-        horizontalProductLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        horizontalRecyclerView.setLayoutManager(horizontalProductLayoutManager);
-
-        horizontalRecyclerView.setAdapter(horizontalProductScrollAdapter);
-        horizontalProductScrollAdapter.notifyDataSetChanged();
-
-        gridLayoutTitle = view.findViewById(R.id.grid_product_layout_title);
-        gridLayoutViewAllBtn = view.findViewById(R.id.grid_product_layout_btn);
-        gridView = view.findViewById(R.id.grid_product_layout_view);
-
-        gridView.setAdapter(new GridProductLayoutAdapter(horizontalProductScrollModelList));
-
         //homepage
-        RecyclerView testing = view.findViewById(R.id.testing);
+        testing = view.findViewById(R.id.home_page_recycler_view);
         LinearLayoutManager testingLayoutManager = new LinearLayoutManager(getContext());
         testingLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         testing.setLayoutManager(testingLayoutManager);
@@ -201,40 +124,5 @@ public class HomeFragment extends Fragment {
                     }
                 });
         return view;
-    }
-
-//    private void pageLooper(){
-//        if (currentPage == sliderModelList.size() - 2){
-//            currentPage = 2;
-//            bannerSliderViewPager.setCurrentItem(currentPage, false);
-//        }
-//        if (currentPage == 1){
-//            currentPage = sliderModelList.size() - 3;
-//            bannerSliderViewPager.setCurrentItem(currentPage, false);
-//        }
-//    }
-
-    private void startBannerSlide(){
-        final Handler handler = new Handler();
-        final Runnable update = new Runnable() {
-            @Override
-            public void run() {
-                if (currentPage >= sliderModelList.size()){
-                    currentPage = 0;
-                }
-                bannerSliderViewPager.setCurrentItem(currentPage ++, true);
-            }
-        };
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(update);
-            }
-        }, DELAY_TIME, PERIOD_TIME);
-    }
-
-    private void stopBannerSlide(){
-        timer.cancel();
     }
 }

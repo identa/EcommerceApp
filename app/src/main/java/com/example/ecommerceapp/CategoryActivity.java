@@ -36,6 +36,9 @@ public class CategoryActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.home_search_icon) {
             return true;
+        }else if (id == android.R.id.home){
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
