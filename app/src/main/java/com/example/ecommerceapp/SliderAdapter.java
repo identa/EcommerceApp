@@ -1,6 +1,8 @@
 package com.example.ecommerceapp;
 
+import android.content.res.ColorStateList;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;

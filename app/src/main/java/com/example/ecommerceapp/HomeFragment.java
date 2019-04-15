@@ -19,8 +19,10 @@ import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.CategoryAdapter;
 import com.example.ecommerceapp.adapters.GridProductLayoutAdapter;
+import com.example.ecommerceapp.adapters.HomePageAdapter;
 import com.example.ecommerceapp.adapters.HorizontalProductScrollAdapter;
 import com.example.ecommerceapp.models.CategoryModel;
+import com.example.ecommerceapp.models.HomePageModel;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -75,6 +77,7 @@ public class HomeFragment extends Fragment {
 
         catRecyclerView = view.findViewById(R.id.cat_recycler_view);
         bannerSliderViewPager = view.findViewById(R.id.banner_slider_view_pager);
+
         sliderModelList = new ArrayList<>();
         sliderModelList.add(new SliderModel(R.mipmap.cancel));
         sliderModelList.add(new SliderModel(R.mipmap.email));
@@ -91,6 +94,8 @@ public class HomeFragment extends Fragment {
         bannerSliderViewPager.setAdapter(sliderAdapter);
         bannerSliderViewPager.setClipToPadding(false);
         bannerSliderViewPager.setPageMargin(20);
+
+        bannerSliderViewPager.setCurrentItem(currentPage);
 
         ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
             @Override
@@ -140,6 +145,7 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager horizontalProductLayoutManager = new LinearLayoutManager(getContext());
         horizontalProductLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         horizontalRecyclerView.setLayoutManager(horizontalProductLayoutManager);
+
         horizontalRecyclerView.setAdapter(horizontalProductScrollAdapter);
         horizontalProductScrollAdapter.notifyDataSetChanged();
 
@@ -148,6 +154,22 @@ public class HomeFragment extends Fragment {
         gridView = view.findViewById(R.id.grid_product_layout_view);
 
         gridView.setAdapter(new GridProductLayoutAdapter(horizontalProductScrollModelList));
+
+        //homepage
+        RecyclerView testing = view.findViewById(R.id.testing);
+        LinearLayoutManager testingLayoutManager = new LinearLayoutManager(getContext());
+        testingLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        testing.setLayoutManager(testingLayoutManager);
+
+        List<HomePageModel> homePageModelList = new ArrayList<>();
+        homePageModelList.add(new HomePageModel(0, sliderModelList));
+        homePageModelList.add(new HomePageModel(1, "Deals of the Day", horizontalProductScrollModelList));
+        homePageModelList.add(new HomePageModel(2, "Trendy", horizontalProductScrollModelList));
+
+        HomePageAdapter homePageAdapter = new HomePageAdapter(homePageModelList);
+        testing.setAdapter(homePageAdapter);
+        homePageAdapter.notifyDataSetChanged();
+        //homepage
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
