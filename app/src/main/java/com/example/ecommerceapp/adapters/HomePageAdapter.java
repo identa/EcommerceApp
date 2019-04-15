@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.adapters;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.example.ecommerceapp.R;
 import com.example.ecommerceapp.SliderAdapter;
 import com.example.ecommerceapp.SliderModel;
+import com.example.ecommerceapp.ViewAllActivity;
 import com.example.ecommerceapp.models.HomePageModel;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
 
@@ -185,6 +187,14 @@ public class HomePageAdapter extends RecyclerView.Adapter {
 
             if (horizontalProductScrollModelList.size() > 8) {
                 horizontalViewAllBtn.setVisibility(View.VISIBLE);
+                horizontalViewAllBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
+                        viewAllIntent.putExtra("layout_code", 0);
+                        itemView.getContext().startActivity(viewAllIntent);
+                    }
+                });
             } else {
                 horizontalViewAllBtn.setVisibility(View.INVISIBLE);
             }
@@ -215,6 +225,14 @@ public class HomePageAdapter extends RecyclerView.Adapter {
         private void setGridProductLayout(List<HorizontalProductScrollModel> gridProductModelList, String title){
             gridLayoutTitle.setText(title);
             gridView.setAdapter(new GridProductLayoutAdapter(gridProductModelList));
+            gridLayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
+                    viewAllIntent.putExtra("layout_code", 1);
+                    itemView.getContext().startActivity(viewAllIntent);
+                }
+            });
         }
     }
 }
