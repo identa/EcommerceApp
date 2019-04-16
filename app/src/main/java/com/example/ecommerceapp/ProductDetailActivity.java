@@ -1,5 +1,6 @@
 package com.example.ecommerceapp;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +20,8 @@ import com.example.ecommerceapp.adapters.ProductImageAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.ecommerceapp.HomeActivity.showCart;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
@@ -130,9 +133,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
             return true;
-        } else if (id == R.id.home_search_icon) {
+        } else if (id == R.id.product_detail_search_icon) {
             return true;
-        } else if (id == R.id.home_cart_icon) {
+        } else if (id == R.id.product_detail_cart_icon) {
+            Intent cartIntent = new Intent(ProductDetailActivity.this, HomeActivity.class);
+            showCart = true;
+            startActivity(cartIntent);
             return true;
         }
 

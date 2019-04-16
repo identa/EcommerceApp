@@ -25,6 +25,7 @@ import com.example.ecommerceapp.ViewAllActivity;
 import com.example.ecommerceapp.models.HomePageModel;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -105,6 +106,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
 
         private final long DELAY_TIME = 3000;
         private final long PERIOD_TIME = 3000;
+        private List<SliderModel> arrangedList;
 
         public BannerSliderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -113,6 +115,19 @@ public class HomePageAdapter extends RecyclerView.Adapter {
         }
 
         private void setBannerSliderViewPager(final List<SliderModel> sliderModelList) {
+//            currentPage = 2;
+            if (timer != null){
+                timer.cancel();
+            }
+//            arrangedList = new ArrayList<>();
+//            for (int i = 0; i < sliderModelList.size(); i++){
+//                arrangedList.add(i, sliderModelList.get(i));
+//            }
+//            arrangedList.add(0, sliderModelList.get(sliderModelList.size() - 2));
+//            arrangedList.add(1, sliderModelList.get(sliderModelList.size() - 1));
+//            arrangedList.add(sliderModelList.get(0));
+//            arrangedList.add(sliderModelList.get(1));
+
             SliderAdapter sliderAdapter = new SliderAdapter(sliderModelList);
             bannerSliderViewPager.setAdapter(sliderAdapter);
             bannerSliderViewPager.setClipToPadding(false);

@@ -26,8 +26,9 @@ public class HomeActivity extends AppCompatActivity
     private static final int ORDER_FRAGMENT = 2;
     private static final int WISHLIST_FRAGMENT = 3;
     private static final int ACCOUNT_FRAGMENT = 4;
+    public static Boolean showCart = false;
 
-    private static int currentFragment = -1;
+    private int currentFragment = -1;
     private NavigationView navigationView;
 
     private FrameLayout frameLayout;
@@ -44,26 +45,28 @@ public class HomeActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.addDrawerListener(toggle);
+//        toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
         frameLayout = findViewById(R.id.home_frame_layout);
-        setFragment(new HomeFragment(), HOME_FRAGMENT);
+
+        if (showCart){
+            drawer.setDrawerLockMode(1);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            gotoFragment("My cart", new MyCartFragment(), -2);
+        }else {
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+            setFragment(new HomeFragment(), HOME_FRAGMENT);
+        }
     }
 
     @Override
@@ -76,9 +79,14 @@ public class HomeActivity extends AppCompatActivity
                 currentFragment = -1;
                 super.onBackPressed();
             }else {
-                invalidateOptionsMenu();
-                setFragment(new HomeFragment(), HOME_FRAGMENT);
-                navigationView.getMenu().getItem(0).setChecked(true);
+                if (showCart){
+                    showCart = false;
+                    finish();
+                }else {
+                    invalidateOptionsMenu();
+                    setFragment(new HomeFragment(), HOME_FRAGMENT);
+                    navigationView.getMenu().getItem(0).setChecked(true);
+                }
             }
         }
     }
@@ -108,6 +116,12 @@ public class HomeActivity extends AppCompatActivity
         }else if (id == R.id.home_cart_icon){
             gotoFragment("My cart", new MyCartFragment(), CART_FRAGMENT);
             return true;
+        } else if (id == android.R.id.home){
+            if (showCart){
+                showCart = false;
+                finish();
+                return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);
