@@ -116,7 +116,7 @@
             app:layout_constraintTop_toBottomOf="@+id/sign_up_password" />
 
         <Button
-            android:id="@+id/sign_up_btn"
+            android:id="@+id/ok_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -151,7 +151,7 @@
             app:layout_constraintBottom_toTopOf="@+id/tv_already_have_account"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sign_up_btn" />
+            app:layout_constraintTop_toBottomOf="@+id/ok_btn" />
 
         <TextView
             android:id="@+id/tv_already_have_account"
@@ -179,7 +179,7 @@
             android:background="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/textView3"
             app:layout_constraintEnd_toStartOf="@+id/textView3"
-            app:layout_constraintStart_toStartOf="@+id/sign_up_btn"
+            app:layout_constraintStart_toStartOf="@+id/ok_btn"
             app:layout_constraintTop_toTopOf="@+id/textView3" />
 
         <View
@@ -192,7 +192,7 @@
             android:layout_marginRight="8dp"
             android:background="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/textView3"
-            app:layout_constraintEnd_toEndOf="@+id/sign_up_btn"
+            app:layout_constraintEnd_toEndOf="@+id/ok_btn"
             app:layout_constraintStart_toEndOf="@+id/textView3"
             app:layout_constraintTop_toTopOf="@+id/textView3" />
 
@@ -206,7 +206,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/sign_up_btn"
+            app:layout_constraintBottom_toTopOf="@+id/ok_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sign_up_confirm" />

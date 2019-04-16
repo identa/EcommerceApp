@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 public class SignUpActivity extends AppCompatActivity {
 
     private FrameLayout frameLayout;
+    public static boolean setSignUpFragment = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +17,14 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         frameLayout = findViewById(R.id.sign_up_frame_layout);
-        setFragment(new SignInFragment());
+
+        if (setSignUpFragment){
+            setSignUpFragment = false;
+            setFragment(new SignUpFragment());
+        } else{
+            setFragment(new SignInFragment());
+        }
+//        setFragment(new SignInFragment());
     }
 
     private void setFragment(Fragment fragment){

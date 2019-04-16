@@ -1,8 +1,8 @@
 package com.example.ecommerceapp;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -14,9 +14,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import static com.example.ecommerceapp.SignUpActivity.setSignUpFragment;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -114,7 +118,34 @@ public class HomeActivity extends AppCompatActivity
         }else if (id == R.id.home_notification_icon){
             return true;
         }else if (id == R.id.home_cart_icon){
-            gotoFragment("My cart", new MyCartFragment(), CART_FRAGMENT);
+            final Dialog signInDialog = new Dialog(HomeActivity.this);
+            signInDialog.setContentView(R.layout.sign_in_dialog);
+            signInDialog.setCancelable(true);
+            signInDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            Button dialogSignInBtn = signInDialog.findViewById(R.id.cancel_btn);
+            Button dialogSignUpBtn = signInDialog.findViewById(R.id.ok_btn);
+            final Intent signUpIntent = new Intent(HomeActivity.this, SignUpActivity.class);
+
+            dialogSignInBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    signInDialog.dismiss();
+                    setSignUpFragment = false;
+                    startActivity(signUpIntent);
+                }
+            });
+
+            dialogSignUpBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    signInDialog.dismiss();
+                    setSignUpFragment = true;
+                    startActivity(signUpIntent);
+                }
+            });
+            signInDialog.show();
+//            gotoFragment("My cart", new MyCartFragment(), CART_FRAGMENT);
             return true;
         } else if (id == android.R.id.home){
             if (showCart){

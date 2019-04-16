@@ -76,7 +76,7 @@ public class SignUpFragment extends Fragment {
         password = view.findViewById(R.id.sign_up_password);
         confirmPassword = view.findViewById(R.id.sign_up_confirm);
 
-        signUpBtn = view.findViewById(R.id.sign_up_btn);
+        signUpBtn = view.findViewById(R.id.ok_btn);
         closeBtn = view.findViewById(R.id.sign_up_close_btn);
         progressBar = view.findViewById(R.id.sign_up_progress_bar);
 

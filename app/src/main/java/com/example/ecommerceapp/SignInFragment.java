@@ -64,7 +64,7 @@ public class SignInFragment extends Fragment {
         parentFrameLayout = getActivity().findViewById(R.id.sign_up_frame_layout);
         email = view.findViewById(R.id.sign_in_email);
         password = view.findViewById(R.id.sign_in_password);
-        signInBtn = view.findViewById(R.id.sign_in_btn);
+        signInBtn = view.findViewById(R.id.cancel_btn);
         closeBtn = view.findViewById(R.id.sign_in_close_btn);
         progressBar = view.findViewById(R.id.sign_in_progress_bar);
         forgotPassword = view.findViewById(R.id.sign_in_forgot_password);
