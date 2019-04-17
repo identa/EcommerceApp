@@ -20,8 +20,13 @@ public class SignInServiceImpl implements SignInService {
         call.enqueue(new Callback<SignInResponse>() {
             @Override
             public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
-                    if (response.code() == 200)
-                        Log.d("Id: ", response.body().getFirstName());
+                    if (response.code() == 200) {
+                        if (response.body().getStatus().equals("SUCCESS")){
+                            Log.d("Data", response.body().getData().getFirstName());
+                        }
+                        Log.d("Id: ", response.body().getMessage());
+                        Log.d("Id: ", response.body().getStatus());
+                    }
             }
 
             @Override
