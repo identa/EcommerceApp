@@ -1,17 +1,17 @@
 package com.example.ecommerceapp;
 
 public class SliderModel {
-    private int num;
+    private String iconLink;
 
-    public SliderModel(int num) {
-        this.num = num;
+    public SliderModel(String iconLink) {
+        this.iconLink = iconLink;
     }
 
-    public int getNum() {
-        return num;
+    public String getIconLink() {
+        return iconLink;
     }
 
-    public void setNum(int num) {
-        this.num = num;
+    public void setIconLink(String iconLink) {
+        this.iconLink = iconLink;
     }
 }

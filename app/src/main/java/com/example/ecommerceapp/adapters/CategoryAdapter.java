@@ -58,7 +58,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
         private void setCatIcon(String icon) {
             if (!icon.equals("null")) {
-                Glide.with(itemView.getContext()).load(icon).apply(new RequestOptions().placeholder(R.mipmap.warning)).into(catIcon);
+                Glide.with(itemView.getContext()).load(icon).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(catIcon);
             }
         }
 

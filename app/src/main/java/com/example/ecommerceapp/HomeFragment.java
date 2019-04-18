@@ -2,28 +2,29 @@ package com.example.ecommerceapp;
 
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.CategoryAdapter;
-import com.example.ecommerceapp.adapters.GridProductLayoutAdapter;
 import com.example.ecommerceapp.adapters.HomePageAdapter;
-import com.example.ecommerceapp.adapters.HorizontalProductScrollAdapter;
+import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.CategoryModel;
 import com.example.ecommerceapp.models.HomePageModel;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
+import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.responses.HomePageProductData;
+import com.example.ecommerceapp.models.entities.responses.HomePageProductResponse;
+import com.example.ecommerceapp.models.entities.responses.SliderData;
+import com.example.ecommerceapp.models.entities.responses.SliderResponse;
+import com.example.ecommerceapp.models.interfaces.HomePageAPI;
+import com.example.ecommerceapp.models.services.HomePageService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,14 +33,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements HomePageService {
 
     public HomeFragment() {
         // Required empty public constructor
@@ -49,6 +52,11 @@ public class HomeFragment extends Fragment {
     private CategoryAdapter categoryAdapter;
     private RecyclerView testing;
     private List<CategoryModel> categoryModelList;
+    private List<SliderModel> sliderModelList;
+    private List<HorizontalProductScrollModel> horizontalList, gridList;
+
+
+    private HomePageAdapter homePageAdapter;
 
     private FirebaseFirestore firebaseFirestore;
 
@@ -60,28 +68,34 @@ public class HomeFragment extends Fragment {
 
         catRecyclerView = view.findViewById(R.id.cat_recycler_view);
 
-        List<SliderModel> sliderModelList = new ArrayList<>();
-        sliderModelList.add(new SliderModel(R.mipmap.cancel));
-        sliderModelList.add(new SliderModel(R.mipmap.email));
-        sliderModelList.add(new SliderModel(R.mipmap.caution));
-        sliderModelList.add(new SliderModel(R.mipmap.cancel));
-        sliderModelList.add(new SliderModel(R.mipmap.email));
-        sliderModelList.add(new SliderModel(R.mipmap.error));
-        sliderModelList.add(new SliderModel(R.mipmap.plus));
-        sliderModelList.add(new SliderModel(R.mipmap.email));
-        sliderModelList.add(new SliderModel(R.mipmap.steakhouse));
+        sliderModelList = new ArrayList<>();
+        doGetSlider();
+//        sliderModelList.add(new SliderModel(R.mipmap.cancel));
+//        sliderModelList.add(new SliderModel(R.mipmap.email));
+//        sliderModelList.add(new SliderModel(R.mipmap.caution));
+//        sliderModelList.add(new SliderModel(R.mipmap.cancel));
+//        sliderModelList.add(new SliderModel(R.mipmap.email));
+//        sliderModelList.add(new SliderModel(R.mipmap.error));
+//        sliderModelList.add(new SliderModel(R.mipmap.plus));
+//        sliderModelList.add(new SliderModel(R.mipmap.email));
+//        sliderModelList.add(new SliderModel(R.mipmap.steakhouse));
 
-        List<HorizontalProductScrollModel> horizontalProductScrollModelList = new ArrayList<>();
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
+        horizontalList = new ArrayList<>();
+        gridList = new ArrayList<>();
+
+        doGetMostViewedProduct();
+
+//        doGetMostOrderedProduct();
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
 
         //homepage
         testing = view.findViewById(R.id.home_page_recycler_view);
@@ -91,10 +105,10 @@ public class HomeFragment extends Fragment {
 
         List<HomePageModel> homePageModelList = new ArrayList<>();
         homePageModelList.add(new HomePageModel(0, sliderModelList));
-        homePageModelList.add(new HomePageModel(1, "Deals of the Day", horizontalProductScrollModelList));
-        homePageModelList.add(new HomePageModel(2, "Trendy", horizontalProductScrollModelList));
+        homePageModelList.add(new HomePageModel(1, "Deals of the Day", horizontalList));
+        homePageModelList.add(new HomePageModel(2, "Trendy", gridList));
 
-        HomePageAdapter homePageAdapter = new HomePageAdapter(homePageModelList);
+        homePageAdapter = new HomePageAdapter(homePageModelList);
         testing.setAdapter(homePageAdapter);
         homePageAdapter.notifyDataSetChanged();
         //homepage
@@ -124,5 +138,89 @@ public class HomeFragment extends Fragment {
                     }
                 });
         return view;
+    }
+
+    @Override
+    public void doGetSlider() {
+        HomePageAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(HomePageAPI.class);
+        Call<SliderResponse> call = api.getSlider();
+        call.enqueue(new Callback<SliderResponse>() {
+            @Override
+            public void onResponse(Call<SliderResponse> call, Response<SliderResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        for (SliderData data : response.body().getData()){
+                            sliderModelList.add(new SliderModel(data.getImageURL()));
+                        }
+                        homePageAdapter.notifyDataSetChanged();
+                    } else if (response.body().getStatus().equals("FAILED")){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SliderResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void doGetMostViewedProduct() {
+        HomePageAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(HomePageAPI.class);
+        Call<HomePageProductResponse> call = api.getMVProduct();
+        call.enqueue(new Callback<HomePageProductResponse>() {
+            @Override
+            public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        for (HomePageProductData data : response.body().getData()){
+                            horizontalList.add(new HorizontalProductScrollModel(data.getId(),
+                                    data.getImageURL(),
+                                    data.getName(),
+                                    data.getCatName(),
+                                    data.getPrice()));
+                        }
+                        doGetMostOrderedProduct();
+//                        homePageAdapter.notifyDataSetChanged();
+                    } else if (response.body().getStatus().equals("FAILED")){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HomePageProductResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void doGetMostOrderedProduct() {
+        HomePageAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(HomePageAPI.class);
+        Call<HomePageProductResponse> call = api.getMOProduct();
+        call.enqueue(new Callback<HomePageProductResponse>() {
+            @Override
+            public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        for (HomePageProductData data : response.body().getData()){
+                            gridList.add(new HorizontalProductScrollModel(data.getId(),
+                                    data.getImageURL(),
+                                    data.getName(),
+                                    data.getCatName(),
+                                    data.getPrice()));
+                        }
+                        homePageAdapter.notifyDataSetChanged();
+                    } else if (response.body().getStatus().equals("FAILED")){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HomePageProductResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
     }
 }

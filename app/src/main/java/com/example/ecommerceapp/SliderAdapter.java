@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.List;
 
 public class SliderAdapter extends PagerAdapter {
@@ -28,7 +31,8 @@ public class SliderAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = LayoutInflater.from(container.getContext()).inflate(R.layout.slider_layout, container, false);
         ImageView banner = view.findViewById(R.id.banner_slide);
-        banner.setImageResource(sliderModelList.get(position).getNum());
+//        banner.setImageResource(sliderModelList.get(position).getIconLink());
+        Glide.with(container.getContext()).load(sliderModelList.get(position).getIconLink()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(banner);
         container.addView(view, 0);
         return view;
     }

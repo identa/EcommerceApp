@@ -1,27 +1,38 @@
 package com.example.ecommerceapp.models;
 
 public class HorizontalProductScrollModel {
-    private int num;
+    private int id;
+
+    private String imageLink;
 
     private String title;
 
     private String desc;
 
-    private String price;
+    private double price;
 
-    public HorizontalProductScrollModel(int num, String title, String desc, String price) {
-        this.num = num;
+    public HorizontalProductScrollModel(int id, String imageLink, String title, String desc, double price) {
+        this.id = id;
+        this.imageLink = imageLink;
         this.title = title;
         this.desc = desc;
         this.price = price;
     }
 
-    public int getNum() {
-        return num;
+    public int getId() {
+        return id;
     }
 
-    public void setNum(int num) {
-        this.num = num;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
     public String getTitle() {
@@ -40,11 +51,11 @@ public class HorizontalProductScrollModel {
         this.desc = desc;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }

@@ -4,6 +4,7 @@ package com.example.ecommerceapp;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +37,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,7 +50,7 @@ import static com.example.ecommerceapp.SignUpActivity.onResetPassword;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignInFragment extends Fragment implements SignInService{
+public class SignInFragment extends Fragment implements SignInService {
 
 
     public SignInFragment() {
@@ -67,6 +70,8 @@ public class SignInFragment extends Fragment implements SignInService{
     private ProgressBar progressBar;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
 
 
     @Override
@@ -84,7 +89,8 @@ public class SignInFragment extends Fragment implements SignInService{
         forgotPassword = view.findViewById(R.id.sign_in_forgot_password);
 
         firebaseAuth = FirebaseAuth.getInstance();
-
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
         return view;
     }
 
@@ -175,41 +181,51 @@ public class SignInFragment extends Fragment implements SignInService{
 
     private void checkEmailAndPassword(){
         Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
-        customWarningIcon.setBounds(0,0,customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
-        if (email.getText().toString().matches(ValidationConst.EMAIL)){
-            if (password.length() >= 7){
+        customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
+        if (email.getText().toString().matches(ValidationConst.EMAIL)) {
+            if (password.length() >= 7) {
                 progressBar.setVisibility(View.VISIBLE);
                 signInBtn.setEnabled(false);
-                signInBtn.setTextColor(Color.argb(50,255,255,255));
+                signInBtn.setTextColor(Color.argb(50, 255, 255, 255));
 
                 SignInRequest request = new SignInRequest();
                 request.setEmail(email.getText().toString());
                 request.setPassword(password.getText().toString());
 
-                firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            goHome();
-                        } else {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            signInBtn.setEnabled(true);
-                            signInBtn.setTextColor(Color.rgb(255,255,255));
-                            String error = task.getException().getMessage();
-                            Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                doSignIn(request);
+//                storageReference.child("categories/cable.png").getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Uri> task) {
+//                        if (task.isSuccessful()){
+//                            String a = task.getResult().toString();
+//                            goHome();
+//                        }
+//                    }
+//                });
+//                firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()){
+//                            goHome();
+//                        } else {
+//                            progressBar.setVisibility(View.INVISIBLE);
+//                            signInBtn.setEnabled(true);
+//                            signInBtn.setTextColor(Color.rgb(255,255,255));
+//                            String error = task.getException().getMessage();
+//                            Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
 
-            }else {
+            } else {
                 Toast.makeText(getActivity(), ValidationConst.INCORRECT, Toast.LENGTH_SHORT).show();
             }
-        }else {
+        } else {
             Toast.makeText(getActivity(), ValidationConst.INCORRECT, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void goHome(){
+    private void goHome() {
         Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
         startActivity(homeIntent);
         getActivity().finish();
@@ -217,18 +233,18 @@ public class SignInFragment extends Fragment implements SignInService{
 
     @Override
     public void doSignIn(SignInRequest request) {
-        SignInAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(SignInAPI.class);
+        SignInAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(SignInAPI.class);
         Call<SignInResponse> call = api.signIn(request);
         call.enqueue(new Callback<SignInResponse>() {
             @Override
             public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
                 if (response.code() == 200) {
-                    if (response.body().getStatus().equals("SUCCESS")){
+                    if (response.body().getStatus().equals("SUCCESS")) {
                         goHome();
-                    }else {
+                    } else {
                         progressBar.setVisibility(View.INVISIBLE);
                         signInBtn.setEnabled(true);
-                        signInBtn.setTextColor(Color.rgb(255,255,255));
+                        signInBtn.setTextColor(Color.rgb(255, 255, 255));
                         String error = response.body().getMessage();
                         Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
                     }
@@ -238,6 +254,11 @@ public class SignInFragment extends Fragment implements SignInService{
             @Override
             public void onFailure(Call<SignInResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                progressBar.setVisibility(View.INVISIBLE);
+                signInBtn.setEnabled(true);
+                signInBtn.setTextColor(Color.rgb(255, 255, 255));
+                String error = t.getMessage();
+                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
             }
         });
     }

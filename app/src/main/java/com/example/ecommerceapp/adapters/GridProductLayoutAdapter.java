@@ -58,10 +58,10 @@ public class GridProductLayoutAdapter extends BaseAdapter {
             TextView productDesc = view.findViewById(R.id.h_s_product_desc);
             TextView productPrice = view.findViewById(R.id.h_s_product_price);
 
-            productImage.setImageResource(modelList.get(position).getNum());
+//            productImage.setImageResource(modelList.get(position).getNum());
             productTitle.setText(modelList.get(position).getTitle());
             productDesc.setText(modelList.get(position).getDesc());
-            productPrice.setText(modelList.get(position).getPrice());
+            productPrice.setText(String.format("$%s", modelList.get(position).getPrice()));
         }else {
             view = convertView;
         }

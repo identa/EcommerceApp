@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.ecommerceapp.ProductDetailActivity;
 import com.example.ecommerceapp.R;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
@@ -31,10 +33,10 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
 
     @Override
     public void onBindViewHolder(@NonNull HorizontalProductScrollAdapter.ViewHolder viewHolder, int position) {
-        int resource = horizontalProductScrollModelList.get(position).getNum();
+        String resource = horizontalProductScrollModelList.get(position).getImageLink();
         String title = horizontalProductScrollModelList.get(position).getTitle();
         String desc = horizontalProductScrollModelList.get(position).getDesc();
-        String price = horizontalProductScrollModelList.get(position).getPrice();
+        double price = horizontalProductScrollModelList.get(position).getPrice();
 
         viewHolder.setProductImage(resource);
         viewHolder.setProductTitle(title);
@@ -71,8 +73,8 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
             });
         }
 
-        private void setProductImage(int resource){
-            productImage.setImageResource(resource);
+        private void setProductImage(String resource){
+            Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
         }
 
         private void setProductTitle(String title){
@@ -83,8 +85,8 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
             productDesc.setText(desc);
         }
 
-        private void setProductPrice(String price){
-            productPrice.setText(price);
+        private void setProductPrice(double price){
+            productPrice.setText(String.format("$%s", price));
         }
     }
 }

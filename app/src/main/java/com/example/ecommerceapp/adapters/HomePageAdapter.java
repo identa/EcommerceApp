@@ -1,9 +1,11 @@
 package com.example.ecommerceapp.adapters;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.ecommerceapp.ProductDetailActivity;
 import com.example.ecommerceapp.R;
 import com.example.ecommerceapp.SliderAdapter;
@@ -254,10 +258,11 @@ public class HomePageAdapter extends RecyclerView.Adapter {
                 TextView productDesc = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_desc);
                 TextView productPrice = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_price);
 
-                productImage.setImageResource(gridProductModelList.get(i).getNum());
+//                productImage.setImageResource(gridProductModelList.get(i).getNum());
+//                Glide.with(itemView.getContext()).load(gridProductModelList.get(i).getImageLink()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
                 productTitle.setText(gridProductModelList.get(i).getTitle());
                 productDesc.setText(gridProductModelList.get(i).getDesc());
-                productPrice.setText(gridProductModelList.get(i).getPrice());
+                productPrice.setText(String.format("$%s", gridProductModelList.get(i).getPrice()));
 
                 gridProductLayout.getChildAt(i).setBackgroundColor(Color.parseColor("#ffffff"));
                 gridProductLayout.getChildAt(i).setOnClickListener(new View.OnClickListener() {
