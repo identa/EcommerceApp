@@ -5,23 +5,36 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 
 import com.example.ecommerceapp.adapters.GridProductLayoutAdapter;
 import com.example.ecommerceapp.adapters.HorizontalProductScrollAdapter;
+import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
+import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.responses.HomePageProductData;
+import com.example.ecommerceapp.models.entities.responses.HomePageProductResponse;
+import com.example.ecommerceapp.models.interfaces.HomePageAPI;
+import com.example.ecommerceapp.models.services.HomePageService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewAllActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class ViewAllActivity extends AppCompatActivity implements HomePageService {
 
     private RecyclerView recyclerView;
     private GridView gridView;
-    public static List<HorizontalProductScrollModel> gridModelList;
-    public static List<HorizontalProductScrollModel> horizontalProductScrollModelList;
+    private List<HorizontalProductScrollModel> gridModelList;
+    private List<HorizontalProductScrollModel> horizontalProductScrollModelList;
+    private HorizontalProductScrollAdapter horizontalProductScrollAdapter;
+    private GridProductLayoutAdapter gridProductLayoutAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,44 +51,22 @@ public class ViewAllActivity extends AppCompatActivity {
 
         int layout_code = getIntent().getIntExtra("layout_code", -1);
 
-//        List<HorizontalProductScrollModel> horizontalProductScrollModelList = new ArrayList<>();
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-
         if (layout_code == 0){
+            horizontalProductScrollModelList = new ArrayList<>();
+            doGetMostViewedProduct();
             recyclerView.setVisibility(View.VISIBLE);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManager);
 
-            HorizontalProductScrollAdapter horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
+            horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
             recyclerView.setAdapter(horizontalProductScrollAdapter);
             horizontalProductScrollAdapter.notifyDataSetChanged();
         }else if (layout_code == 1){
+            gridModelList = new ArrayList<>();
+            doGetMostOrderedProduct();
             gridView.setVisibility(View.VISIBLE);
-//            List<HorizontalProductScrollModel> horizontalProductScrollModelList = new ArrayList<>();
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-//            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
-
-            GridProductLayoutAdapter gridProductLayoutAdapter = new GridProductLayoutAdapter(gridModelList);
+            gridProductLayoutAdapter = new GridProductLayoutAdapter(gridModelList);
             gridView.setAdapter(gridProductLayoutAdapter);
             gridProductLayoutAdapter.notifyDataSetChanged();
         }
@@ -88,5 +79,68 @@ public class ViewAllActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void doGetSlider() {
+
+    }
+
+    @Override
+    public void doGetMostViewedProduct() {
+        HomePageAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(HomePageAPI.class);
+        Call<HomePageProductResponse> call = api.getMVProduct();
+        call.enqueue(new Callback<HomePageProductResponse>() {
+            @Override
+            public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        for (HomePageProductData data : response.body().getData()){
+                            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(data.getId(),
+                                    data.getImageURL(),
+                                    data.getName(),
+                                    data.getCatName(),
+                                    data.getPrice()));
+                        }
+                        horizontalProductScrollAdapter.notifyDataSetChanged();
+                    } else if (response.body().getStatus().equals("FAILED")){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HomePageProductResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void doGetMostOrderedProduct() {
+        HomePageAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(HomePageAPI.class);
+        Call<HomePageProductResponse> call = api.getMOProduct();
+        call.enqueue(new Callback<HomePageProductResponse>() {
+            @Override
+            public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        for (HomePageProductData data : response.body().getData()){
+                            gridModelList.add(new HorizontalProductScrollModel(data.getId(),
+                                    data.getImageURL(),
+                                    data.getName(),
+                                    data.getCatName(),
+                                    data.getPrice()));
+                        }
+                        gridProductLayoutAdapter.notifyDataSetChanged();
+                    } else if (response.body().getStatus().equals("FAILED")){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HomePageProductResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
     }
 }

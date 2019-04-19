@@ -19,16 +19,13 @@ import java.util.List;
 
 public class GridProductLayoutAdapter extends BaseAdapter {
     List<HorizontalProductScrollModel> modelList;
-    public static boolean isGridInHomePage = false;
     public GridProductLayoutAdapter(List<HorizontalProductScrollModel> modelList) {
         this.modelList = modelList;
     }
 
     @Override
     public int getCount() {
-        if (isGridInHomePage){
-            return 4;
-        } else return modelList.size();
+        return modelList.size();
     }
 
     @Override
@@ -62,7 +59,6 @@ public class GridProductLayoutAdapter extends BaseAdapter {
             TextView productDesc = view.findViewById(R.id.h_s_product_desc);
             TextView productPrice = view.findViewById(R.id.h_s_product_price);
 
-//            productImage.setImageResource(modelList.get(position).getNum());
             Glide.with(parent.getContext()).load(modelList.get(position).getImageLink()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
             productTitle.setText(modelList.get(position).getTitle());
             productDesc.setText(modelList.get(position).getDesc());

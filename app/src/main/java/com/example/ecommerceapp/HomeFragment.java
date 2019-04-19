@@ -89,15 +89,6 @@ public class HomeFragment extends Fragment implements HomePageService {
 
             sliderModelList = new ArrayList<>();
             doGetSlider();
-//        sliderModelList.add(new SliderModel(R.mipmap.cancel));
-//        sliderModelList.add(new SliderModel(R.mipmap.email));
-//        sliderModelList.add(new SliderModel(R.mipmap.caution));
-//        sliderModelList.add(new SliderModel(R.mipmap.cancel));
-//        sliderModelList.add(new SliderModel(R.mipmap.email));
-//        sliderModelList.add(new SliderModel(R.mipmap.error));
-//        sliderModelList.add(new SliderModel(R.mipmap.plus));
-//        sliderModelList.add(new SliderModel(R.mipmap.email));
-//        sliderModelList.add(new SliderModel(R.mipmap.steakhouse));
 
             horizontalList = new ArrayList<>();
             gridList = new ArrayList<>();
@@ -105,16 +96,6 @@ public class HomeFragment extends Fragment implements HomePageService {
             doGetMostViewedProduct();
 
             doGetMostOrderedProduct();
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
-//        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
 
             //homepage
             testing = view.findViewById(R.id.home_page_recycler_view);
