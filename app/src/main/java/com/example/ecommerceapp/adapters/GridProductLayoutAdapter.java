@@ -24,7 +24,9 @@ public class GridProductLayoutAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return modelList.size();
+        if (modelList.size() > 8){
+            return 8;
+        } else return modelList.size();
     }
 
     @Override

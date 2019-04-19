@@ -239,49 +239,58 @@ public class HomePageAdapter extends RecyclerView.Adapter {
 
         private TextView gridLayoutTitle;
         private Button gridLayoutViewAllBtn;
-        //        private GridView gridView;
+        private GridView gridView;
         private GridLayout gridProductLayout;
 
         public GridProductViewHolder(@NonNull View itemView) {
             super(itemView);
             gridLayoutTitle = itemView.findViewById(R.id.grid_product_layout_title);
             gridLayoutViewAllBtn = itemView.findViewById(R.id.grid_product_layout_btn);
-//            gridView = itemView.findViewById(R.id.grid_product_layout_view);
-            gridProductLayout = itemView.findViewById(R.id.grid_layout);
+            gridView = itemView.findViewById(R.id.grid_product_layout_view);
+//            gridProductLayout = itemView.findViewById(R.id.grid_layout);
         }
 
         private void setGridProductLayout(List<HorizontalProductScrollModel> gridProductModelList, String title) {
             gridLayoutTitle.setText(title);
-            for (int i = 0; i < 4; i++) {
-                ImageView productImage = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_image);
-                TextView productTitle = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_title);
-                TextView productDesc = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_desc);
-                TextView productPrice = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_price);
+            GridProductLayoutAdapter gridProductLayoutAdapter = new GridProductLayoutAdapter(gridProductModelList);
+            gridView.setAdapter(gridProductLayoutAdapter);
+            gridProductLayoutAdapter.notifyDataSetChanged();
 
-//                productImage.setImageResource(gridProductModelList.get(i).getNum());
-//                Glide.with(itemView.getContext()).load(gridProductModelList.get(i).getImageLink()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
-                productTitle.setText(gridProductModelList.get(i).getTitle());
-                productDesc.setText(gridProductModelList.get(i).getDesc());
-                productPrice.setText(String.format("$%s", gridProductModelList.get(i).getPrice()));
-
-                gridProductLayout.getChildAt(i).setBackgroundColor(Color.parseColor("#ffffff"));
-                gridProductLayout.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+//            for (int i = 0; i < 4; i++) {
+//                ImageView productImage = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_image);
+//                TextView productTitle = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_title);
+//                TextView productDesc = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_desc);
+//                TextView productPrice = gridProductLayout.getChildAt(i).findViewById(R.id.h_s_product_price);
+//
+////                productImage.setImageResource(gridProductModelList.get(i).getNum());
+////                Glide.with(itemView.getContext()).load(gridProductModelList.get(i).getImageLink()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
+//                productTitle.setText(gridProductModelList.get(i).getTitle());
+//                productDesc.setText(gridProductModelList.get(i).getDesc());
+//                productPrice.setText(String.format("$%s", gridProductModelList.get(i).getPrice()));
+//
+//                gridProductLayout.getChildAt(i).setBackgroundColor(Color.parseColor("#ffffff"));
+//                gridProductLayout.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Intent productDetailsIntent = new Intent(itemView.getContext(), ProductDetailActivity.class);
+//                        itemView.getContext().startActivity(productDetailsIntent);
+//                    }
+//                });
+//            }
+            if (gridProductModelList.size() > 4){
+                gridLayoutViewAllBtn.setVisibility(View.VISIBLE);
+                gridLayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent productDetailsIntent = new Intent(itemView.getContext(), ProductDetailActivity.class);
-                        itemView.getContext().startActivity(productDetailsIntent);
+                        Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
+                        viewAllIntent.putExtra("layout_code", 1);
+                        itemView.getContext().startActivity(viewAllIntent);
                     }
                 });
+            } else {
+                gridLayoutViewAllBtn.setVisibility(View.INVISIBLE);
             }
-//            gridView.setAdapter(new GridProductLayoutAdapter(gridProductModelList));
-            gridLayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
-                    viewAllIntent.putExtra("layout_code", 1);
-                    itemView.getContext().startActivity(viewAllIntent);
-                }
-            });
+
         }
     }
 }

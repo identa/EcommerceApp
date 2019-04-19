@@ -36,67 +36,66 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v7.widget.GridLayout
-        android:id="@+id/grid_layout"
+    <!--<android.support.v7.widget.GridLayout-->
+        <!--android:id="@+id/grid_layout"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--app:columnCount="2"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/grid_product_layout_btn">-->
+
+        <!--<include-->
+            <!--layout="@layout/horizontal_scroll_item_layout"-->
+            <!--app:layout_columnWeight="1" />-->
+
+        <!--<include-->
+            <!--layout="@layout/horizontal_scroll_item_layout"-->
+            <!--app:layout_columnWeight="1" />-->
+
+        <!--<include-->
+            <!--layout="@layout/horizontal_scroll_item_layout"-->
+            <!--app:layout_columnWeight="1" />-->
+
+        <!--<include-->
+            <!--layout="@layout/horizontal_scroll_item_layout"-->
+            <!--app:layout_columnWeight="1" />-->
+
+    <!--</android.support.v7.widget.GridLayout>-->
+
+    <!--<View-->
+        <!--android:id="@+id/divider6"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@color/recyclerViewBackground"-->
+        <!--app:layout_constraintBottom_toBottomOf="@+id/grid_layout"-->
+        <!--app:layout_constraintEnd_toEndOf="@+id/grid_layout"-->
+        <!--app:layout_constraintStart_toStartOf="@+id/grid_layout"-->
+        <!--app:layout_constraintTop_toTopOf="@+id/grid_layout" />-->
+
+    <!--<View-->
+        <!--android:id="@+id/divider9"-->
+        <!--android:layout_width="1dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:background="@color/recyclerViewBackground"-->
+        <!--app:layout_constraintBottom_toBottomOf="@+id/grid_layout"-->
+        <!--app:layout_constraintEnd_toEndOf="@+id/grid_layout"-->
+        <!--app:layout_constraintStart_toStartOf="@+id/grid_layout"-->
+        <!--app:layout_constraintTop_toTopOf="@+id/grid_layout" />-->
+
+    <GridView
+        android:id="@+id/grid_product_layout_view"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:columnCount="2"
+        android:layout_height="326dp"
+        android:background="@color/colorAccent"
+        android:horizontalSpacing="1dp"
+        android:numColumns="2"
+        android:verticalSpacing="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/grid_product_layout_btn">
-
-        <include
-            layout="@layout/horizontal_scroll_item_layout"
-            app:layout_columnWeight="1" />
-
-        <include
-            layout="@layout/horizontal_scroll_item_layout"
-            app:layout_columnWeight="1" />
-
-        <include
-            layout="@layout/horizontal_scroll_item_layout"
-            app:layout_columnWeight="1" />
-
-        <include
-            layout="@layout/horizontal_scroll_item_layout"
-            app:layout_columnWeight="1" />
-
-    </android.support.v7.widget.GridLayout>
-
-    <View
-        android:id="@+id/divider6"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/recyclerViewBackground"
-        app:layout_constraintBottom_toBottomOf="@+id/grid_layout"
-        app:layout_constraintEnd_toEndOf="@+id/grid_layout"
-        app:layout_constraintStart_toStartOf="@+id/grid_layout"
-        app:layout_constraintTop_toTopOf="@+id/grid_layout" />
-
-    <View
-        android:id="@+id/divider9"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/recyclerViewBackground"
-        app:layout_constraintBottom_toBottomOf="@+id/grid_layout"
-        app:layout_constraintEnd_toEndOf="@+id/grid_layout"
-        app:layout_constraintStart_toStartOf="@+id/grid_layout"
-        app:layout_constraintTop_toTopOf="@+id/grid_layout" />
-
-    <!--<GridView-->
-    <!--android:id="@+id/grid_product_layout_view"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="326dp"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:background="#d9d9d9"-->
-    <!--android:horizontalSpacing="1dp"-->
-    <!--android:numColumns="2"-->
-    <!--android:verticalSpacing="1dp"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/grid_product_layout_btn" />-->
+        app:layout_constraintTop_toBottomOf="@+id/grid_product_layout_btn" />
 </android.support.constraint.ConstraintLayout>
