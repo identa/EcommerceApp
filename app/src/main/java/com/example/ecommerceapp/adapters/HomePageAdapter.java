@@ -240,7 +240,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
         private TextView gridLayoutTitle;
         private Button gridLayoutViewAllBtn;
         private GridView gridView;
-        private GridLayout gridProductLayout;
+//        private GridLayout gridProductLayout;
 
         public GridProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -250,7 +250,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
 //            gridProductLayout = itemView.findViewById(R.id.grid_layout);
         }
 
-        private void setGridProductLayout(List<HorizontalProductScrollModel> gridProductModelList, String title) {
+        private void setGridProductLayout(final List<HorizontalProductScrollModel> gridProductModelList, final String title) {
             gridLayoutTitle.setText(title);
             GridProductLayoutAdapter gridProductLayoutAdapter = new GridProductLayoutAdapter(gridProductModelList);
             gridView.setAdapter(gridProductLayoutAdapter);
@@ -282,8 +282,10 @@ public class HomePageAdapter extends RecyclerView.Adapter {
                 gridLayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        ViewAllActivity.gridModelList = gridProductModelList;
                         Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
                         viewAllIntent.putExtra("layout_code", 1);
+                        viewAllIntent.putExtra("title", title);
                         itemView.getContext().startActivity(viewAllIntent);
                     }
                 });

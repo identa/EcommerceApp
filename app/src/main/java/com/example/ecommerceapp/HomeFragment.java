@@ -1,6 +1,9 @@
 package com.example.ecommerceapp;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,8 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.ecommerceapp.adapters.CategoryAdapter;
 import com.example.ecommerceapp.adapters.HomePageAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
@@ -54,7 +59,7 @@ public class HomeFragment extends Fragment implements HomePageService {
     private List<CategoryModel> categoryModelList;
     private List<SliderModel> sliderModelList;
     private List<HorizontalProductScrollModel> horizontalList, gridList;
-
+    private ImageView noInternet;
 
     private HomePageAdapter homePageAdapter;
 
@@ -65,11 +70,25 @@ public class HomeFragment extends Fragment implements HomePageService {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        noInternet = view.findViewById(R.id.no_internet);
 
-        catRecyclerView = view.findViewById(R.id.cat_recycler_view);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-        sliderModelList = new ArrayList<>();
-        doGetSlider();
+        if (networkInfo != null && networkInfo.isConnected()){
+            noInternet.setVisibility(View.GONE);
+
+            catRecyclerView = view.findViewById(R.id.cat_recycler_view);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            catRecyclerView.setLayoutManager(layoutManager);
+            categoryModelList = new ArrayList<>();
+
+            categoryAdapter = new CategoryAdapter(categoryModelList);
+            catRecyclerView.setAdapter(categoryAdapter);
+
+            sliderModelList = new ArrayList<>();
+            doGetSlider();
 //        sliderModelList.add(new SliderModel(R.mipmap.cancel));
 //        sliderModelList.add(new SliderModel(R.mipmap.email));
 //        sliderModelList.add(new SliderModel(R.mipmap.caution));
@@ -80,12 +99,12 @@ public class HomeFragment extends Fragment implements HomePageService {
 //        sliderModelList.add(new SliderModel(R.mipmap.email));
 //        sliderModelList.add(new SliderModel(R.mipmap.steakhouse));
 
-        horizontalList = new ArrayList<>();
-        gridList = new ArrayList<>();
+            horizontalList = new ArrayList<>();
+            gridList = new ArrayList<>();
 
-        doGetMostViewedProduct();
+            doGetMostViewedProduct();
 
-        doGetMostOrderedProduct();
+            doGetMostOrderedProduct();
 //        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
 //        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
 //        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
@@ -97,46 +116,44 @@ public class HomeFragment extends Fragment implements HomePageService {
 //        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
 //        gridList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
 
-        //homepage
-        testing = view.findViewById(R.id.home_page_recycler_view);
-        LinearLayoutManager testingLayoutManager = new LinearLayoutManager(getContext());
-        testingLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        testing.setLayoutManager(testingLayoutManager);
+            //homepage
+            testing = view.findViewById(R.id.home_page_recycler_view);
+            LinearLayoutManager testingLayoutManager = new LinearLayoutManager(getContext());
+            testingLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            testing.setLayoutManager(testingLayoutManager);
 
-        List<HomePageModel> homePageModelList = new ArrayList<>();
-        homePageModelList.add(new HomePageModel(0, sliderModelList));
-        homePageModelList.add(new HomePageModel(1, "Deals of the Day", horizontalList));
-        homePageModelList.add(new HomePageModel(2, "Trendy", gridList));
+            List<HomePageModel> homePageModelList = new ArrayList<>();
+            homePageModelList.add(new HomePageModel(0, sliderModelList));
+            homePageModelList.add(new HomePageModel(1, "Deals of the Day", horizontalList));
+            homePageModelList.add(new HomePageModel(2, "Trendy", gridList));
 
-        homePageAdapter = new HomePageAdapter(homePageModelList);
-        testing.setAdapter(homePageAdapter);
-        homePageAdapter.notifyDataSetChanged();
-        //homepage
+            homePageAdapter = new HomePageAdapter(homePageModelList);
+            testing.setAdapter(homePageAdapter);
+            homePageAdapter.notifyDataSetChanged();
+            //homepage
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        catRecyclerView.setLayoutManager(layoutManager);
-        categoryModelList = new ArrayList<>();
-
-        categoryAdapter = new CategoryAdapter(categoryModelList);
-        catRecyclerView.setAdapter(categoryAdapter);
-
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("CATEGORIES").orderBy("index").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                categoryModelList.add(new CategoryModel(snapshot.get("icon").toString(), snapshot.get("name").toString()));
+            firebaseFirestore = FirebaseFirestore.getInstance();
+            firebaseFirestore.collection("CATEGORIES").orderBy("index").get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                    categoryModelList.add(new CategoryModel(snapshot.get("icon").toString(), snapshot.get("name").toString()));
+                                }
+                                categoryAdapter.notifyDataSetChanged();
+                            } else {
+                                String error = task.getException().getMessage();
+                                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
                             }
-                            categoryAdapter.notifyDataSetChanged();
-                        } else {
-                            String error = task.getException().getMessage();
-                            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
+                    });
+        } else {
+            Glide.with(this).load(R.mipmap.no_internet).into(noInternet);
+            noInternet.setVisibility(View.VISIBLE);
+        }
+
+
         return view;
     }
 

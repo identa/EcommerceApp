@@ -20,6 +20,7 @@ public class ViewAllActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private GridView gridView;
+    public static List<HorizontalProductScrollModel> gridModelList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,7 @@ public class ViewAllActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle("Deals of the Day");
+        getSupportActionBar().setTitle(getIntent().getStringExtra("title"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = findViewById(R.id.recycler_view);
@@ -73,7 +74,7 @@ public class ViewAllActivity extends AppCompatActivity {
 //            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
 //            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
 
-            GridProductLayoutAdapter gridProductLayoutAdapter = new GridProductLayoutAdapter(horizontalProductScrollModelList);
+            GridProductLayoutAdapter gridProductLayoutAdapter = new GridProductLayoutAdapter(gridModelList);
             gridView.setAdapter(gridProductLayoutAdapter);
             gridProductLayoutAdapter.notifyDataSetChanged();
         }

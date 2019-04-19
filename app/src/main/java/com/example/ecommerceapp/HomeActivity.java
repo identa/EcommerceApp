@@ -1,7 +1,10 @@
 package com.example.ecommerceapp;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,9 +19,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import static com.example.ecommerceapp.SignUpActivity.setSignUpFragment;
 
@@ -37,7 +43,6 @@ public class HomeActivity extends AppCompatActivity
 
     private FrameLayout frameLayout;
     private ImageView actionBarLogo;
-
     private Window window;
     private Toolbar toolbar;
 
@@ -48,7 +53,8 @@ public class HomeActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+        window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
 //                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -58,19 +64,42 @@ public class HomeActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
-        frameLayout = findViewById(R.id.home_frame_layout);
 
-        if (showCart){
+        frameLayout = findViewById(R.id.home_frame_layout);
+//        noInternet = findViewById(R.id.no_internet);
+
+        if (showCart) {
             drawer.setDrawerLockMode(1);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             gotoFragment("My cart", new MyCartFragment(), -2);
-        }else {
+        } else {
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.addDrawerListener(toggle);
             toggle.syncState();
             setFragment(new HomeFragment(), HOME_FRAGMENT);
         }
+
+//        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+//
+//        if (networkInfo != null && networkInfo.isConnected()){
+//            noInternet.setVisibility(View.GONE);
+////        if (showCart) {
+////            drawer.setDrawerLockMode(1);
+////            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+////            gotoFragment("My cart", new MyCartFragment(), -2);
+////        } else {
+////            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+////                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+////            drawer.addDrawerListener(toggle);
+////            toggle.syncState();
+////            setFragment(new HomeFragment(), HOME_FRAGMENT);
+////        }
+//    } else {
+//            Glide.with(this).load(R.mipmap.no_internet).into(noInternet);
+//            noInternet.setVisibility(View.VISIBLE);
+//        }
     }
 
     @Override

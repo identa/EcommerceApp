@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.ecommerceapp.ProductDetailActivity;
 import com.example.ecommerceapp.R;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
@@ -24,8 +26,8 @@ public class GridProductLayoutAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (modelList.size() > 8){
-            return 8;
+        if (modelList.size() > 4){
+            return 4;
         } else return modelList.size();
     }
 
@@ -61,6 +63,7 @@ public class GridProductLayoutAdapter extends BaseAdapter {
             TextView productPrice = view.findViewById(R.id.h_s_product_price);
 
 //            productImage.setImageResource(modelList.get(position).getNum());
+            Glide.with(parent.getContext()).load(modelList.get(position).getImageLink()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
             productTitle.setText(modelList.get(position).getTitle());
             productDesc.setText(modelList.get(position).getDesc());
             productPrice.setText(String.format("$%s", modelList.get(position).getPrice()));
