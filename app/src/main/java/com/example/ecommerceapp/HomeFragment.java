@@ -198,7 +198,6 @@ public class HomeFragment extends Fragment implements HomePageService {
                                     data.getCatName(),
                                     data.getPrice()));
                         }
-                        doGetMostOrderedProduct();
                         homePageAdapter.notifyDataSetChanged();
                     } else if (response.body().getStatus().equals("FAILED")){
                     }

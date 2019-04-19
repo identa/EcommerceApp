@@ -19,6 +19,7 @@ import java.util.List;
 
 public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<HorizontalProductScrollAdapter.ViewHolder> {
     private List<HorizontalProductScrollModel> horizontalProductScrollModelList;
+    public static boolean isHorizontalInHomePage = false;
 
     public HorizontalProductScrollAdapter(List<HorizontalProductScrollModel> horizontalProductScrollModelList) {
         this.horizontalProductScrollModelList = horizontalProductScrollModelList;
@@ -46,7 +47,7 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
 
     @Override
     public int getItemCount() {
-        if (horizontalProductScrollModelList.size() > 8){
+        if (isHorizontalInHomePage){
             return 8;
         } else return horizontalProductScrollModelList.size();
     }

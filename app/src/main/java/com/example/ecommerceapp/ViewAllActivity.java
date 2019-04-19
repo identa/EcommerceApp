@@ -21,6 +21,7 @@ public class ViewAllActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private GridView gridView;
     public static List<HorizontalProductScrollModel> gridModelList;
+    public static List<HorizontalProductScrollModel> horizontalProductScrollModelList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,8 @@ public class ViewAllActivity extends AppCompatActivity {
 
         int layout_code = getIntent().getIntExtra("layout_code", -1);
 
-        List<HorizontalProductScrollModel> horizontalProductScrollModelList = new ArrayList<>();
-        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
+//        List<HorizontalProductScrollModel> horizontalProductScrollModelList = new ArrayList<>();
+//        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(1, "https://i.imgur.com/2G9UXB2.png", "a", "Samsung Galaxy S10", 10));
 //        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
 //        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));
 //        horizontalProductScrollModelList.add(new HorizontalProductScrollModel(R.mipmap.steakhouse, "Samsung Galaxy S10", "Samsung", "$1000.00"));

@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.example.ecommerceapp.adapters.GridProductLayoutAdapter.isGridInHomePage;
+import static com.example.ecommerceapp.adapters.HorizontalProductScrollAdapter.isHorizontalInHomePage;
+
 public class HomePageAdapter extends RecyclerView.Adapter {
     private List<HomePageModel> homePageModelList;
     private RecyclerView.RecycledViewPool recycledViewPool;
@@ -72,11 +75,13 @@ public class HomePageAdapter extends RecyclerView.Adapter {
                 String horizontalTitle = homePageModelList.get(i).getTitle();
                 List<HorizontalProductScrollModel> horizontalProductScrollModelList = homePageModelList.get(i).getHorizontalProductScrollModelList();
                 ((HorizontalProductViewHolder) viewHolder).setHorizontalProductLayout(horizontalProductScrollModelList, horizontalTitle);
+                isHorizontalInHomePage = false;
                 break;
             case HomePageModel.GRID_PRODUCT_VIEW:
                 String gridTitle = homePageModelList.get(i).getTitle();
                 List<HorizontalProductScrollModel> gridProductModelList = homePageModelList.get(i).getHorizontalProductScrollModelList();
                 ((GridProductViewHolder) viewHolder).setGridProductLayout(gridProductModelList, gridTitle);
+                isGridInHomePage = false;
                 break;
             default:
                 return;
@@ -208,7 +213,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
             horizontalRecyclerView.setRecycledViewPool(recycledViewPool);
         }
 
-        private void setHorizontalProductLayout(List<HorizontalProductScrollModel> horizontalProductScrollModelList, String title) {
+        private void setHorizontalProductLayout(final List<HorizontalProductScrollModel> horizontalProductScrollModelList, String title) {
             horizontalLayoutTitle.setText(title);
 
             if (horizontalProductScrollModelList.size() > 8) {
@@ -216,6 +221,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
                 horizontalViewAllBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        ViewAllActivity.horizontalProductScrollModelList = horizontalProductScrollModelList;
                         Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
                         viewAllIntent.putExtra("layout_code", 0);
                         itemView.getContext().startActivity(viewAllIntent);
@@ -224,7 +230,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
             } else {
                 horizontalViewAllBtn.setVisibility(View.INVISIBLE);
             }
-
+            isHorizontalInHomePage = true;
             HorizontalProductScrollAdapter horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
             LinearLayoutManager horizontalProductLayoutManager = new LinearLayoutManager(itemView.getContext());
             horizontalProductLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -252,6 +258,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
 
         private void setGridProductLayout(final List<HorizontalProductScrollModel> gridProductModelList, final String title) {
             gridLayoutTitle.setText(title);
+            isGridInHomePage = true;
             GridProductLayoutAdapter gridProductLayoutAdapter = new GridProductLayoutAdapter(gridProductModelList);
             gridView.setAdapter(gridProductLayoutAdapter);
             gridProductLayoutAdapter.notifyDataSetChanged();

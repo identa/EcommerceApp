@@ -19,14 +19,14 @@ import java.util.List;
 
 public class GridProductLayoutAdapter extends BaseAdapter {
     List<HorizontalProductScrollModel> modelList;
-
+    public static boolean isGridInHomePage = false;
     public GridProductLayoutAdapter(List<HorizontalProductScrollModel> modelList) {
         this.modelList = modelList;
     }
 
     @Override
     public int getCount() {
-        if (modelList.size() > 4){
+        if (isGridInHomePage){
             return 4;
         } else return modelList.size();
     }
