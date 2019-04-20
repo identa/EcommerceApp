@@ -6,27 +6,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.ecommerceapp.R;
+
 import java.util.List;
 
 public class ProductImageAdapter extends PagerAdapter {
-    private List<Integer> productNums;
+    private List<String> productImages;
 
-    public ProductImageAdapter(List<Integer> productNum) {
-        this.productNums = productNum;
+    public ProductImageAdapter(List<String> productImages) {
+        this.productImages = productImages;
     }
 
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         ImageView productImage = new ImageView(container.getContext());
-        productImage.setImageResource(productNums.get(position));
+//        productImage.setImageResource(productNums.get(position));
+        Glide.with(container.getContext()).load(productImages.get(position)).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
         container.addView(productImage,0);
         return productImage;
     }
 
     @Override
     public int getCount() {
-        return productNums.size();
+        return productImages.size();
     }
 
     @Override
