@@ -52,9 +52,20 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private ConstraintLayout productDetailsTabsContainer;
     private ViewPager productDetailsViewPager;
     private TabLayout productDetailsTabLayout;
+    private String productDescription;
+    private String productOtherDetails;
+//    public static int tabsPosition = -1;
     //product desc
 
+    //rating
     private LinearLayout rateNowContainer;
+    private TextView totalRatings;
+    private LinearLayout ratingsNoContainer;
+    private TextView totalRatingsFigure;
+    private LinearLayout ratingsProgressBarContainer;
+    private TextView avgRating;
+    //rating
+
     private Button buyNowBtn;
     private List<String> productImages;
     private static boolean isAddedToWishlist = false;
@@ -81,6 +92,11 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         productPrice = findViewById(R.id.product_price);
         cuttedPrice = findViewById(R.id.cutted_price);
         productDetailsTabsContainer = findViewById(R.id.product_details_tabs_container);
+        totalRatings = findViewById(R.id.total_ratings);
+        ratingsNoContainer = findViewById(R.id.ratings_number_container);
+        totalRatingsFigure = findViewById(R.id.total_ratings_figure);
+        ratingsProgressBarContainer = findViewById(R.id.ratings_progressbar_container);
+        avgRating = findViewById(R.id.avg_rating);
         productImages = new ArrayList<>();
 
 //        productImages.add(R.mipmap.steakhouse);
@@ -92,6 +108,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 //        ProductImageAdapter productImageAdapter = new ProductImageAdapter(productImages);
 //        productImageViewPager.setAdapter(productImageAdapter);
 //        productImageAdapter.notifyDataSetChanged();
+        doGetProductDetail(getIntent().getIntExtra("id", 1));
 
         viewPagerIndicator.setupWithViewPager(productImageViewPager, true);
         addToWishlistBtn.setOnClickListener(new View.OnClickListener() {
@@ -107,11 +124,12 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             }
         });
 
-        productDetailsViewPager.setAdapter(new ProductDetailsAdapter(getSupportFragmentManager(), productDetailsTabLayout.getTabCount()));
+//        productDetailsViewPager.setAdapter(new ProductDetailsAdapter(getSupportFragmentManager(), productDetailsTabLayout.getTabCount()));
         productDetailsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(productDetailsTabLayout));
         productDetailsTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+//                tabsPosition = tab.getPosition();
                 productDetailsViewPager.setCurrentItem(tab.getPosition());
             }
 
@@ -190,13 +208,17 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                         for (ProductImageData data : response.body().getData().getImages()){
                             productImages.add(data.getImageURL());
                         }
+                        productTitle.setText(response.body().getData().getName());
+                        productPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount()/100)));
+                        cuttedPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice()));
+                        productDescription = response.body().getData().getDescription();
+                        productOtherDetails = response.body().getData().getDescription();
+
                         ProductImageAdapter productImageAdapter = new ProductImageAdapter(productImages);
                         productImageViewPager.setAdapter(productImageAdapter);
 
-                        productTitle.setText(response.body().getData().getName());
-                        productPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount())));
-                        cuttedPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice()));
                         productImageAdapter.notifyDataSetChanged();
+                        productDetailsViewPager.setAdapter(new ProductDetailsAdapter(getSupportFragmentManager(), productDetailsTabLayout.getTabCount(), productDescription, productOtherDetails));
                     } else if (response.body().getStatus().equals("FAILED")){
                     }
                 }

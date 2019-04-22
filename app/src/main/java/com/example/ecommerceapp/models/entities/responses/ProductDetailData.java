@@ -22,6 +22,10 @@ public class ProductDetailData {
     @Expose
     private int discount;
 
+    @SerializedName("description")
+    @Expose
+    private String description;
+
     @SerializedName("limit")
     @Expose
     private int limit;
@@ -60,6 +64,14 @@ public class ProductDetailData {
 
     public void setDiscount(int discount) {
         this.discount = discount;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getLimit() {

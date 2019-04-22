@@ -37,11 +37,13 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
         String title = horizontalProductScrollModelList.get(position).getTitle();
         String desc = horizontalProductScrollModelList.get(position).getDesc();
         double price = horizontalProductScrollModelList.get(position).getPrice();
+        int id = horizontalProductScrollModelList.get(position).getId();
 
         viewHolder.setProductImage(resource);
         viewHolder.setProductTitle(title);
         viewHolder.setProductDesc(desc);
         viewHolder.setProductPrice(price);
+        viewHolder.setID(id);
     }
 
     @Override
@@ -54,6 +56,7 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
         private TextView productTitle;
         private TextView productDesc;
         private TextView productPrice;
+        private int productID;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -66,6 +69,7 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
                 @Override
                 public void onClick(View v) {
                     Intent productDetailIntent = new Intent(itemView.getContext(), ProductDetailActivity.class);
+                    productDetailIntent.putExtra("id", productID);
                     itemView.getContext().startActivity(productDetailIntent);
                 }
             });
@@ -85,6 +89,10 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
 
         private void setProductPrice(double price){
             productPrice.setText(String.format("$%s", price));
+        }
+
+        private void setID(int id){
+            productID = id;
         }
     }
 }
