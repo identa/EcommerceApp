@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.ecommerceapp.ProductDetailActivity;
 import com.example.ecommerceapp.R;
+import com.example.ecommerceapp.ViewAllActivity;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
 
 import java.util.List;
@@ -50,7 +51,8 @@ public class GridProductLayoutAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     Intent productDetailsIntent = new Intent(parent.getContext(), ProductDetailActivity.class);
-                    productDetailsIntent.putExtra("id", modelList.get(position).getId());
+//                    productDetailsIntent.putExtra("id", modelList.get(position).getId());
+                    ProductDetailActivity.productID = modelList.get(position).getId();
                     parent.getContext().startActivity(productDetailsIntent);
                 }
             });

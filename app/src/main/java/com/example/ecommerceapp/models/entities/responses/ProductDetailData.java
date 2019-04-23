@@ -30,6 +30,10 @@ public class ProductDetailData {
     @Expose
     private int limit;
 
+    @SerializedName("inCart")
+    @Expose
+    private boolean inCart;
+
     @SerializedName("images")
     @Expose
     private List<ProductImageData> images;
@@ -80,6 +84,14 @@ public class ProductDetailData {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public boolean isInCart() {
+        return inCart;
+    }
+
+    public void setInCart(boolean inCart) {
+        this.inCart = inCart;
     }
 
     public List<ProductImageData> getImages() {

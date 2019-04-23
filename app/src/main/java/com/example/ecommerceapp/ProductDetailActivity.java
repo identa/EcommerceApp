@@ -1,5 +1,6 @@
 package com.example.ecommerceapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -18,16 +19,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.ProductDetailsAdapter;
 import com.example.ecommerceapp.adapters.ProductImageAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.responses.AddCartResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductDetailData;
 import com.example.ecommerceapp.models.entities.responses.ProductDetailResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductImageData;
 import com.example.ecommerceapp.models.interfaces.ProductDetailAPI;
+import com.example.ecommerceapp.models.services.CartService;
 import com.example.ecommerceapp.models.services.ProductDetailService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,12 +70,19 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private TextView totalRatingsFigure;
     private LinearLayout ratingsProgressBarContainer;
     private TextView avgRating;
+    private TextView addToCartTextView;
     //rating
 
     private Button buyNowBtn;
+    private LinearLayout addToCartBtn;
     private List<String> productImages;
     private static boolean isAddedToWishlist = false;
+    private static boolean isAddedToCart = false;
+    public static int productID;
     private FloatingActionButton addToWishlistBtn;
+
+    private FirebaseUser currentUser;
+    private Dialog signInDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +93,15 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         productImageViewPager = findViewById(R.id.product_image_view_pager);
         viewPagerIndicator = findViewById(R.id.view_pager_indicator);
         addToWishlistBtn = findViewById(R.id.add_to_wishlist_btn);
         productDetailsViewPager = findViewById(R.id.product_details_view_pager);
         productDetailsTabLayout = findViewById(R.id.product_details_tab_layout);
         buyNowBtn = findViewById(R.id.buy_now_btn);
+        addToCartBtn = findViewById(R.id.add_to_cart_btn);
         productTitle = findViewById(R.id.product_title);
         avgRatingMiniView = findViewById(R.id.tv_product_rating_miniview);
         totalRatingMiniView = findViewById(R.id.total_rating_miniview);
@@ -97,6 +113,8 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         totalRatingsFigure = findViewById(R.id.total_ratings_figure);
         ratingsProgressBarContainer = findViewById(R.id.ratings_progressbar_container);
         avgRating = findViewById(R.id.avg_rating);
+        addToCartTextView = findViewById(R.id.tv_add_to_cart);
+
         productImages = new ArrayList<>();
 
 //        productImages.add(R.mipmap.steakhouse);
@@ -108,7 +126,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 //        ProductImageAdapter productImageAdapter = new ProductImageAdapter(productImages);
 //        productImageViewPager.setAdapter(productImageAdapter);
 //        productImageAdapter.notifyDataSetChanged();
-        doGetProductDetail(getIntent().getIntExtra("id", 1));
+        doGetProductDetail(productID, 2);
 
         viewPagerIndicator.setupWithViewPager(productImageViewPager, true);
         addToWishlistBtn.setOnClickListener(new View.OnClickListener() {
@@ -197,9 +215,9 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     }
 
     @Override
-    public void doGetProductDetail(int id) {
+    public void doGetProductDetail(int pid, int uid) {
         ProductDetailAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(ProductDetailAPI.class);
-        Call<ProductDetailResponse> call = api.getProductDetail(id);
+        Call<ProductDetailResponse> call = api.getProductDetail(pid, uid);
         call.enqueue(new Callback<ProductDetailResponse>() {
             @Override
             public void onResponse(Call<ProductDetailResponse> call, Response<ProductDetailResponse> response) {
@@ -213,7 +231,25 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                         cuttedPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice()));
                         productDescription = response.body().getData().getDescription();
                         productOtherDetails = response.body().getData().getDescription();
+                        isAddedToCart = response.body().getData().isInCart();
 
+                        if (isAddedToCart){
+                            addToCartTextView = findViewById(R.id.tv_add_to_cart);
+                            addToCartTextView.setText("ADREADY ADDED TO");
+                            addToCartBtn.setOnClickListener(null);
+                        }else {
+                            addToCartBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (currentUser == null){
+//                        signInDialog.show();
+                                    }
+                                    else {
+                                        doAddToCart(productID, 2);
+                                    }
+                                }
+                            });
+                        }
                         ProductImageAdapter productImageAdapter = new ProductImageAdapter(productImages);
                         productImageViewPager.setAdapter(productImageAdapter);
 
@@ -227,6 +263,31 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             @Override
             public void onFailure(Call<ProductDetailResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void doAddToCart(int pid, int uid) {
+        ProductDetailAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(ProductDetailAPI.class);
+        Call<AddCartResponse> call = api.addToCart(pid, uid);
+        call.enqueue(new Callback<AddCartResponse>() {
+            @Override
+            public void onResponse(Call<AddCartResponse> call, Response<AddCartResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        isAddedToCart = true;
+                        addToCartTextView = findViewById(R.id.tv_add_to_cart);
+                        addToCartTextView.setText("ADREADY ADDED TO");
+                        Toast.makeText(ProductDetailActivity.this, "Add to cart successfully!", Toast.LENGTH_SHORT).show();
+                        addToCartBtn.setOnClickListener(null);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddCartResponse> call, Throwable t) {
+
             }
         });
     }

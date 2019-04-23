@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.ecommerceapp.R;
 import com.example.ecommerceapp.models.CartItemModel;
 
@@ -54,12 +56,13 @@ public class CartAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         switch (cartItemModelList.get(i).getType()){
             case CartItemModel.CART_ITEM:
-                int resource = cartItemModelList.get(i).getProductImage();
+                int id = cartItemModelList.get(i).getProductID();
+                String resource = cartItemModelList.get(i).getProductImage();
                 String title = cartItemModelList.get(i).getProductTitle();
                 double productPrice = cartItemModelList.get(i).getProductPrice();
                 double cuttedPrice = cartItemModelList.get(i).getCuttedPrice();
 
-                ((CartItemViewHolder) viewHolder).setItemDetails(resource, title,productPrice, cuttedPrice);
+                ((CartItemViewHolder) viewHolder).setItemDetails(id, resource, title,productPrice, cuttedPrice);
                 break;
                 case CartItemModel.TOTAL_AMOUNT:
                     String totalItems = cartItemModelList.get(i).getTotalItems();
@@ -95,8 +98,9 @@ public class CartAdapter extends RecyclerView.Adapter {
             productQuantity = itemView.findViewById(R.id.product_quantity);
         }
 
-        private void setItemDetails(int resource, String title, double productPriceText, double cuttedPriceText){
-            productImage.setImageResource(resource);
+        private void setItemDetails(int id, String resource, String title, double productPriceText, double cuttedPriceText){
+//            productImage.setImageResource(resource);
+            Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
             productTitle.setText(title);
             productPrice.setText(String.format("$%s", productPriceText));
             cuttedPrice.setText(String.format("$%s", cuttedPriceText));

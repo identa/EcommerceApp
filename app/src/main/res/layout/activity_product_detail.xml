@@ -64,17 +64,19 @@
             android:background="@color/colorAccent"
             android:gravity="center"
             android:layout_weight="1">
+
             <TextView
+                android:id="@+id/tv_add_to_cart"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="ADD TO CART"
                 android:drawableEnd="@mipmap/cart_black"
                 android:drawablePadding="8dp"
+                android:drawableTint="#485F70"
                 android:gravity="center"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:text="ADD TO CART"
                 android:textColor="#485F70"
-                android:drawableTint="#485F70"/>
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <Button

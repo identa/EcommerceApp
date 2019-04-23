@@ -241,13 +241,15 @@ public class SignUpFragment extends Fragment {
                         if (task.isSuccessful()){
                             Map<Object, String> userData = new HashMap<>();
                             userData.put("fullName", fullName.getText().toString());
-                            firebaseFirestore.collection("USERS").add(userData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+
+                            firebaseFirestore.collection("USERS")
+                                    .document(firebaseAuth.getUid())
+                                    .set(userData)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
-                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){
-                                        Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
-                                        startActivity(homeIntent);
-                                        getActivity().finish();
+                                        goHome();
                                     }else {
                                         progressBar.setVisibility(View.INVISIBLE);
                                         signUpBtn.setEnabled(true);
