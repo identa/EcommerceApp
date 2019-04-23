@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import com.example.ecommerceapp.adapters.CartAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.CartItemModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
-import com.example.ecommerceapp.models.entities.responses.CartData;
+import com.example.ecommerceapp.models.entities.responses.CartList;
 import com.example.ecommerceapp.models.entities.responses.CartResponse;
 import com.example.ecommerceapp.models.interfaces.CartAPI;
 import com.example.ecommerceapp.models.services.CartService;
@@ -44,50 +45,53 @@ public class MyCartFragment extends Fragment implements CartService {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_cart, container, false);
+        cartItemModelList = new ArrayList<>();
+        doGetCart(2);
+
         cartItemRecyclerView = view.findViewById(R.id.cart_item_recycler_view);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         cartItemRecyclerView.setLayoutManager(layoutManager);
 
-        cartItemModelList = new ArrayList<>();
+
 //        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
 //        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
 //        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
 //        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
 
 
-        cartItemModelList.add(new CartItemModel(1, "Price (4 items)", 2000, 2000));
+//        cartItemModelList.add(new CartItemModel(1, "Price (4 items)", 2000, 2000));
 
-        cartAdapter = new CartAdapter(cartItemModelList);
-        cartItemRecyclerView.setAdapter(cartAdapter);
-        cartAdapter.notifyDataSetChanged();
+//        cartAdapter = new CartAdapter(cartItemModelList);
+//        cartItemRecyclerView.setAdapter(cartAdapter);
+//        cartAdapter.notifyDataSetChanged();
 
         return view;
     }
 
     @Override
-    public void doGetCart(int pid, int uid) {
+    public void doGetCart(int id) {
         CartAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(CartAPI.class);
-        Call<CartResponse> call = api.getCart(pid, uid);
+        Call<CartResponse> call = api.getCart(id);
         call.enqueue(new Callback<CartResponse>() {
             @Override
             public void onResponse(Call<CartResponse> call, Response<CartResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")){
-                        for (CartData data : response.body().getData()){
+                        for (CartList data : response.body().getData().getCartData()){
                             cartItemModelList.add(new CartItemModel(0,
                                     data.getId(),
                                     data.getImageURL(),
                                     data.getName(),
-                                    data.getPrice() * (1 - data.getDiscount()),
+                                    data.getPrice()*(1- data.getDiscount()/100),
                                     data.getPrice(),
                                     data.getQuantity()));
                         }
-
                         cartItemModelList.add(new CartItemModel(1,
-                                "Price (" + response.body().getTotalItem() + " items)",
-                                response.body().getTotalPrice(),
-                                response.body().getItemAmount()));
+                                "Price (" + response.body().getData().getTotalItem() + " items)",
+                                response.body().getData().getTotalPrice(),
+                                response.body().getData().getItemAmount()));
                         cartAdapter = new CartAdapter(cartItemModelList);
                         cartItemRecyclerView.setAdapter(cartAdapter);
                         cartAdapter.notifyDataSetChanged();
@@ -97,7 +101,7 @@ public class MyCartFragment extends Fragment implements CartService {
 
             @Override
             public void onFailure(Call<CartResponse> call, Throwable t) {
-
+                Log.d("Error", t.getMessage());
             }
         });
     }

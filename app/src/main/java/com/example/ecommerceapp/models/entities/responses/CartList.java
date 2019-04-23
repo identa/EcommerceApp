@@ -3,7 +3,7 @@ package com.example.ecommerceapp.models.entities.responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CartData {
+public class CartList {
     @SerializedName("id")
     @Expose
     private int id;

@@ -30,7 +30,6 @@ import com.example.ecommerceapp.models.entities.responses.ProductDetailData;
 import com.example.ecommerceapp.models.entities.responses.ProductDetailResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductImageData;
 import com.example.ecommerceapp.models.interfaces.ProductDetailAPI;
-import com.example.ecommerceapp.models.services.CartService;
 import com.example.ecommerceapp.models.services.ProductDetailService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

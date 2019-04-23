@@ -61,8 +61,8 @@ public class CartAdapter extends RecyclerView.Adapter {
                 String title = cartItemModelList.get(i).getProductTitle();
                 double productPrice = cartItemModelList.get(i).getProductPrice();
                 double cuttedPrice = cartItemModelList.get(i).getCuttedPrice();
-
-                ((CartItemViewHolder) viewHolder).setItemDetails(id, resource, title,productPrice, cuttedPrice);
+                int quantity = cartItemModelList.get(i).getProductQuantity();
+                ((CartItemViewHolder) viewHolder).setItemDetails(id, resource, title,productPrice, cuttedPrice, quantity);
                 break;
                 case CartItemModel.TOTAL_AMOUNT:
                     String totalItems = cartItemModelList.get(i).getTotalItems();
@@ -98,12 +98,13 @@ public class CartAdapter extends RecyclerView.Adapter {
             productQuantity = itemView.findViewById(R.id.product_quantity);
         }
 
-        private void setItemDetails(int id, String resource, String title, double productPriceText, double cuttedPriceText){
+        private void setItemDetails(int id, String resource, String title, double productPriceText, double cuttedPriceText, int quantity){
 //            productImage.setImageResource(resource);
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
             productTitle.setText(title);
             productPrice.setText(String.format("$%s", productPriceText));
             cuttedPrice.setText(String.format("$%s", cuttedPriceText));
+            productQuantity.setText(String.format("Qty: %s", quantity));
 
             productQuantity.setOnClickListener(new View.OnClickListener() {
                 @Override
