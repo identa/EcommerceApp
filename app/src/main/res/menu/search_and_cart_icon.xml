@@ -4,14 +4,16 @@
     <item
         android:id="@+id/product_detail_search_icon"
         android:orderInCategory="100"
-        android:icon="@mipmap/email"
+        android:icon="@mipmap/search"
+        android:iconTint="@color/colorAccent"
         android:title="search"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/product_detail_cart_icon"
         android:orderInCategory="100"
-        android:icon="@mipmap/email"
+        android:icon="@mipmap/cart_black"
+        android:iconTint="@color/colorAccent"
         android:title="cart"
         app:showAsAction="always" />
 

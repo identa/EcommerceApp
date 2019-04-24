@@ -39,7 +39,7 @@ public class MyCartFragment extends Fragment implements CartService {
 
     private RecyclerView cartItemRecyclerView;
     private List<CartItemModel> cartItemModelList;
-    private CartAdapter cartAdapter;
+    public static CartAdapter cartAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

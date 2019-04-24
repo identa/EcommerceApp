@@ -25,6 +25,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import static com.example.ecommerceapp.SignUpActivity.setSignUpFragment;
 
@@ -45,6 +47,8 @@ public class HomeActivity extends AppCompatActivity
     private ImageView actionBarLogo;
     private Window window;
     private Toolbar toolbar;
+
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +104,17 @@ public class HomeActivity extends AppCompatActivity
 //            Glide.with(this).load(R.mipmap.no_internet).into(noInternet);
 //            noInternet.setVisibility(View.VISIBLE);
 //        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null){
+            navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(false);
+        }
+        else navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(true);
+        invalidateOptionsMenu();
     }
 
     @Override
