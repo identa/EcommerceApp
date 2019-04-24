@@ -24,6 +24,10 @@ public class AddCartData {
     @Expose
     private double price;
 
+    @SerializedName("discount")
+    @Expose
+    private int discount;
+
     public int getId() {
         return id;
     }
@@ -62,5 +66,13 @@ public class AddCartData {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
     }
 }

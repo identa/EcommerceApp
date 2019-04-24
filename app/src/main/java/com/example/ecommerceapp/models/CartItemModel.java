@@ -80,22 +80,22 @@ public class CartItemModel {
     }
 
     //cart total
-    private String totalItems;
+    private int totalItems;
     private double totalItemPrice;
-    private double totalAmount;
+    private int totalAmount;
 
-    public CartItemModel(int type, String totalItems, double totalItemPrice, double totalAmount) {
+    public CartItemModel(int type, int totalItems, double totalItemPrice, int totalAmount) {
         this.type = type;
         this.totalItems = totalItems;
         this.totalItemPrice = totalItemPrice;
         this.totalAmount = totalAmount;
     }
 
-    public String getTotalItems() {
+    public int getTotalItems() {
         return totalItems;
     }
 
-    public void setTotalItems(String totalItems) {
+    public void setTotalItems(int totalItems) {
         this.totalItems = totalItems;
     }
 
@@ -107,11 +107,11 @@ public class CartItemModel {
         this.totalItemPrice = totalItemPrice;
     }
 
-    public double getTotalAmount() {
+    public int getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(int totalAmount) {
         this.totalAmount = totalAmount;
     }
 }

@@ -82,9 +82,9 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                 ((CartItemViewHolder) viewHolder).setItemDetails(id, resource, title, productPrice, cuttedPrice, quantity, i);
                 break;
             case CartItemModel.TOTAL_AMOUNT:
-                String totalItems = cartItemModelList.get(i).getTotalItems();
+                int totalItems = cartItemModelList.get(i).getTotalItems();
                 double totalItemPrice = cartItemModelList.get(i).getTotalItemPrice();
-                double totalAmount = cartItemModelList.get(i).getTotalAmount();
+                int totalAmount = cartItemModelList.get(i).getTotalAmount();
 
                 ((CartTotalAmountViewHolder) viewHolder).setTotalAmount(totalItems, totalItemPrice, totalAmount);
                 break;
@@ -113,6 +113,10 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
             public void onResponse(Call<DeleteCartResponse> call, Response<DeleteCartResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
+                        CartItemModel totalAmountModel = cartItemModelList.get(cartItemModelList.size() - 1);
+                        totalAmountModel.setTotalItems(totalAmountModel.getTotalItems() - cartItemModelList.get(position).getProductQuantity());
+                        totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity()*cartItemModelList.get(position).getProductPrice());
+                        totalAmountModel.setTotalAmount(totalAmountModel.getTotalAmount() - 1);
                         cartItemModelList.remove(position);
                         MyCartFragment.cartAdapter.notifyDataSetChanged();
                         Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -136,9 +140,9 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
             public void onResponse(Call<EditCartResponse> call, Response<EditCartResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        cartItemModelList.get(position).setProductQuantity(response.body().getData().getQuantity());
-                        cartItemModelList.get(cartItemModelList.size() - 1).setTotalItemPrice(response.body().getData().getTotalPrice());
-                        cartItemModelList.get(cartItemModelList.size() - 1).setTotalItems("Price (" + response.body().getData().getTotalItem() + " items)");
+                        CartItemModel totalAmountModel = cartItemModelList.get(cartItemModelList.size() - 1);
+                        totalAmountModel.setTotalItems(totalAmountModel.getTotalItems() - cartItemModelList.get(position).getProductQuantity() + response.body().getData().getQuantity());
+                        totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity()*cartItemModelList.get(position).getProductPrice() + response.body().getData().getQuantity()*response.body().getData().getPrice());
 
                         MyCartFragment.cartAdapter.notifyDataSetChanged();
                         Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -236,10 +240,10 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
             totalAmount = itemView.findViewById(R.id.total_price);
         }
 
-        private void setTotalAmount(String totalItemText, double totalItemPriceText, double totalAmountText) {
-            totalItems.setText(totalItemText);
+        private void setTotalAmount(int totalItemText, double totalItemPriceText, int totalAmountText) {
+            totalItems.setText(String.format("Price(%d items)", totalItemText));
             totalItemPrice.setText(String.format("$%s", totalItemPriceText));
-            totalAmount.setText(String.format("$%s", totalAmountText));
+            totalAmount.setText(String.format("%d", totalAmountText));
         }
     }
 }

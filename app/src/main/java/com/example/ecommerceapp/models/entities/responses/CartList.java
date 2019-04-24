@@ -16,9 +16,9 @@ public class CartList {
     @Expose
     private double price;
 
-    @SerializedName("discount")
+    @SerializedName("cuttedPrice")
     @Expose
-    private int discount;
+    private double cuttedPrice;
 
     @SerializedName("quantity")
     @Expose
@@ -52,12 +52,12 @@ public class CartList {
         this.price = price;
     }
 
-    public int getDiscount() {
-        return discount;
+    public double getCuttedPrice() {
+        return cuttedPrice;
     }
 
-    public void setDiscount(int discount) {
-        this.discount = discount;
+    public void setCuttedPrice(double cuttedPrice) {
+        this.cuttedPrice = cuttedPrice;
     }
 
     public int getQuantity() {

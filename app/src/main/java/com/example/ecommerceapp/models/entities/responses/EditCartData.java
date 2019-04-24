@@ -4,18 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class EditCartData {
-    @SerializedName("totalPrice")
-    @Expose
-    private double totalPrice;
-
-    @SerializedName("totalItem")
-    @Expose
-    private int totalItem;
-
-    @SerializedName("itemAmount")
-    @Expose
-    private int itemAmount;
-
     @SerializedName("id")
     @Expose
     private int id;
@@ -24,37 +12,13 @@ public class EditCartData {
     @Expose
     private double price;
 
-    @SerializedName("discount")
+    @SerializedName("cuttedPrice")
     @Expose
-    private int discount;
+    private double cuttedPrice;
 
     @SerializedName("quantity")
     @Expose
     private int quantity;
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public int getTotalItem() {
-        return totalItem;
-    }
-
-    public void setTotalItem(int totalItem) {
-        this.totalItem = totalItem;
-    }
-
-    public int getItemAmount() {
-        return itemAmount;
-    }
-
-    public void setItemAmount(int itemAmount) {
-        this.itemAmount = itemAmount;
-    }
 
     public int getId() {
         return id;
@@ -72,12 +36,12 @@ public class EditCartData {
         this.price = price;
     }
 
-    public int getDiscount() {
-        return discount;
+    public double getCuttedPrice() {
+        return cuttedPrice;
     }
 
-    public void setDiscount(int discount) {
-        this.discount = discount;
+    public void setCuttedPrice(double cuttedPrice) {
+        this.cuttedPrice = cuttedPrice;
     }
 
     public int getQuantity() {
