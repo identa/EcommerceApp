@@ -24,6 +24,7 @@ import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.CartItemModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
 import com.example.ecommerceapp.models.entities.responses.DeleteCartResponse;
+import com.example.ecommerceapp.models.entities.responses.EditCartResponse;
 import com.example.ecommerceapp.models.interfaces.DeleteCartAPI;
 import com.example.ecommerceapp.models.services.DeleteCartService;
 
@@ -126,6 +127,32 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
         });
     }
 
+    @Override
+    public void doEditCart(int id, final int quantity, final int position, final Context context) {
+        DeleteCartAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(DeleteCartAPI.class);
+        Call<EditCartResponse> call = api.editCart(id, quantity);
+        call.enqueue(new Callback<EditCartResponse>() {
+            @Override
+            public void onResponse(Call<EditCartResponse> call, Response<EditCartResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        cartItemModelList.get(position).setProductQuantity(response.body().getData().getQuantity());
+                        cartItemModelList.get(cartItemModelList.size() - 1).setTotalItemPrice(response.body().getData().getTotalPrice());
+                        cartItemModelList.get(cartItemModelList.size() - 1).setTotalItems("Price (" + response.body().getData().getTotalItem() + " items)");
+
+                        MyCartFragment.cartAdapter.notifyDataSetChanged();
+                        Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EditCartResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
     class CartItemViewHolder extends RecyclerView.ViewHolder {
         private ImageView productImage;
         private TextView productTitle;
@@ -175,6 +202,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                     okBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            doEditCart(id, Integer.parseInt(quantityNo.getText().toString()), position, itemView.getContext());
                             productQuantity.setText(String.format("Qty: %s", quantityNo.getText()));
                             quantityDialog.dismiss();
                         }
