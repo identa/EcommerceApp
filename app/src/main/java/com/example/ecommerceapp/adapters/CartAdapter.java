@@ -118,7 +118,14 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                         totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity()*cartItemModelList.get(position).getProductPrice());
                         totalAmountModel.setTotalAmount(totalAmountModel.getTotalAmount() - 1);
                         cartItemModelList.remove(position);
-                        MyCartFragment.cartAdapter.notifyDataSetChanged();
+
+                        if (cartItemModelList.size() == 1){
+                            cartItemModelList.remove(cartItemModelList.get(cartItemModelList.size() - 1));
+                            MyCartFragment.cartAdapter.notifyDataSetChanged();
+                        }else {
+                            MyCartFragment.cartAdapter.notifyDataSetChanged();
+                        }
+
                         Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -143,6 +150,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                         CartItemModel totalAmountModel = cartItemModelList.get(cartItemModelList.size() - 1);
                         totalAmountModel.setTotalItems(totalAmountModel.getTotalItems() - cartItemModelList.get(position).getProductQuantity() + response.body().getData().getQuantity());
                         totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity()*cartItemModelList.get(position).getProductPrice() + response.body().getData().getQuantity()*response.body().getData().getPrice());
+                        cartItemModelList.get(position).setProductQuantity(response.body().getData().getQuantity());
 
                         MyCartFragment.cartAdapter.notifyDataSetChanged();
                         Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -207,7 +215,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                         @Override
                         public void onClick(View v) {
                             doEditCart(id, Integer.parseInt(quantityNo.getText().toString()), position, itemView.getContext());
-                            productQuantity.setText(String.format("Qty: %s", quantityNo.getText()));
+//                            productQuantity.setText(String.format("Qty: %s", quantityNo.getText().toString()));
                             quantityDialog.dismiss();
                         }
                     });

@@ -1,6 +1,7 @@
 package com.example.ecommerceapp;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.ecommerceapp.adapters.CartAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
@@ -40,6 +42,8 @@ public class MyCartFragment extends Fragment implements CartService {
     private RecyclerView cartItemRecyclerView;
     private List<CartItemModel> cartItemModelList;
     public static CartAdapter cartAdapter;
+    private Button continueBtn;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,11 +53,20 @@ public class MyCartFragment extends Fragment implements CartService {
         doGetCart(2);
 
         cartItemRecyclerView = view.findViewById(R.id.cart_item_recycler_view);
+        continueBtn = view.findViewById(R.id.cart_continue_btn);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         cartItemRecyclerView.setLayoutManager(layoutManager);
 
+        continueBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeliveryActivity.cartItemModelList = cartItemModelList;
+                Intent deliveryIntent = new Intent(getContext(), DeliveryActivity.class);
+                getContext().startActivity(deliveryIntent);
+            }
+        });
 
 //        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
 //        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
@@ -92,6 +105,7 @@ public class MyCartFragment extends Fragment implements CartService {
                                 response.body().getData().getTotalItem(),
                                 response.body().getData().getTotalPrice(),
                                 response.body().getData().getItemAmount()));
+
                         cartAdapter = new CartAdapter(cartItemModelList);
                         cartItemRecyclerView.setAdapter(cartAdapter);
                         cartAdapter.notifyDataSetChanged();

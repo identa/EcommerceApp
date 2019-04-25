@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.ecommerceapp.adapters.ProductDetailsAdapter;
 import com.example.ecommerceapp.adapters.ProductImageAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
+import com.example.ecommerceapp.models.CartItemModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
 import com.example.ecommerceapp.models.entities.responses.AddCartResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductDetailData;
@@ -79,6 +80,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private static boolean isAddedToCart = false;
     public static int productID;
     private FloatingActionButton addToWishlistBtn;
+    private List<CartItemModel> cartItemModelList;
 
     private FirebaseUser currentUser;
     private Dialog signInDialog;
@@ -115,7 +117,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         addToCartTextView = findViewById(R.id.tv_add_to_cart);
 
         productImages = new ArrayList<>();
-
+        cartItemModelList = new ArrayList<>();
 //        productImages.add(R.mipmap.steakhouse);
 //        productImages.add(R.mipmap.steakhouse);
 //        productImages.add(R.mipmap.steakhouse);
@@ -171,6 +173,15 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                 }
             });
         }
+
+        buyNowBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeliveryActivity.cartItemModelList = cartItemModelList;
+                Intent deliveryIntent = new Intent(ProductDetailActivity.this, DeliveryActivity.class);
+                startActivity(deliveryIntent);
+            }
+        });
     }
 
     private void setRating(int starPosition) {
@@ -225,12 +236,25 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                         for (ProductImageData data : response.body().getData().getImages()){
                             productImages.add(data.getImageURL());
                         }
+
                         productTitle.setText(response.body().getData().getName());
                         productPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount()/100)));
                         cuttedPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice()));
                         productDescription = response.body().getData().getDescription();
                         productOtherDetails = response.body().getData().getDescription();
                         isAddedToCart = response.body().getData().isInCart();
+
+                        cartItemModelList.add(new CartItemModel(0, response.body().getData().getId(),
+                                response.body().getData().getImages().get(0).getImageURL(),
+                                response.body().getData().getName(),
+                                response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount()/100),
+                                response.body().getData().getOriginalPrice(),
+                                1));
+
+                        cartItemModelList.add(new CartItemModel(1,
+                                1,
+                                response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount()/100),
+                                1));
 
                         if (isAddedToCart){
                             addToCartTextView = findViewById(R.id.tv_add_to_cart);

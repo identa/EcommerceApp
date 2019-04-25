@@ -44,7 +44,6 @@ public class HomeActivity extends AppCompatActivity
     private NavigationView navigationView;
 
     private FrameLayout frameLayout;
-    private ImageView actionBarLogo;
     private Window window;
     private Toolbar toolbar;
 
