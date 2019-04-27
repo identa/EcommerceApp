@@ -71,6 +71,7 @@ public class DeliveryActivity extends AppCompatActivity {
         paymentMethodDialog.setCancelable(true);
         paymentMethodDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
         paymentMethodDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        paytm = paymentMethodDialog.findViewById(R.id.paytm);
         //payment
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -88,7 +89,6 @@ public class DeliveryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 paymentMethodDialog.show();
-                paytm = paymentMethodDialog.findViewById(R.id.paytm);
 
                 paytm.setOnClickListener(new View.OnClickListener() {
                     @Override

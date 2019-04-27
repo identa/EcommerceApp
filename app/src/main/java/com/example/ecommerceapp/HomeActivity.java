@@ -225,7 +225,7 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_cart) {
             gotoFragment("My cart", new MyCartFragment(), CART_FRAGMENT);
         } else if (id == R.id.nav_wishlist) {
-
+            gotoFragment("My wishlist", new MyWishlistFragment(), WISHLIST_FRAGMENT);
         } else if (id == R.id.nav_account) {
 
         } else if (id == R.id.nav_sign_out){
