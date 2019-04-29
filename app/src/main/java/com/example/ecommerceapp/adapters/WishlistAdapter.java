@@ -19,9 +19,11 @@ import java.util.List;
 
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHolder> {
     private List<WishlistModel> wishlistModelList;
+    private boolean wishlist;
 
-    public WishlistAdapter(List<WishlistModel> wishlistModelList) {
+    public WishlistAdapter(List<WishlistModel> wishlistModelList, boolean wishlist) {
         this.wishlistModelList = wishlistModelList;
+        this.wishlist = wishlist;
     }
 
     @NonNull
@@ -34,13 +36,14 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+        int id = wishlistModelList.get(i).getId();
         String resource = wishlistModelList.get(i).getProductImage();
         String title = wishlistModelList.get(i).getProductTitle();
         double price = wishlistModelList.get(i).getProductPrice();
         double cuttedPrice = wishlistModelList.get(i).getCuttedPrice();
         double rating = wishlistModelList.get(i).getRating();
         int totalRatings = wishlistModelList.get(i).getTotalRatings();
-        viewHolder.setData(resource, title, rating, totalRatings, price, cuttedPrice);
+        viewHolder.setData(id, resource, title, rating, totalRatings, price, cuttedPrice);
     }
 
     @Override
@@ -70,7 +73,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             deleteBtn = itemView.findViewById(R.id.delete_btn);
         }
 
-        private void setData(String resource, String title, double avgRating, int totalRatingNo, double price, double cuttedPriceText){
+        private void setData(int id, String resource, String title, double avgRating, int totalRatingNo, double price, double cuttedPriceText){
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(producImage);
             productTitle.setText(title);
             rating.setText(String.format("%s", avgRating));
@@ -78,12 +81,17 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             productPrice.setText(String.format("$%s", price));
             cuttedPrice.setText(String.format("$%s", cuttedPriceText));
 
-            deleteBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "Delete item successfully", Toast.LENGTH_SHORT).show();
-                }
-            });
+            if (wishlist){
+                deleteBtn.setVisibility(View.VISIBLE);
+                deleteBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(itemView.getContext(), "Delete item successfully", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else {
+                deleteBtn.setVisibility(View.GONE);
+            }
         }
     }
 }

@@ -231,11 +231,6 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_sign_out){
 
         }
-//        else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

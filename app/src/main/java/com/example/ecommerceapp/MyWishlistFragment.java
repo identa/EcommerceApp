@@ -39,13 +39,13 @@ public class MyWishlistFragment extends Fragment {
         wishlistRecyclerView.setLayoutManager(linearLayoutManager);
 
         List<WishlistModel> wishlistModelList = new ArrayList<>();
-        wishlistModelList.add(new WishlistModel("a", "a", 4.5, 212, 2000,3000));
-        wishlistModelList.add(new WishlistModel("a", "a", 4.5, 212, 2000,3000));
-        wishlistModelList.add(new WishlistModel("a", "a", 4.5, 212, 2000,3000));
-        wishlistModelList.add(new WishlistModel("a", "a", 4.5, 212, 2000,3000));
-        wishlistModelList.add(new WishlistModel("a", "a", 4.5, 212, 2000,3000));
+        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
+        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
+        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
+        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
+        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
 
-        WishlistAdapter wishlistAdapter = new WishlistAdapter(wishlistModelList);
+        WishlistAdapter wishlistAdapter = new WishlistAdapter(wishlistModelList, true);
         wishlistRecyclerView.setAdapter(wishlistAdapter);
         wishlistAdapter.notifyDataSetChanged();
         return view;

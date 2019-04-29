@@ -12,13 +12,19 @@ import android.widget.GridView;
 
 import com.example.ecommerceapp.adapters.GridProductLayoutAdapter;
 import com.example.ecommerceapp.adapters.HorizontalProductScrollAdapter;
+import com.example.ecommerceapp.adapters.WishlistAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
+import com.example.ecommerceapp.models.WishlistModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
 import com.example.ecommerceapp.models.entities.responses.HomePageProductData;
 import com.example.ecommerceapp.models.entities.responses.HomePageProductResponse;
+import com.example.ecommerceapp.models.entities.responses.HorizontalViewAllData;
+import com.example.ecommerceapp.models.entities.responses.HorizontalViewAllResponse;
 import com.example.ecommerceapp.models.interfaces.HomePageAPI;
+import com.example.ecommerceapp.models.interfaces.ViewAllAPI;
 import com.example.ecommerceapp.models.services.HomePageService;
+import com.example.ecommerceapp.models.services.ViewAllService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +33,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ViewAllActivity extends AppCompatActivity implements HomePageService {
+public class ViewAllActivity extends AppCompatActivity implements ViewAllService {
 
     private RecyclerView recyclerView;
     private GridView gridView;
     private List<HorizontalProductScrollModel> gridModelList;
-    private List<HorizontalProductScrollModel> horizontalProductScrollModelList;
-    private HorizontalProductScrollAdapter horizontalProductScrollAdapter;
+//    private List<HorizontalProductScrollModel> horizontalProductScrollModelList;
+//    private HorizontalProductScrollAdapter horizontalProductScrollAdapter;
+    private List<WishlistModel> horizontalModelList;
+    private WishlistAdapter horizontalAdapter;
     private GridProductLayoutAdapter gridProductLayoutAdapter;
 
     @Override
@@ -52,19 +60,23 @@ public class ViewAllActivity extends AppCompatActivity implements HomePageServic
         int layout_code = getIntent().getIntExtra("layout_code", -1);
 
         if (layout_code == 0){
-            horizontalProductScrollModelList = new ArrayList<>();
-            doGetMostViewedProduct();
+//            horizontalProductScrollModelList = new ArrayList<>();
+            horizontalModelList = new ArrayList<>();
+            doGetMostViewedProductAll();
             recyclerView.setVisibility(View.VISIBLE);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(layoutManager);
 
-            horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
-            recyclerView.setAdapter(horizontalProductScrollAdapter);
-            horizontalProductScrollAdapter.notifyDataSetChanged();
+            horizontalAdapter = new WishlistAdapter(horizontalModelList, false);
+            recyclerView.setAdapter(horizontalAdapter);
+            horizontalAdapter.notifyDataSetChanged();
+//            horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
+//            recyclerView.setAdapter(horizontalProductScrollAdapter);
+//            horizontalProductScrollAdapter.notifyDataSetChanged();
         }else if (layout_code == 1){
             gridModelList = new ArrayList<>();
-            doGetMostOrderedProduct();
+            doGetMostOrderedProductAll();
             gridView.setVisibility(View.VISIBLE);
             gridProductLayoutAdapter = new GridProductLayoutAdapter(gridModelList);
             gridView.setAdapter(gridProductLayoutAdapter);
@@ -82,43 +94,49 @@ public class ViewAllActivity extends AppCompatActivity implements HomePageServic
     }
 
     @Override
-    public void doGetSlider() {
-
-    }
-
-    @Override
-    public void doGetMostViewedProduct() {
-        HomePageAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(HomePageAPI.class);
-        Call<HomePageProductResponse> call = api.getMVProduct();
-        call.enqueue(new Callback<HomePageProductResponse>() {
+    public void doGetMostViewedProductAll() {
+        ViewAllAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(ViewAllAPI.class);
+        Call<HorizontalViewAllResponse> call = api.getMVProductAll();
+        call.enqueue(new Callback<HorizontalViewAllResponse>() {
             @Override
-            public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {
+            public void onResponse(Call<HorizontalViewAllResponse> call, Response<HorizontalViewAllResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (HomePageProductData data : response.body().getData()){
-                            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(data.getId(),
-                                    data.getImageURL(),
-                                    data.getName(),
-                                    data.getCatName(),
-                                    data.getPrice()));
+//                        for (HomePageProductData data : response.body().getData()){
+//                            horizontalProductScrollModelList.add(new HorizontalProductScrollModel(data.getId(),
+//                                    data.getImageURL(),
+//                                    data.getName(),
+//                                    data.getCatName(),
+//                                    data.getPrice()));
+//                        }
+//                        horizontalProductScrollAdapter.notifyDataSetChanged();
+                        for (HorizontalViewAllData data : response.body().getData()){
+                            horizontalModelList.add(new WishlistModel(data.getId(),
+                                    data.getProductImage(),
+                                    data.getProductTitle(),
+                                    data.getRating(),
+                                    data.getTotalRatings(),
+                                    data.getProductPrice(),
+                                    data.getCuttedPrice()));
                         }
-                        horizontalProductScrollAdapter.notifyDataSetChanged();
+
+                        horizontalAdapter.notifyDataSetChanged();
                     } else if (response.body().getStatus().equals("FAILED")){
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<HomePageProductResponse> call, Throwable t) {
+            public void onFailure(Call<HorizontalViewAllResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
             }
         });
     }
 
     @Override
-    public void doGetMostOrderedProduct() {
-        HomePageAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(HomePageAPI.class);
-        Call<HomePageProductResponse> call = api.getMOProduct();
+    public void doGetMostOrderedProductAll() {
+        ViewAllAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(ViewAllAPI.class);
+        Call<HomePageProductResponse> call = api.getMOProductAll();
         call.enqueue(new Callback<HomePageProductResponse>() {
             @Override
             public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {

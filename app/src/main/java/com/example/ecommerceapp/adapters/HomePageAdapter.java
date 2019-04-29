@@ -198,22 +198,23 @@ public class HomePageAdapter extends RecyclerView.Adapter {
             horizontalRecyclerView.setRecycledViewPool(recycledViewPool);
         }
 
-        private void setHorizontalProductLayout(final List<HorizontalProductScrollModel> horizontalProductScrollModelList, String title) {
+        private void setHorizontalProductLayout(final List<HorizontalProductScrollModel> horizontalProductScrollModelList, final String title) {
             horizontalLayoutTitle.setText(title);
 
-            if (horizontalProductScrollModelList.size() > 8) {
+//            if (horizontalProductScrollModelList.size() > 8) {
                 horizontalViewAllBtn.setVisibility(View.VISIBLE);
                 horizontalViewAllBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
                         viewAllIntent.putExtra("layout_code", 0);
+                        viewAllIntent.putExtra("title", title);
                         itemView.getContext().startActivity(viewAllIntent);
                     }
                 });
-            } else {
-                horizontalViewAllBtn.setVisibility(View.INVISIBLE);
-            }
+//            } else {
+//                horizontalViewAllBtn.setVisibility(View.INVISIBLE);
+//            }
 
             HorizontalProductScrollAdapter horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
             LinearLayoutManager horizontalProductLayoutManager = new LinearLayoutManager(itemView.getContext());
@@ -245,7 +246,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
             gridView.setAdapter(gridProductLayoutAdapter);
             gridProductLayoutAdapter.notifyDataSetChanged();
 
-            if (gridProductModelList.size() > 4){
+//            if (gridProductModelList.size() > 4){
                 gridLayoutViewAllBtn.setVisibility(View.VISIBLE);
                 gridLayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -256,9 +257,9 @@ public class HomePageAdapter extends RecyclerView.Adapter {
                         itemView.getContext().startActivity(viewAllIntent);
                     }
                 });
-            } else {
-                gridLayoutViewAllBtn.setVisibility(View.INVISIBLE);
-            }
+//            } else {
+//                gridLayoutViewAllBtn.setVisibility(View.INVISIBLE);
+//            }
 
         }
     }

@@ -1,23 +1,36 @@
-package com.example.ecommerceapp.models;
+package com.example.ecommerceapp.models.entities.responses;
 
-public class WishlistModel {
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public class HorizontalViewAllData {
+    @SerializedName("id")
+    @Expose
     private int id;
-    private String productImage;
-    private String productTitle;
-    private double rating;
-    private int totalRatings;
-    private double productPrice;
-    private double cuttedPrice;
 
-    public WishlistModel(int id, String productImage, String productTitle, double rating, int totalRatings, double productPrice, double cuttedPrice) {
-        this.id = id;
-        this.productImage = productImage;
-        this.productTitle = productTitle;
-        this.rating = rating;
-        this.totalRatings = totalRatings;
-        this.productPrice = productPrice;
-        this.cuttedPrice = cuttedPrice;
-    }
+    @SerializedName("productImage")
+    @Expose
+    private String productImage;
+
+    @SerializedName("productTitle")
+    @Expose
+    private String productTitle;
+
+    @SerializedName("rating")
+    @Expose
+    private double rating;
+
+    @SerializedName("totalRatings")
+    @Expose
+    private int totalRatings;
+
+    @SerializedName("productPrice")
+    @Expose
+    private double productPrice;
+
+    @SerializedName("cuttedPrice")
+    @Expose
+    private double cuttedPrice;
 
     public int getId() {
         return id;

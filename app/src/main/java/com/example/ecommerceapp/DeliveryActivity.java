@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +44,11 @@ public class DeliveryActivity extends AppCompatActivity {
     private Dialog loadingDialog;
     private Dialog paymentMethodDialog;
     private ImageButton paytm;
+
+    private ConstraintLayout orderConfirmationLayout;
+    private ImageButton continueShoppingBtn;
+    private TextView orderID;
+
     private static final int REQUEST_CODE = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,9 @@ public class DeliveryActivity extends AppCompatActivity {
         fullName = findViewById(R.id.full_name);
         fullAddress = findViewById(R.id.address);
         continuewBtn = findViewById(R.id.cart_continue_btn);
+        orderConfirmationLayout = findViewById(R.id.order_confirm_layout);
+        continueShoppingBtn = findViewById(R.id.continue_shopping_btn);
+        orderID = findViewById(R.id.order_id);
 
         Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, configuration);
@@ -119,15 +129,26 @@ public class DeliveryActivity extends AppCompatActivity {
                 if (confirmation != null){
                     try {
                         String paymentDetails = confirmation.toJSONObject().toString(4);
+                        Log.i("payment", paymentDetails);
+                        Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
+                        orderConfirmationLayout.setVisibility(View.VISIBLE);
+                        continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                HomeActivity.showCart = false;
+                                Intent homeIntent = new Intent(DeliveryActivity.this, HomeActivity.class);
+                                startActivity(homeIntent);
+                            }
+                        });
                         Toast.makeText(this, "Payment is successful", Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-            } else if (requestCode == Activity.RESULT_CANCELED){
+            } else if (resultCode == Activity.RESULT_CANCELED){
                 Toast.makeText(this, "Payment is cancelled", Toast.LENGTH_SHORT).show();;
             }
-            else if (requestCode == PaymentActivity.RESULT_EXTRAS_INVALID){
+            else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID){
                 Toast.makeText(this, "Invalid payment", Toast.LENGTH_SHORT).show();;
             }
         super.onActivityResult(requestCode, resultCode, data);
