@@ -8,18 +8,29 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.MyOrderAdapter;
+import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.MyOrderItemModel;
+import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.responses.GetOrderData;
+import com.example.ecommerceapp.models.entities.responses.GetOrderResponse;
+import com.example.ecommerceapp.models.interfaces.OrderAPI;
+import com.example.ecommerceapp.models.services.OrderService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyOrderFragment extends Fragment {
+public class MyOrderFragment extends Fragment implements OrderService {
 
 
     public MyOrderFragment() {
@@ -27,6 +38,8 @@ public class MyOrderFragment extends Fragment {
     }
 
     private RecyclerView myOrderRecyclerView;
+    private List<MyOrderItemModel> myOrderItemModelList;
+    private MyOrderAdapter myOrderAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,18 +51,41 @@ public class MyOrderFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         myOrderRecyclerView.setLayoutManager(layoutManager);
 
-        List<MyOrderItemModel> myOrderItemModelList = new ArrayList<>();
-        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
-        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
-        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
-        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Cancelled"));
-        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
-
-        MyOrderAdapter myOrderAdapter = new MyOrderAdapter(myOrderItemModelList);
+        myOrderItemModelList = new ArrayList<>();
+//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
+//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
+//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
+//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Cancelled"));
+//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
+        doGetOrder(2);
+        myOrderAdapter = new MyOrderAdapter(myOrderItemModelList);
         myOrderRecyclerView.setAdapter(myOrderAdapter);
         myOrderAdapter.notifyDataSetChanged();
 
         return view;
     }
 
+    @Override
+    public void doGetOrder(int id) {
+        OrderAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(OrderAPI.class);
+        Call<GetOrderResponse> call = api.getOrder(id);
+        call.enqueue(new Callback<GetOrderResponse>() {
+            @Override
+            public void onResponse(Call<GetOrderResponse> call, Response<GetOrderResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                       for (GetOrderData data : response.body().getData()){
+                           myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Order no " + data.getId(), "Delivered on Mon, 15th Jan 2018"));
+                       }
+                       myOrderAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetOrderResponse> call, Throwable t) {
+
+            }
+        });
+    }
 }

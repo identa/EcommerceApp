@@ -27,6 +27,8 @@ import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.CartItemModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
 import com.example.ecommerceapp.models.entities.responses.AddCartResponse;
+import com.example.ecommerceapp.models.entities.responses.AddWishlistResponse;
+import com.example.ecommerceapp.models.entities.responses.DeleteCartResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductDetailData;
 import com.example.ecommerceapp.models.entities.responses.ProductDetailResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductImageData;
@@ -134,11 +136,13 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             @Override
             public void onClick(View v) {
                 if (isAddedToWishlist) {
-                    isAddedToWishlist = false;
-                    addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
+                    doDeleteWishlist(productID, 2);
+//                    isAddedToWishlist = false;
+//                    addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
                 } else {
-                    isAddedToWishlist = true;
-                    addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
+                    doAddToWishlist(productID, 2);
+//                    isAddedToWishlist = true;
+//                    addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
                 }
             }
         });
@@ -310,6 +314,52 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 
             @Override
             public void onFailure(Call<AddCartResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void doAddToWishlist(int pid, int uid) {
+        ProductDetailAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(ProductDetailAPI.class);
+        Call<AddWishlistResponse> call = api.addToWishlist(pid, uid);
+        call.enqueue(new Callback<AddWishlistResponse>() {
+            @Override
+            public void onResponse(Call<AddWishlistResponse> call, Response<AddWishlistResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        isAddedToWishlist = true;
+                        addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
+                        Toast.makeText(ProductDetailActivity.this, "Add to wishlist successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddWishlistResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void doDeleteWishlist(int pid, int uid) {
+        ProductDetailAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(ProductDetailAPI.class);
+        Call<DeleteCartResponse> call = api.deleteWishlist(pid, uid);
+        call.enqueue(new Callback<DeleteCartResponse>() {
+            @Override
+            public void onResponse(Call<DeleteCartResponse> call, Response<DeleteCartResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        isAddedToWishlist = false;
+                        addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
+                        Toast.makeText(ProductDetailActivity.this, "Delete wishlist successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DeleteCartResponse> call, Throwable t) {
 
             }
         });
