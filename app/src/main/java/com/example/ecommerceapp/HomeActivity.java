@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import static com.example.ecommerceapp.SignUpActivity.setSignUpFragment;
 
@@ -47,6 +48,8 @@ public class HomeActivity extends AppCompatActivity
     private Window window;
     private Toolbar toolbar;
 
+    private MaterialSearchView searchView;
+
     private FirebaseUser currentUser;
 
     @Override
@@ -54,6 +57,13 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        searchView = findViewById(R.id.search_view);
+        searchView.setCursorDrawable(R.drawable.search_view_custom_cursor);
+        searchView.setHint("What do you want to search ?");
+        searchView.setHintTextColor(R.color.recyclerViewBackground);
+        searchView.setVoiceSearch(true);
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         window = getWindow();
@@ -157,6 +167,22 @@ public class HomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.home_search_icon) {
+            searchView.setMenuItem(item);
+            searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    Intent viewAllIntent = new Intent(HomeActivity.this, ViewAllActivity.class);
+                    viewAllIntent.putExtra("layout_code",2);
+                    viewAllIntent.putExtra("search_query", query);
+                    startActivity(viewAllIntent);
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
             return true;
         }else if (id == R.id.home_notification_icon){
             return true;

@@ -1,5 +1,7 @@
 package com.example.ecommerceapp.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,12 +14,22 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.ecommerceapp.ProductDetailActivity;
 import com.example.ecommerceapp.R;
+import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.WishlistModel;
+import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.responses.DeleteCartResponse;
+import com.example.ecommerceapp.models.interfaces.DeleteWishlistAPI;
+import com.example.ecommerceapp.models.services.DeleteWishlistService;
 
 import java.util.List;
 
-public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHolder> {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHolder> implements DeleteWishlistService {
     private List<WishlistModel> wishlistModelList;
     private boolean wishlist;
 
@@ -43,12 +55,35 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         double cuttedPrice = wishlistModelList.get(i).getCuttedPrice();
         double rating = wishlistModelList.get(i).getRating();
         int totalRatings = wishlistModelList.get(i).getTotalRatings();
-        viewHolder.setData(id, resource, title, rating, totalRatings, price, cuttedPrice);
+        viewHolder.setData(id, resource, title, rating, totalRatings, price, cuttedPrice, i);
     }
 
     @Override
     public int getItemCount() {
         return wishlistModelList.size();
+    }
+
+    @Override
+    public void doDeleteWishlist(int pid, int uid, final int position, final Context context) {
+        DeleteWishlistAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(DeleteWishlistAPI.class);
+        Call<DeleteCartResponse> call = api.deleteWishlist(pid, uid);
+        call.enqueue(new Callback<DeleteCartResponse>() {
+            @Override
+            public void onResponse(Call<DeleteCartResponse> call, Response<DeleteCartResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        wishlistModelList.remove(position);
+                        Toast.makeText(context, "Delete wishlist successfully!", Toast.LENGTH_SHORT).show();
+                        notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DeleteCartResponse> call, Throwable t) {
+
+            }
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -60,8 +95,9 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         private TextView productPrice;
         private TextView cuttedPrice;
         private ImageButton deleteBtn;
+        private int productID;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             producImage = itemView.findViewById(R.id.product_image);
             productTitle = itemView.findViewById(R.id.product_title);
@@ -71,22 +107,32 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             productPrice = itemView.findViewById(R.id.product_price);
             cuttedPrice = itemView.findViewById(R.id.cutted_price);
             deleteBtn = itemView.findViewById(R.id.delete_btn);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent productDetailIntent = new Intent(itemView.getContext(), ProductDetailActivity.class);
+                    ProductDetailActivity.productID = productID;
+                    itemView.getContext().startActivity(productDetailIntent);
+                }
+            });
         }
 
-        private void setData(int id, String resource, String title, double avgRating, int totalRatingNo, double price, double cuttedPriceText){
+        private void setData(int id, String resource, String title, double avgRating, int totalRatingNo, double price, double cuttedPriceText, final int position){
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(producImage);
             productTitle.setText(title);
             rating.setText(String.format("%s", avgRating));
             totalRatings.setText(String.format("(%d) ratings", totalRatingNo));
             productPrice.setText(String.format("$%s", price));
             cuttedPrice.setText(String.format("$%s", cuttedPriceText));
+            productID = id;
 
             if (wishlist){
                 deleteBtn.setVisibility(View.VISIBLE);
                 deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(itemView.getContext(), "Delete item successfully", Toast.LENGTH_SHORT).show();
+                        doDeleteWishlist(productID,2, position, itemView.getContext());
                     }
                 });
             }else {

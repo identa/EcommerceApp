@@ -132,6 +132,15 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         doGetProductDetail(productID, 2);
 
         viewPagerIndicator.setupWithViewPager(productImageViewPager, true);
+
+        if (isAddedToWishlist){
+            addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
+
+        }else {
+            addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
+
+        }
+
         addToWishlistBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

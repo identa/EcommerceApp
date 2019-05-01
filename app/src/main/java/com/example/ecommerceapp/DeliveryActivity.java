@@ -20,7 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.CartAdapter;
+import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.CartItemModel;
+import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.requests.AddOrderReq;
+import com.example.ecommerceapp.models.entities.requests.AddOrderRequest;
+import com.example.ecommerceapp.models.entities.responses.AddOrderResponse;
+import com.example.ecommerceapp.models.interfaces.AddOrderAPI;
+import com.example.ecommerceapp.models.services.AddOrderService;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -30,9 +37,14 @@ import com.paypal.android.sdk.payments.PaymentConfirmation;
 import org.json.JSONException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-public class DeliveryActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class DeliveryActivity extends AppCompatActivity implements AddOrderService {
 
     private RecyclerView deliveryRecyclerView;
     private Button changeOrAddNewAddressBtn;
@@ -48,6 +60,7 @@ public class DeliveryActivity extends AppCompatActivity {
     private ConstraintLayout orderConfirmationLayout;
     private ImageButton continueShoppingBtn;
     private TextView orderID;
+    private int orderNoID;
 
     private static final int REQUEST_CODE = 0;
     @Override
@@ -128,10 +141,12 @@ public class DeliveryActivity extends AppCompatActivity {
                 PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
                 if (confirmation != null){
                     try {
+                        doAddOrder(2);
                         String paymentDetails = confirmation.toJSONObject().toString(4);
                         Log.i("payment", paymentDetails);
                         Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
                         orderConfirmationLayout.setVisibility(View.VISIBLE);
+                        orderID.setText("Order ID " + orderNoID);
                         continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -167,4 +182,37 @@ public class DeliveryActivity extends AppCompatActivity {
     private static PayPalConfiguration configuration = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
             .clientId("ATn5fXIAjF-ITaCoG5AnlDL2B4NqwzVgJElPov-HzAlqBNRrQy2LEOPQWjgCVlXla7cp-_GCO1esALmv");
+
+    @Override
+    public void doAddOrder(int id) {
+        AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
+        List<AddOrderRequest> requests = new ArrayList<>();
+        for (int i = 0; i < cartItemModelList.size() - 1; i++){
+            AddOrderRequest request = new AddOrderRequest();
+            request.setId(cartItemModelList.get(i).getProductID());
+            request.setPrice(cartItemModelList.get(i).getProductPrice());
+            request.setCuttedPrice(cartItemModelList.get(i).getCuttedPrice());
+            request.setQuantity(cartItemModelList.get(i).getProductQuantity());
+            requests.add(request);
+        }
+
+        AddOrderReq req = new AddOrderReq();
+        req.setOrders(requests);
+        Call<AddOrderResponse> call = api.addOrder(id, req);
+        call.enqueue(new Callback<AddOrderResponse>() {
+            @Override
+            public void onResponse(Call<AddOrderResponse> call, Response<AddOrderResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")){
+                        orderNoID = response.body().getData().getId();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddOrderResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+    }
 }
