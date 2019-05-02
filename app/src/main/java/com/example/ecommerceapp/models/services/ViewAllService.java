@@ -4,4 +4,5 @@ public interface ViewAllService {
     void doGetMostViewedProductAll();
     void doGetMostOrderedProductAll();
     void doSearch(String query);
+    void doShowCat(int id);
 }

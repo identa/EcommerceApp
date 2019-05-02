@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.models.interfaces;
 
+import com.example.ecommerceapp.models.entities.responses.GetCatResponse;
 import com.example.ecommerceapp.models.entities.responses.HomePageProductResponse;
 import com.example.ecommerceapp.models.entities.responses.SliderResponse;
 
@@ -15,4 +16,7 @@ public interface HomePageAPI {
 
     @GET("/api/public/getMOProduct")
     Call<HomePageProductResponse> getMOProduct();
+
+    @GET("/api/public/cat")
+    Call<GetCatResponse> getCat();
 }

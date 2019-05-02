@@ -5,6 +5,7 @@ import com.example.ecommerceapp.models.entities.responses.HorizontalViewAllRespo
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ViewAllAPI {
@@ -16,4 +17,7 @@ public interface ViewAllAPI {
 
     @GET("/api/public/product")
     Call<HorizontalViewAllResponse> search(@Query("search") String query);
+
+    @GET("/api/public/cat/{id}")
+    Call<HorizontalViewAllResponse> showCat(@Path("id") int id);
 }

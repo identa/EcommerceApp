@@ -42,6 +42,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
 //    private HorizontalProductScrollAdapter horizontalProductScrollAdapter;
     private List<WishlistModel> horizontalModelList;
     private List<WishlistModel> searchModelList;
+    private List<WishlistModel> categoryModelList;
 
     private WishlistAdapter horizontalAdapter;
     private GridProductLayoutAdapter gridProductLayoutAdapter;
@@ -93,6 +94,17 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
             recyclerView.setLayoutManager(layoutManager);
 
             horizontalAdapter = new WishlistAdapter(searchModelList, false);
+            recyclerView.setAdapter(horizontalAdapter);
+            horizontalAdapter.notifyDataSetChanged();
+        }else if (layout_code == 3){
+            categoryModelList = new ArrayList<>();
+            doShowCat(getIntent().getIntExtra("cat_id", 1));
+            recyclerView.setVisibility(View.VISIBLE);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(layoutManager);
+
+            horizontalAdapter = new WishlistAdapter(categoryModelList, false);
             recyclerView.setAdapter(horizontalAdapter);
             horizontalAdapter.notifyDataSetChanged();
         }
@@ -187,6 +199,38 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
                     if (response.body().getStatus().equals("SUCCESS")) {
                         for (HorizontalViewAllData data : response.body().getData()){
                             searchModelList.add(new WishlistModel(data.getId(),
+                                    data.getProductImage(),
+                                    data.getProductTitle(),
+                                    data.getRating(),
+                                    data.getTotalRatings(),
+                                    data.getProductPrice(),
+                                    data.getCuttedPrice()));
+                        }
+
+                        horizontalAdapter.notifyDataSetChanged();
+                    } else if (response.body().getStatus().equals("FAILED")){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<HorizontalViewAllResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void doShowCat(int id) {
+        ViewAllAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(ViewAllAPI.class);
+        Call<HorizontalViewAllResponse> call = api.showCat(id);
+        call.enqueue(new Callback<HorizontalViewAllResponse>() {
+            @Override
+            public void onResponse(Call<HorizontalViewAllResponse> call, Response<HorizontalViewAllResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        for (HorizontalViewAllData data : response.body().getData()){
+                            categoryModelList.add(new WishlistModel(data.getId(),
                                     data.getProductImage(),
                                     data.getProductTitle(),
                                     data.getRating(),

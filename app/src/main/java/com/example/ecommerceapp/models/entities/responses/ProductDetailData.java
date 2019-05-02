@@ -34,6 +34,10 @@ public class ProductDetailData {
     @Expose
     private boolean inCart;
 
+    @SerializedName("inWishlist")
+    @Expose
+    private boolean inWishlist;
+
     @SerializedName("images")
     @Expose
     private List<ProductImageData> images;
@@ -92,6 +96,14 @@ public class ProductDetailData {
 
     public void setInCart(boolean inCart) {
         this.inCart = inCart;
+    }
+
+    public boolean isInWishlist() {
+        return inWishlist;
+    }
+
+    public void setInWishlist(boolean inWishlist) {
+        this.inWishlist = inWishlist;
     }
 
     public List<ProductImageData> getImages() {

@@ -4,4 +4,5 @@ public interface HomePageService {
     void doGetSlider();
     void doGetMostViewedProduct();
     void doGetMostOrderedProduct();
+    void doGetCat();
 }

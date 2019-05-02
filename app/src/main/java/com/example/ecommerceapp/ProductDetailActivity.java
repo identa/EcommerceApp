@@ -133,28 +133,28 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 
         viewPagerIndicator.setupWithViewPager(productImageViewPager, true);
 
-        if (isAddedToWishlist){
-            addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
+//        if (isAddedToWishlist){
+//            addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
+//
+//        }else {
+//            addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
+//
+//        }
 
-        }else {
-            addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
-
-        }
-
-        addToWishlistBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isAddedToWishlist) {
-                    doDeleteWishlist(productID, 2);
-//                    isAddedToWishlist = false;
-//                    addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
-                } else {
-                    doAddToWishlist(productID, 2);
-//                    isAddedToWishlist = true;
-//                    addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
-                }
-            }
-        });
+//        addToWishlistBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (isAddedToWishlist) {
+//                    doDeleteWishlist(productID, 2);
+////                    isAddedToWishlist = false;
+////                    addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
+//                } else {
+//                    doAddToWishlist(productID, 2);
+////                    isAddedToWishlist = true;
+////                    addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
+//                }
+//            }
+//        });
 
 //        productDetailsViewPager.setAdapter(new ProductDetailsAdapter(getSupportFragmentManager(), productDetailsTabLayout.getTabCount()));
         productDetailsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(productDetailsTabLayout));
@@ -256,6 +256,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                         productDescription = response.body().getData().getDescription();
                         productOtherDetails = response.body().getData().getDescription();
                         isAddedToCart = response.body().getData().isInCart();
+                        isAddedToWishlist = response.body().getData().isInWishlist();
 
                         cartItemModelList.add(new CartItemModel(0, response.body().getData().getId(),
                                 response.body().getData().getImages().get(0).getImageURL(),
@@ -286,6 +287,24 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                                 }
                             });
                         }
+
+                        if (isAddedToWishlist){
+                            addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
+                        }else {
+                            addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
+                        }
+
+                        addToWishlistBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (isAddedToWishlist) {
+                                    doDeleteWishlist(productID, 2);
+                                } else {
+                                    doAddToWishlist(productID, 2);
+                                }
+                            }
+                        });
+
                         ProductImageAdapter productImageAdapter = new ProductImageAdapter(productImages);
                         productImageViewPager.setAdapter(productImageAdapter);
 

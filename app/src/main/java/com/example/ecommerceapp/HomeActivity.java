@@ -174,6 +174,7 @@ public class HomeActivity extends AppCompatActivity
                     Intent viewAllIntent = new Intent(HomeActivity.this, ViewAllActivity.class);
                     viewAllIntent.putExtra("layout_code",2);
                     viewAllIntent.putExtra("search_query", query);
+                    viewAllIntent.putExtra("title", "Search results");
                     startActivity(viewAllIntent);
                     return false;
                 }

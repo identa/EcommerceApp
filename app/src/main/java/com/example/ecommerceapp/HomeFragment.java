@@ -24,6 +24,8 @@ import com.example.ecommerceapp.models.CategoryModel;
 import com.example.ecommerceapp.models.HomePageModel;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.responses.GetCatData;
+import com.example.ecommerceapp.models.entities.responses.GetCatResponse;
 import com.example.ecommerceapp.models.entities.responses.HomePageProductData;
 import com.example.ecommerceapp.models.entities.responses.HomePageProductResponse;
 import com.example.ecommerceapp.models.entities.responses.SliderData;
@@ -84,8 +86,10 @@ public class HomeFragment extends Fragment implements HomePageService {
             catRecyclerView.setLayoutManager(layoutManager);
             categoryModelList = new ArrayList<>();
 
+            doGetCat();
             categoryAdapter = new CategoryAdapter(categoryModelList);
             catRecyclerView.setAdapter(categoryAdapter);
+            categoryAdapter.notifyDataSetChanged();
 
             sliderModelList = new ArrayList<>();
             doGetSlider();
@@ -113,22 +117,23 @@ public class HomeFragment extends Fragment implements HomePageService {
             homePageAdapter.notifyDataSetChanged();
             //homepage
 
-            firebaseFirestore = FirebaseFirestore.getInstance();
-            firebaseFirestore.collection("CATEGORIES").orderBy("index").get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                    categoryModelList.add(new CategoryModel(snapshot.get("icon").toString(), snapshot.get("name").toString()));
-                                }
-                                categoryAdapter.notifyDataSetChanged();
-                            } else {
-                                String error = task.getException().getMessage();
-                                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+//            firebaseFirestore = FirebaseFirestore.getInstance();
+//            firebaseFirestore.collection("CATEGORIES").orderBy("index").get()
+//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                            if (task.isSuccessful()) {
+//                                for (QueryDocumentSnapshot snapshot : task.getResult()) {
+//                                    categoryModelList.add(new CategoryModel(snapshot.get("icon").toString(), snapshot.get("name").toString()));
+//                                }
+//                                categoryAdapter.notifyDataSetChanged();
+//                            } else {
+//                                String error = task.getException().getMessage();
+//                                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    });
+
         } else {
             Glide.with(this).load(R.mipmap.no_internet).into(noInternet);
             noInternet.setVisibility(View.VISIBLE);
@@ -216,6 +221,33 @@ public class HomeFragment extends Fragment implements HomePageService {
 
             @Override
             public void onFailure(Call<HomePageProductResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void doGetCat() {
+        HomePageAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(HomePageAPI.class);
+        Call<GetCatResponse> call = api.getCat();
+        call.enqueue(new Callback<GetCatResponse>() {
+            @Override
+            public void onResponse(Call<GetCatResponse> call, Response<GetCatResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        for (GetCatData data : response.body().getData()){
+                            categoryModelList.add(new CategoryModel(data.getId(),
+                                    data.getImageURL(),
+                                    data.getName()));
+                        }
+                        categoryAdapter.notifyDataSetChanged();
+                    } else if (response.body().getStatus().equals("FAILED")){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetCatResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
             }
         });

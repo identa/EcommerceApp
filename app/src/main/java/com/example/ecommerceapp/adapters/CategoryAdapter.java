@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.ecommerceapp.CategoryActivity;
 import com.example.ecommerceapp.R;
+import com.example.ecommerceapp.ViewAllActivity;
 import com.example.ecommerceapp.models.CategoryModel;
 
 import java.util.List;
@@ -34,9 +35,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull CategoryAdapter.ViewHolder viewHolder, int position) {
+        int id = categoryModelList.get(position).getId();
         String icon = categoryModelList.get(position).getIconLink();
         String name = categoryModelList.get(position).getName();
-        viewHolder.setCat(name, position);
+        viewHolder.setCat(name, id);
         viewHolder.setCatIcon(icon);
     }
 
@@ -62,14 +64,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             }
         }
 
-        private void setCat(final String name, final int position){
+        private void setCat(final String name, final int id){
             catName.setText(name);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 //                    if (position != 0) {
-                        Intent catIntent = new Intent(itemView.getContext(), CategoryActivity.class);
-                        catIntent.putExtra("CategoryName", name);
+                        Intent catIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
+                        catIntent.putExtra("title", name);
+                        catIntent.putExtra("layout_code", 3);
+                        catIntent.putExtra("cat_id", id);
                         itemView.getContext().startActivity(catIntent);
 //                    }
                 }
