@@ -107,7 +107,14 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
 
         changeOrAddNewAddressBtn.setVisibility(View.VISIBLE);
         //part 76 - 2:33
-
+        changeOrAddNewAddressBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addAddressIntent = new Intent(DeliveryActivity.this, AddAddressActivity.class);
+                addAddressIntent.putExtra("mode", 1);
+                startActivity(addAddressIntent);
+            }
+        });
         continuewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

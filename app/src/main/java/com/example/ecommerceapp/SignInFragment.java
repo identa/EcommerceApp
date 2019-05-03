@@ -1,7 +1,9 @@
 package com.example.ecommerceapp;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -240,6 +242,15 @@ public class SignInFragment extends Fragment implements SignInService {
             public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
+                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("firstName", response.body().getData().getFirstName());
+                        editor.putString("lastName", response.body().getData().getLastName());
+                        editor.putString("imageURL", response.body().getData().getImageURL());
+                        editor.putString("token", response.body().getData().getToken());
+                        editor.putInt("id", response.body().getData().getId());
+
+                        editor.apply();
                         goHome();
                     } else {
                         progressBar.setVisibility(View.INVISIBLE);
