@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment implements HomePageService {
         ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-        if (networkInfo != null && networkInfo.isConnected()){
+        if (networkInfo != null && networkInfo.isConnected()) {
             noInternet.setVisibility(View.GONE);
 
             catRecyclerView = view.findViewById(R.id.cat_recycler_view);
@@ -152,11 +152,11 @@ public class HomeFragment extends Fragment implements HomePageService {
             public void onResponse(Call<SliderResponse> call, Response<SliderResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (SliderData data : response.body().getData()){
+                        for (SliderData data : response.body().getData()) {
                             sliderModelList.add(new SliderModel(data.getImageURL()));
                         }
                         homePageAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }
@@ -177,7 +177,7 @@ public class HomeFragment extends Fragment implements HomePageService {
             public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (HomePageProductData data : response.body().getData()){
+                        for (HomePageProductData data : response.body().getData()) {
                             horizontalList.add(new HorizontalProductScrollModel(data.getId(),
                                     data.getImageURL(),
                                     data.getName(),
@@ -185,7 +185,7 @@ public class HomeFragment extends Fragment implements HomePageService {
                                     data.getPrice()));
                         }
                         homePageAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }
@@ -206,7 +206,7 @@ public class HomeFragment extends Fragment implements HomePageService {
             public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (HomePageProductData data : response.body().getData()){
+                        for (HomePageProductData data : response.body().getData()) {
                             gridList.add(new HorizontalProductScrollModel(data.getId(),
                                     data.getImageURL(),
                                     data.getName(),
@@ -214,7 +214,7 @@ public class HomeFragment extends Fragment implements HomePageService {
                                     data.getPrice()));
                         }
                         homePageAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }
@@ -235,13 +235,13 @@ public class HomeFragment extends Fragment implements HomePageService {
             public void onResponse(Call<GetCatResponse> call, Response<GetCatResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (GetCatData data : response.body().getData()){
+                        for (GetCatData data : response.body().getData()) {
                             categoryModelList.add(new CategoryModel(data.getId(),
                                     data.getImageURL(),
                                     data.getName()));
                         }
                         categoryAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }

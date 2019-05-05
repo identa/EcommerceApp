@@ -60,7 +60,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
 
         mode = getIntent().getIntExtra("mode", -1);
 
-        if (mode == 0){
+        if (mode == 0) {
             saveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -72,7 +72,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
                 }
             });
 
-        }else if (mode == 1){
+        } else if (mode == 1) {
             city.setText(addAddressModel.getCity());
             locality.setText(addAddressModel.getAddress());
             postalCode.setText(String.format("%d", addAddressModel.getPostalCode()));
@@ -89,7 +89,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
 //                    finish();
                 }
             });
-        }else if (mode == 2){
+        } else if (mode == 2) {
             saveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -113,7 +113,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home){
+        if (id == android.R.id.home) {
             finish();
             return true;
         }
@@ -123,25 +123,25 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
     @Override
     public void doAddAddress(int id) {
         AddAddressAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddAddressAPI.class);
-            AddressRequest request = new AddressRequest();
-            request.setCity(city.getText().toString());
-            request.setAddress(locality.getText().toString());
-            request.setPostalCode(Integer.parseInt(postalCode.getText().toString()));
-            request.setRecipientName(recipientName.getText().toString());
-            request.setState(state.getText().toString());
+        AddressRequest request = new AddressRequest();
+        request.setCity(city.getText().toString());
+        request.setAddress(locality.getText().toString());
+        request.setPostalCode(Integer.parseInt(postalCode.getText().toString()));
+        request.setRecipientName(recipientName.getText().toString());
+        request.setState(state.getText().toString());
 
         Call<GetAddressResponse> call = api.addAddress(id, request);
         call.enqueue(new Callback<GetAddressResponse>() {
             @Override
             public void onResponse(Call<GetAddressResponse> call, Response<GetAddressResponse> response) {
                 if (response.code() == 200) {
-                    if (response.body().getStatus().equals("SUCCESS")){
-                        if (mode == 0){
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        if (mode == 0) {
                             Intent deliveryIntent = new Intent(AddAddressActivity.this, HomeActivity.class);
                             deliveryIntent.putExtra("showAccount", true);
                             startActivity(deliveryIntent);
                             finish();
-                        }else if (mode == 2){
+                        } else if (mode == 2) {
                             Intent deliveryIntent = new Intent(AddAddressActivity.this, DeliveryActivity.class);
                             startActivity(deliveryIntent);
                             finish();
@@ -173,11 +173,11 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
             @Override
             public void onResponse(Call<GetAddressResponse> call, Response<GetAddressResponse> response) {
                 if (response.code() == 200) {
-                    if (response.body().getStatus().equals("SUCCESS")){
-                            Intent deliveryIntent = new Intent(AddAddressActivity.this, HomeActivity.class);
-                            deliveryIntent.putExtra("showAccount", true);
-                            startActivity(deliveryIntent);
-                            finish();
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        Intent deliveryIntent = new Intent(AddAddressActivity.this, HomeActivity.class);
+                        deliveryIntent.putExtra("showAccount", true);
+                        startActivity(deliveryIntent);
+                        finish();
 
                         Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }

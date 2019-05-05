@@ -49,6 +49,7 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
     private TextView postalCode;
 
     private ConstraintLayout addressLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -90,8 +91,8 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
             @Override
             public void onResponse(Call<GetAddressResponse> call, Response<GetAddressResponse> response) {
                 if (response.code() == 200) {
-                    if (response.body().getStatus().equals("SUCCESS")){
-                        if (response.body().getData() == null){
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        if (response.body().getData() == null) {
                             addAddressBtn.setVisibility(View.VISIBLE);
                             addressLayout.setVisibility(View.GONE);
 
@@ -103,7 +104,7 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
                                     startActivity(addAddressIntent);
                                 }
                             });
-                        }else {
+                        } else {
                             addAddressBtn.setVisibility(View.GONE);
                             addressLayout.setVisibility(View.VISIBLE);
                             recipientName.setText(response.body().getData().getRecipientName());

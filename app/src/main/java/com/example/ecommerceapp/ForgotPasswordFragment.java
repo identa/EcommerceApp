@@ -110,20 +110,20 @@ public class ForgotPasswordFragment extends Fragment {
                 progressBar.setVisibility(View.VISIBLE);
 
                 forgotPasswordBtn.setEnabled(false);
-                forgotPasswordBtn.setTextColor(Color.argb(50,255,255,255));
+                forgotPasswordBtn.setTextColor(Color.argb(50, 255, 255, 255));
 
                 firebaseAuth.sendPasswordResetEmail(email.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    ScaleAnimation scaleAnimation = new ScaleAnimation(1,0,1,0,emailIcon.getWidth()/2,emailIcon.getHeight()/2);
+                                if (task.isSuccessful()) {
+                                    ScaleAnimation scaleAnimation = new ScaleAnimation(1, 0, 1, 0, emailIcon.getWidth() / 2, emailIcon.getHeight() / 2);
                                     scaleAnimation.setDuration(100);
                                     scaleAnimation.setInterpolator(new AccelerateInterpolator());
                                     scaleAnimation.setRepeatMode(Animation.REVERSE);
                                     scaleAnimation.setRepeatCount(1);
 
-                                    scaleAnimation.setAnimationListener(new Animation.AnimationListener(){
+                                    scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
                                         @Override
                                         public void onAnimationStart(Animation animation) {
 
@@ -148,11 +148,11 @@ public class ForgotPasswordFragment extends Fragment {
 
                                     emailIcon.startAnimation(scaleAnimation);
 //                                    Toast.makeText(getActivity(), "Email is sent successfully", Toast.LENGTH_LONG).show();
-                                }else {
+                                } else {
                                     String error = task.getException().getMessage();
 //                                    progressBar.setVisibility(View.GONE);
                                     forgotPasswordBtn.setEnabled(false);
-                                    forgotPasswordBtn.setTextColor(Color.argb(50, 255,255,255));
+                                    forgotPasswordBtn.setTextColor(Color.argb(50, 255, 255, 255));
                                     stateText.setText(error);
                                     stateText.setTextColor(getResources().getColor(R.color.colorPrimary));
                                     TransitionManager.beginDelayedTransition(stateContainer);
@@ -174,13 +174,13 @@ public class ForgotPasswordFragment extends Fragment {
         });
     }
 
-    private void checkInput(){
-        if (TextUtils.isEmpty(email.getText())){
+    private void checkInput() {
+        if (TextUtils.isEmpty(email.getText())) {
             forgotPasswordBtn.setEnabled(false);
-            forgotPasswordBtn.setTextColor(Color.argb(50,255,255,255));
-        }else {
+            forgotPasswordBtn.setTextColor(Color.argb(50, 255, 255, 255));
+        } else {
             forgotPasswordBtn.setEnabled(true);
-            forgotPasswordBtn.setTextColor(Color.rgb(255,255,255));
+            forgotPasswordBtn.setTextColor(Color.rgb(255, 255, 255));
 
         }
     }

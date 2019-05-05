@@ -118,7 +118,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             });
         }
 
-        private void setData(int id, String resource, String title, double avgRating, int totalRatingNo, double price, double cuttedPriceText, final int position){
+        private void setData(int id, String resource, String title, double avgRating, int totalRatingNo, double price, double cuttedPriceText, final int position) {
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(producImage);
             productTitle.setText(title);
             rating.setText(String.format("%s", avgRating));
@@ -127,15 +127,15 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             cuttedPrice.setText(String.format("$%s", cuttedPriceText));
             productID = id;
 
-            if (wishlist){
+            if (wishlist) {
                 deleteBtn.setVisibility(View.VISIBLE);
                 deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        doDeleteWishlist(productID,2, position, itemView.getContext());
+                        doDeleteWishlist(productID, 2, position, itemView.getContext());
                     }
                 });
-            }else {
+            } else {
                 deleteBtn.setVisibility(View.GONE);
             }
         }

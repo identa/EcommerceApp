@@ -38,7 +38,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
     private RecyclerView recyclerView;
     private GridView gridView;
     private List<HorizontalProductScrollModel> gridModelList;
-//    private List<HorizontalProductScrollModel> horizontalProductScrollModelList;
+    //    private List<HorizontalProductScrollModel> horizontalProductScrollModelList;
 //    private HorizontalProductScrollAdapter horizontalProductScrollAdapter;
     private List<WishlistModel> horizontalModelList;
     private List<WishlistModel> searchModelList;
@@ -62,7 +62,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
 
         int layout_code = getIntent().getIntExtra("layout_code", -1);
 
-        if (layout_code == 0){
+        if (layout_code == 0) {
 //            horizontalProductScrollModelList = new ArrayList<>();
             horizontalModelList = new ArrayList<>();
             doGetMostViewedProductAll();
@@ -77,14 +77,14 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
 //            horizontalProductScrollAdapter = new HorizontalProductScrollAdapter(horizontalProductScrollModelList);
 //            recyclerView.setAdapter(horizontalProductScrollAdapter);
 //            horizontalProductScrollAdapter.notifyDataSetChanged();
-        }else if (layout_code == 1){
+        } else if (layout_code == 1) {
             gridModelList = new ArrayList<>();
             doGetMostOrderedProductAll();
             gridView.setVisibility(View.VISIBLE);
             gridProductLayoutAdapter = new GridProductLayoutAdapter(gridModelList);
             gridView.setAdapter(gridProductLayoutAdapter);
             gridProductLayoutAdapter.notifyDataSetChanged();
-        }else if (layout_code == 2){
+        } else if (layout_code == 2) {
             String searchQuery = getIntent().getStringExtra("search_query");
             searchModelList = new ArrayList<>();
             doSearch(searchQuery);
@@ -96,7 +96,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
             horizontalAdapter = new WishlistAdapter(searchModelList, false);
             recyclerView.setAdapter(horizontalAdapter);
             horizontalAdapter.notifyDataSetChanged();
-        }else if (layout_code == 3){
+        } else if (layout_code == 3) {
             categoryModelList = new ArrayList<>();
             doShowCat(getIntent().getIntExtra("cat_id", 1));
             recyclerView.setVisibility(View.VISIBLE);
@@ -112,7 +112,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
@@ -136,7 +136,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
 //                                    data.getPrice()));
 //                        }
 //                        horizontalProductScrollAdapter.notifyDataSetChanged();
-                        for (HorizontalViewAllData data : response.body().getData()){
+                        for (HorizontalViewAllData data : response.body().getData()) {
                             horizontalModelList.add(new WishlistModel(data.getId(),
                                     data.getProductImage(),
                                     data.getProductTitle(),
@@ -147,7 +147,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
                         }
 
                         horizontalAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }
@@ -168,7 +168,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
             public void onResponse(Call<HomePageProductResponse> call, Response<HomePageProductResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (HomePageProductData data : response.body().getData()){
+                        for (HomePageProductData data : response.body().getData()) {
                             gridModelList.add(new HorizontalProductScrollModel(data.getId(),
                                     data.getImageURL(),
                                     data.getName(),
@@ -176,7 +176,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
                                     data.getPrice()));
                         }
                         gridProductLayoutAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }
@@ -197,7 +197,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
             public void onResponse(Call<HorizontalViewAllResponse> call, Response<HorizontalViewAllResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (HorizontalViewAllData data : response.body().getData()){
+                        for (HorizontalViewAllData data : response.body().getData()) {
                             searchModelList.add(new WishlistModel(data.getId(),
                                     data.getProductImage(),
                                     data.getProductTitle(),
@@ -208,7 +208,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
                         }
 
                         horizontalAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }
@@ -229,7 +229,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
             public void onResponse(Call<HorizontalViewAllResponse> call, Response<HorizontalViewAllResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (HorizontalViewAllData data : response.body().getData()){
+                        for (HorizontalViewAllData data : response.body().getData()) {
                             categoryModelList.add(new WishlistModel(data.getId(),
                                     data.getProductImage(),
                                     data.getProductTitle(),
@@ -240,7 +240,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
                         }
 
                         horizontalAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }

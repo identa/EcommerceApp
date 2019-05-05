@@ -25,7 +25,7 @@ public class ProductImageAdapter extends PagerAdapter {
         ImageView productImage = new ImageView(container.getContext());
 //        productImage.setImageResource(productNums.get(position));
         Glide.with(container.getContext()).load(productImages.get(position)).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
-        container.addView(productImage,0);
+        container.addView(productImage, 0);
         return productImage;
     }
 
@@ -38,8 +38,6 @@ public class ProductImageAdapter extends PagerAdapter {
     public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
         return view == o;
     }
-
-
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {

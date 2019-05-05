@@ -181,7 +181,7 @@ public class SignInFragment extends Fragment implements SignInService {
         }
     }
 
-    private void checkEmailAndPassword(){
+    private void checkEmailAndPassword() {
         Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
         customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
         if (email.getText().toString().matches(ValidationConst.EMAIL)) {

@@ -76,23 +76,23 @@ public class HorizontalProductScrollAdapter extends RecyclerView.Adapter<Horizon
             });
         }
 
-        private void setProductImage(String resource){
+        private void setProductImage(String resource) {
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
         }
 
-        private void setProductTitle(String title){
+        private void setProductTitle(String title) {
             productTitle.setText(title);
         }
 
-        private void setProductDesc(String desc){
+        private void setProductDesc(String desc) {
             productDesc.setText(desc);
         }
 
-        private void setProductPrice(double price){
+        private void setProductPrice(double price) {
             productPrice.setText(String.format("$%s", price));
         }
 
-        private void setID(int id){
+        private void setID(int id) {
             productID = id;
         }
     }

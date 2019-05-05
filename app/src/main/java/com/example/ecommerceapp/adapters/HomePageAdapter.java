@@ -118,7 +118,7 @@ public class HomePageAdapter extends RecyclerView.Adapter {
         }
 
         private void setBannerSliderViewPager(final List<SliderModel> sliderModelList) {
-            if (timer != null){
+            if (timer != null) {
                 timer.cancel();
             }
 
@@ -202,16 +202,16 @@ public class HomePageAdapter extends RecyclerView.Adapter {
             horizontalLayoutTitle.setText(title);
 
 //            if (horizontalProductScrollModelList.size() > 8) {
-                horizontalViewAllBtn.setVisibility(View.VISIBLE);
-                horizontalViewAllBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
-                        viewAllIntent.putExtra("layout_code", 0);
-                        viewAllIntent.putExtra("title", title);
-                        itemView.getContext().startActivity(viewAllIntent);
-                    }
-                });
+            horizontalViewAllBtn.setVisibility(View.VISIBLE);
+            horizontalViewAllBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
+                    viewAllIntent.putExtra("layout_code", 0);
+                    viewAllIntent.putExtra("title", title);
+                    itemView.getContext().startActivity(viewAllIntent);
+                }
+            });
 //            } else {
 //                horizontalViewAllBtn.setVisibility(View.INVISIBLE);
 //            }
@@ -247,16 +247,16 @@ public class HomePageAdapter extends RecyclerView.Adapter {
             gridProductLayoutAdapter.notifyDataSetChanged();
 
 //            if (gridProductModelList.size() > 4){
-                gridLayoutViewAllBtn.setVisibility(View.VISIBLE);
-                gridLayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
-                        viewAllIntent.putExtra("layout_code", 1);
-                        viewAllIntent.putExtra("title", title);
-                        itemView.getContext().startActivity(viewAllIntent);
-                    }
-                });
+            gridLayoutViewAllBtn.setVisibility(View.VISIBLE);
+            gridLayoutViewAllBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent viewAllIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
+                    viewAllIntent.putExtra("layout_code", 1);
+                    viewAllIntent.putExtra("title", title);
+                    itemView.getContext().startActivity(viewAllIntent);
+                }
+            });
 //            } else {
 //                gridLayoutViewAllBtn.setVisibility(View.INVISIBLE);
 //            }

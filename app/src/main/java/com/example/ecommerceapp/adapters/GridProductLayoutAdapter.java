@@ -20,6 +20,7 @@ import java.util.List;
 
 public class GridProductLayoutAdapter extends BaseAdapter {
     List<HorizontalProductScrollModel> modelList;
+
     public GridProductLayoutAdapter(List<HorizontalProductScrollModel> modelList) {
         this.modelList = modelList;
     }
@@ -42,7 +43,7 @@ public class GridProductLayoutAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         View view;
-        if (convertView == null){
+        if (convertView == null) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.horizontal_scroll_item_layout, null);
             view.setElevation(0);
             view.setBackgroundColor(Color.parseColor("#ffffff"));
@@ -66,7 +67,7 @@ public class GridProductLayoutAdapter extends BaseAdapter {
             productTitle.setText(modelList.get(position).getTitle());
             productDesc.setText(modelList.get(position).getDesc());
             productPrice.setText(String.format("$%s", modelList.get(position).getPrice()));
-        }else {
+        } else {
             view = convertView;
         }
         return view;

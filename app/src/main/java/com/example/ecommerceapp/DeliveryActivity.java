@@ -120,42 +120,41 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-            if (resultCode == Activity.RESULT_OK){
-                PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
-                if (confirmation != null){
-                    try {
-                        doAddOrder(sharedPreferences.getInt("id", 1));
-                        String paymentDetails = confirmation.toJSONObject().toString(4);
-                        Log.i("payment", paymentDetails);
-                        Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
-                        orderConfirmationLayout.setVisibility(View.VISIBLE);
-                        orderID.setText("Order ID " + orderNoID);
-                        continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                HomeActivity.showCart = false;
-                                Intent homeIntent = new Intent(DeliveryActivity.this, HomeActivity.class);
-                                startActivity(homeIntent);
-                            }
-                        });
-                        Toast.makeText(this, "Payment is successful", Toast.LENGTH_SHORT).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+        if (resultCode == Activity.RESULT_OK) {
+            PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+            if (confirmation != null) {
+                try {
+                    doAddOrder(sharedPreferences.getInt("id", 1));
+                    String paymentDetails = confirmation.toJSONObject().toString(4);
+                    Log.i("payment", paymentDetails);
+                    Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
+                    orderConfirmationLayout.setVisibility(View.VISIBLE);
+                    orderID.setText("Order ID " + orderNoID);
+                    continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            HomeActivity.showCart = false;
+                            Intent homeIntent = new Intent(DeliveryActivity.this, HomeActivity.class);
+                            startActivity(homeIntent);
+                        }
+                    });
+                    Toast.makeText(this, "Payment is successful", Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } else if (resultCode == Activity.RESULT_CANCELED){
-                Toast.makeText(this, "Payment is cancelled", Toast.LENGTH_SHORT).show();;
             }
-            else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID){
-                Toast.makeText(this, "Invalid payment", Toast.LENGTH_SHORT).show();;
-            }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(this, "Payment is cancelled", Toast.LENGTH_SHORT).show();
+        } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
+            Toast.makeText(this, "Invalid payment", Toast.LENGTH_SHORT).show();
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home){
+        if (id == android.R.id.home) {
             finish();
             return true;
         }
@@ -170,7 +169,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
     public void doAddOrder(int id) {
         AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
         List<AddOrderRequest> requests = new ArrayList<>();
-        for (int i = 0; i < cartItemModelList.size() - 1; i++){
+        for (int i = 0; i < cartItemModelList.size() - 1; i++) {
             AddOrderRequest request = new AddOrderRequest();
             request.setId(cartItemModelList.get(i).getProductID());
             request.setPrice(cartItemModelList.get(i).getProductPrice());
@@ -186,7 +185,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
             @Override
             public void onResponse(Call<AddOrderResponse> call, Response<AddOrderResponse> response) {
                 if (response.code() == 200) {
-                    if (response.body().getStatus().equals("SUCCESS")){
+                    if (response.body().getStatus().equals("SUCCESS")) {
                         orderNoID = response.body().getData().getId();
                     }
                 }
@@ -207,8 +206,8 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
             @Override
             public void onResponse(Call<GetAddressResponse> call, Response<GetAddressResponse> response) {
                 if (response.code() == 200) {
-                    if (response.body().getStatus().equals("SUCCESS")){
-                        if (response.body().getData() == null){
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        if (response.body().getData() == null) {
                             include.setVisibility(View.GONE);
                             continuewBtn.setText("ADD ADDRESS");
                             continuewBtn.setOnClickListener(new View.OnClickListener() {
@@ -219,7 +218,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                                     startActivity(addAddressIntent);
                                 }
                             });
-                        }else {
+                        } else {
                             include.setVisibility(View.VISIBLE);
                             shippingName.setText(response.body().getData().getRecipientName());
                             shippingCity.setText(response.body().getData().getCity());

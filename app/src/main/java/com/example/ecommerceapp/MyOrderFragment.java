@@ -74,10 +74,10 @@ public class MyOrderFragment extends Fragment implements OrderService {
             public void onResponse(Call<GetOrderResponse> call, Response<GetOrderResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                       for (GetOrderData data : response.body().getData()){
-                           myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Order no " + data.getId(), "Delivered on Mon, 15th Jan 2018"));
-                       }
-                       myOrderAdapter.notifyDataSetChanged();
+                        for (GetOrderData data : response.body().getData()) {
+                            myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2, "Order no " + data.getId(), "Delivered on Mon, 15th Jan 2018"));
+                        }
+                        myOrderAdapter.notifyDataSetChanged();
                     }
                 }
             }

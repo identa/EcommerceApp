@@ -30,11 +30,11 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-        if (currentUser == null){
-            Intent signUpIntent =  new Intent(MainActivity.this, SignUpActivity.class);
+        if (currentUser == null) {
+            Intent signUpIntent = new Intent(MainActivity.this, SignUpActivity.class);
             startActivity(signUpIntent);
             finish();
-        }else {
+        } else {
             Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
             startActivity(homeIntent);
             finish();

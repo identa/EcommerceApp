@@ -91,8 +91,8 @@ public class MyCartFragment extends Fragment implements CartService {
             @Override
             public void onResponse(Call<CartResponse> call, Response<CartResponse> response) {
                 if (response.code() == 200) {
-                    if (response.body().getStatus().equals("SUCCESS")){
-                        for (CartList data : response.body().getData().getCartData()){
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        for (CartList data : response.body().getData().getCartData()) {
                             cartItemModelList.add(new CartItemModel(0,
                                     data.getId(),
                                     data.getImageURL(),

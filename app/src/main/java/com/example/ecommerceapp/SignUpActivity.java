@@ -20,10 +20,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         frameLayout = findViewById(R.id.sign_up_frame_layout);
 
-        if (setSignUpFragment){
+        if (setSignUpFragment) {
             setSignUpFragment = false;
             setDefaultFragment(new SignUpFragment());
-        } else{
+        } else {
             setDefaultFragment(new SignInFragment());
         }
 //        setFragment(new SignInFragment());
@@ -31,8 +31,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
-            if (onResetPassword){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (onResetPassword) {
                 onResetPassword = false;
                 setFragment(new SignInFragment());
                 return false;
@@ -41,7 +41,7 @@ public class SignUpActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    private void setDefaultFragment(Fragment fragment){
+    private void setDefaultFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameLayout.getId(), fragment);
         transaction.commit();

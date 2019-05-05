@@ -90,10 +90,10 @@ public class HomeActivity extends AppCompatActivity
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.addDrawerListener(toggle);
             toggle.syncState();
-            if (getIntent().getBooleanExtra("showAccount", false)){
+            if (getIntent().getBooleanExtra("showAccount", false)) {
                 navigationView.getMenu().getItem(ACCOUNT_FRAGMENT).setChecked(true);
                 gotoFragment("My account", new MyAccountFragment(), ACCOUNT_FRAGMENT);
-            }else setFragment(new HomeFragment(), HOME_FRAGMENT);
+            } else setFragment(new HomeFragment(), HOME_FRAGMENT);
         }
 
 //        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -122,10 +122,11 @@ public class HomeActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null){
+        if (currentUser == null) {
             navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(false);
+        } else {
+            navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(true);
         }
-        else navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(true);
         invalidateOptionsMenu();
     }
 
@@ -135,14 +136,14 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (currentFragment == HOME_FRAGMENT){
+            if (currentFragment == HOME_FRAGMENT) {
                 currentFragment = -1;
                 super.onBackPressed();
-            }else {
-                if (showCart){
+            } else {
+                if (showCart) {
                     showCart = false;
                     finish();
-                }else {
+                } else {
                     invalidateOptionsMenu();
                     setFragment(new HomeFragment(), HOME_FRAGMENT);
                     navigationView.getMenu().getItem(0).setChecked(true);
@@ -154,7 +155,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if (currentFragment == HOME_FRAGMENT){
+        if (currentFragment == HOME_FRAGMENT) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getMenuInflater().inflate(R.menu.home, menu);
         }
@@ -175,7 +176,7 @@ public class HomeActivity extends AppCompatActivity
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     Intent viewAllIntent = new Intent(HomeActivity.this, ViewAllActivity.class);
-                    viewAllIntent.putExtra("layout_code",2);
+                    viewAllIntent.putExtra("layout_code", 2);
                     viewAllIntent.putExtra("search_query", query);
                     viewAllIntent.putExtra("title", "Search results");
                     startActivity(viewAllIntent);
@@ -188,9 +189,9 @@ public class HomeActivity extends AppCompatActivity
                 }
             });
             return true;
-        }else if (id == R.id.home_notification_icon){
+        } else if (id == R.id.home_notification_icon) {
             return true;
-        }else if (id == R.id.home_cart_icon){
+        } else if (id == R.id.home_cart_icon) {
             final Dialog signInDialog = new Dialog(HomeActivity.this);
             signInDialog.setContentView(R.layout.sign_in_dialog);
             signInDialog.setCancelable(true);
@@ -220,8 +221,8 @@ public class HomeActivity extends AppCompatActivity
             signInDialog.show();
 //            gotoFragment("My cart", new MyCartFragment(), CART_FRAGMENT);
             return true;
-        } else if (id == android.R.id.home){
-            if (showCart){
+        } else if (id == android.R.id.home) {
+            if (showCart) {
                 showCart = false;
                 finish();
                 return true;
@@ -246,7 +247,7 @@ public class HomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_home){
+        if (id == R.id.nav_home) {
 //            getSupportActionBar().setDisplayShowTitleEnabled(false);
             invalidateOptionsMenu();
             setFragment(new HomeFragment(), HOME_FRAGMENT);
@@ -258,7 +259,7 @@ public class HomeActivity extends AppCompatActivity
             gotoFragment("My wishlist", new MyWishlistFragment(), WISHLIST_FRAGMENT);
         } else if (id == R.id.nav_account) {
             gotoFragment("My account", new MyAccountFragment(), ACCOUNT_FRAGMENT);
-        } else if (id == R.id.nav_sign_out){
+        } else if (id == R.id.nav_sign_out) {
 
         }
 
@@ -267,7 +268,7 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    private void setFragment(Fragment fragment, int fragmentNo){
+    private void setFragment(Fragment fragment, int fragmentNo) {
         if (fragmentNo != currentFragment) {
             currentFragment = fragmentNo;
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

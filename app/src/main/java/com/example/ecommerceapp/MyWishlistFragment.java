@@ -76,7 +76,7 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
             public void onResponse(Call<GetWishlistResponse> call, Response<GetWishlistResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (GetWishlistData data : response.body().getData()){
+                        for (GetWishlistData data : response.body().getData()) {
                             wishlistModelList.add(new WishlistModel(data.getId(),
                                     data.getImageURL(),
                                     data.getName(),
@@ -87,7 +87,7 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
                         }
 
                         wishlistAdapter.notifyDataSetChanged();
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }

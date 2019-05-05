@@ -60,12 +60,13 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
             deliveryStatus = itemView.findViewById(R.id.order_delivered_date);
             rateNowContainer = itemView.findViewById(R.id.rating_now_container);
         }
-        private void setData(int resource, String title, String deliveredDate, int rating){
+
+        private void setData(int resource, String title, String deliveredDate, int rating) {
             productImage.setImageResource(resource);
             productTitle.setText(title);
-            if (deliveredDate.equals("Cancelled")){
+            if (deliveredDate.equals("Cancelled")) {
                 orderIndicator.setImageTintList(ColorStateList.valueOf(itemView.getContext().getResources().getColor(R.color.colorPrimary)));
-            }else {
+            } else {
                 orderIndicator.setImageTintList(ColorStateList.valueOf(itemView.getContext().getResources().getColor(R.color.successGreen)));
             }
             deliveryStatus.setText(deliveredDate);
@@ -81,11 +82,12 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
                 });
             }
         }
+
         private void setRating(int starPosition) {
-            for (int x = 0; x < rateNowContainer.getChildCount(); x ++){
+            for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
                 ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
                 starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
-                if (x <= starPosition){
+                if (x <= starPosition) {
                     starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
                 }
             }

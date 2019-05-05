@@ -47,7 +47,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return categoryModelList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView catIcon;
         private TextView catName;
@@ -64,17 +64,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             }
         }
 
-        private void setCat(final String name, final int id){
+        private void setCat(final String name, final int id) {
             catName.setText(name);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 //                    if (position != 0) {
-                        Intent catIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
-                        catIntent.putExtra("title", name);
-                        catIntent.putExtra("layout_code", 3);
-                        catIntent.putExtra("cat_id", id);
-                        itemView.getContext().startActivity(catIntent);
+                    Intent catIntent = new Intent(itemView.getContext(), ViewAllActivity.class);
+                    catIntent.putExtra("title", name);
+                    catIntent.putExtra("layout_code", 3);
+                    catIntent.putExtra("cat_id", id);
+                    itemView.getContext().startActivity(catIntent);
 //                    }
                 }
             });

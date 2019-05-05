@@ -92,7 +92,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                 return;
         }
 
-        if (lastPosition < i){
+        if (lastPosition < i) {
             Animation animation = AnimationUtils.loadAnimation(viewHolder.itemView.getContext(), R.anim.fade_in);
             viewHolder.itemView.setAnimation(animation);
             lastPosition = i;
@@ -115,14 +115,14 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                     if (response.body().getStatus().equals("SUCCESS")) {
                         CartItemModel totalAmountModel = cartItemModelList.get(cartItemModelList.size() - 1);
                         totalAmountModel.setTotalItems(totalAmountModel.getTotalItems() - cartItemModelList.get(position).getProductQuantity());
-                        totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity()*cartItemModelList.get(position).getProductPrice());
+                        totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity() * cartItemModelList.get(position).getProductPrice());
                         totalAmountModel.setTotalAmount(totalAmountModel.getTotalAmount() - 1);
                         cartItemModelList.remove(position);
 
-                        if (cartItemModelList.size() == 1){
+                        if (cartItemModelList.size() == 1) {
                             cartItemModelList.remove(cartItemModelList.get(cartItemModelList.size() - 1));
                             MyCartFragment.cartAdapter.notifyDataSetChanged();
-                        }else {
+                        } else {
                             MyCartFragment.cartAdapter.notifyDataSetChanged();
                         }
 
@@ -149,7 +149,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                     if (response.body().getStatus().equals("SUCCESS")) {
                         CartItemModel totalAmountModel = cartItemModelList.get(cartItemModelList.size() - 1);
                         totalAmountModel.setTotalItems(totalAmountModel.getTotalItems() - cartItemModelList.get(position).getProductQuantity() + response.body().getData().getQuantity());
-                        totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity()*cartItemModelList.get(position).getProductPrice() + response.body().getData().getQuantity()*response.body().getData().getPrice());
+                        totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity() * cartItemModelList.get(position).getProductPrice() + response.body().getData().getQuantity() * response.body().getData().getPrice());
                         cartItemModelList.get(position).setProductQuantity(response.body().getData().getQuantity());
 
                         MyCartFragment.cartAdapter.notifyDataSetChanged();

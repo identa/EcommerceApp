@@ -198,10 +198,10 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     }
 
     private void setRating(int starPosition) {
-        for (int x = 0; x < rateNowContainer.getChildCount(); x ++){
+        for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
             ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
             starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
-            if (x <= starPosition){
+            if (x <= starPosition) {
                 starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
             }
         }
@@ -246,12 +246,12 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             public void onResponse(Call<ProductDetailResponse> call, Response<ProductDetailResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (ProductImageData data : response.body().getData().getImages()){
+                        for (ProductImageData data : response.body().getData().getImages()) {
                             productImages.add(data.getImageURL());
                         }
 
                         productTitle.setText(response.body().getData().getName());
-                        productPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount()/100)));
+                        productPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount() / 100)));
                         cuttedPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice()));
                         productDescription = response.body().getData().getDescription();
                         productOtherDetails = response.body().getData().getDescription();
@@ -261,36 +261,35 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                         cartItemModelList.add(new CartItemModel(0, response.body().getData().getId(),
                                 response.body().getData().getImages().get(0).getImageURL(),
                                 response.body().getData().getName(),
-                                response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount()/100),
+                                response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount() / 100),
                                 response.body().getData().getOriginalPrice(),
                                 1));
 
                         cartItemModelList.add(new CartItemModel(1,
                                 1,
-                                response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount()/100),
+                                response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount() / 100),
                                 1));
 
-                        if (isAddedToCart){
+                        if (isAddedToCart) {
                             addToCartTextView = findViewById(R.id.tv_add_to_cart);
                             addToCartTextView.setText("ADREADY ADDED TO");
                             addToCartBtn.setOnClickListener(null);
-                        }else {
+                        } else {
                             addToCartBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    if (currentUser == null){
+                                    if (currentUser == null) {
 //                        signInDialog.show();
-                                    }
-                                    else {
+                                    } else {
                                         doAddToCart(productID, 2);
                                     }
                                 }
                             });
                         }
 
-                        if (isAddedToWishlist){
+                        if (isAddedToWishlist) {
                             addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
-                        }else {
+                        } else {
                             addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
                         }
 
@@ -310,7 +309,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 
                         productImageAdapter.notifyDataSetChanged();
                         productDetailsViewPager.setAdapter(new ProductDetailsAdapter(getSupportFragmentManager(), productDetailsTabLayout.getTabCount(), productDescription, productOtherDetails));
-                    } else if (response.body().getStatus().equals("FAILED")){
+                    } else if (response.body().getStatus().equals("FAILED")) {
                     }
                 }
             }
