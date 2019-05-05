@@ -3,6 +3,7 @@ package com.example.ecommerceapp;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import com.example.ecommerceapp.models.client.RetrofitClient;
 import com.example.ecommerceapp.models.entities.requests.AddOrderReq;
 import com.example.ecommerceapp.models.entities.requests.AddOrderRequest;
 import com.example.ecommerceapp.models.entities.responses.AddOrderResponse;
+import com.example.ecommerceapp.models.entities.responses.GetAddressResponse;
 import com.example.ecommerceapp.models.interfaces.AddOrderAPI;
 import com.example.ecommerceapp.models.services.AddOrderService;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
@@ -47,15 +49,19 @@ import retrofit2.Response;
 public class DeliveryActivity extends AppCompatActivity implements AddOrderService {
 
     private RecyclerView deliveryRecyclerView;
-    private Button changeOrAddNewAddressBtn;
     public static List<CartItemModel> cartItemModelList;
     private TextView totalAmount;
-    private TextView fullName;
-    private TextView fullAddress;
+    private TextView shippingName;
+    private TextView shippingAddress;
+    private TextView shippingCity;
+    private TextView shippingState;
+    private TextView shippingPostalCode;
+
     private Button continuewBtn;
     private Dialog loadingDialog;
     private Dialog paymentMethodDialog;
     private ImageButton paytm;
+    private View include;
 
     private ConstraintLayout orderConfirmationLayout;
     private ImageButton continueShoppingBtn;
@@ -63,6 +69,9 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
     private int orderNoID;
 
     private static final int REQUEST_CODE = 0;
+
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,30 +81,27 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle("Delivery");
+        sharedPreferences = getSharedPreferences("signin_info", MODE_PRIVATE);
 
         deliveryRecyclerView = findViewById(R.id.delivery_recycler_view);
-        changeOrAddNewAddressBtn = findViewById(R.id.change_or_add_address_btn);
         totalAmount = findViewById(R.id.total_cart_amount);
-        fullName = findViewById(R.id.full_name);
-        fullAddress = findViewById(R.id.address);
+        include = findViewById(R.id.include);
+        shippingName = findViewById(R.id.shipping_name);
+        shippingAddress = findViewById(R.id.shipping_address);
+        shippingCity = findViewById(R.id.shipping_city);
+        shippingState = findViewById(R.id.shipping_state);
+        shippingPostalCode = findViewById(R.id.shipping_postal_code);
+
         continuewBtn = findViewById(R.id.cart_continue_btn);
         orderConfirmationLayout = findViewById(R.id.order_confirm_layout);
         continueShoppingBtn = findViewById(R.id.continue_shopping_btn);
         orderID = findViewById(R.id.order_id);
 
+        getAddress(sharedPreferences.getInt("id", 1));
         Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, configuration);
         startService(intent);
         //loading 76 - 12:04
-
-        //payment
-        paymentMethodDialog = new Dialog(DeliveryActivity.this);
-        paymentMethodDialog.setContentView(R.layout.payment_method);
-        paymentMethodDialog.setCancelable(true);
-        paymentMethodDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
-        paymentMethodDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        paytm = paymentMethodDialog.findViewById(R.id.paytm);
-        //payment
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -104,36 +110,6 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         CartAdapter cartAdapter = new CartAdapter(cartItemModelList);
         deliveryRecyclerView.setAdapter(cartAdapter);
         cartAdapter.notifyDataSetChanged();
-
-        changeOrAddNewAddressBtn.setVisibility(View.VISIBLE);
-        //part 76 - 2:33
-        changeOrAddNewAddressBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addAddressIntent = new Intent(DeliveryActivity.this, AddAddressActivity.class);
-                addAddressIntent.putExtra("mode", 1);
-                startActivity(addAddressIntent);
-            }
-        });
-        continuewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                paymentMethodDialog.show();
-
-                paytm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        paymentMethodDialog.dismiss();
-                        PayPalPayment payment = new PayPalPayment(new BigDecimal(cartItemModelList.get(cartItemModelList.size() - 1).getTotalItemPrice()), "USD", "Anh", PayPalPayment.PAYMENT_INTENT_SALE);
-
-                        Intent paypalIntent = new Intent(DeliveryActivity.this, PaymentActivity.class);
-                        paypalIntent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
-                        paypalIntent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, configuration);
-                        startActivityForResult(paypalIntent, REQUEST_CODE);
-                    }
-                });
-            }
-        });
     }
 
     @Override
@@ -148,7 +124,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                 PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
                 if (confirmation != null){
                     try {
-                        doAddOrder(2);
+                        doAddOrder(sharedPreferences.getInt("id", 1));
                         String paymentDetails = confirmation.toJSONObject().toString(4);
                         Log.i("payment", paymentDetails);
                         Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
@@ -218,6 +194,74 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
 
             @Override
             public void onFailure(Call<AddOrderResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void getAddress(int id) {
+        AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
+        Call<GetAddressResponse> call = api.getAddress(id);
+        call.enqueue(new Callback<GetAddressResponse>() {
+            @Override
+            public void onResponse(Call<GetAddressResponse> call, Response<GetAddressResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")){
+                        if (response.body().getData() == null){
+                            include.setVisibility(View.GONE);
+                            continuewBtn.setText("ADD ADDRESS");
+                            continuewBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent addAddressIntent = new Intent(getApplicationContext(), AddAddressActivity.class);
+                                    addAddressIntent.putExtra("mode", 2);
+                                    startActivity(addAddressIntent);
+                                }
+                            });
+                        }else {
+                            include.setVisibility(View.VISIBLE);
+                            shippingName.setText(response.body().getData().getRecipientName());
+                            shippingCity.setText(response.body().getData().getCity());
+                            shippingState.setText(response.body().getData().getState());
+                            shippingAddress.setText(response.body().getData().getAddress());
+                            shippingPostalCode.setText(String.format("%d", response.body().getData().getPostalCode()));
+
+                            //payment
+                            paymentMethodDialog = new Dialog(DeliveryActivity.this);
+                            paymentMethodDialog.setContentView(R.layout.payment_method);
+                            paymentMethodDialog.setCancelable(true);
+                            paymentMethodDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
+                            paymentMethodDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            paytm = paymentMethodDialog.findViewById(R.id.paytm);
+                            //payment
+
+                            continuewBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    paymentMethodDialog.show();
+
+                                    paytm.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            paymentMethodDialog.dismiss();
+                                            PayPalPayment payment = new PayPalPayment(new BigDecimal(cartItemModelList.get(cartItemModelList.size() - 1).getTotalItemPrice()), "USD", "Anh", PayPalPayment.PAYMENT_INTENT_SALE);
+
+                                            Intent paypalIntent = new Intent(DeliveryActivity.this, PaymentActivity.class);
+                                            paypalIntent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
+                                            paypalIntent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, configuration);
+                                            startActivityForResult(paypalIntent, REQUEST_CODE);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetAddressResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
             }
         });

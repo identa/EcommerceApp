@@ -35,8 +35,8 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int HOME_FRAGMENT = 0;
-    private static final int CART_FRAGMENT = 1;
-    private static final int ORDER_FRAGMENT = 2;
+    private static final int CART_FRAGMENT = 2;
+    private static final int ORDER_FRAGMENT = 1;
     private static final int WISHLIST_FRAGMENT = 3;
     private static final int ACCOUNT_FRAGMENT = 4;
     public static Boolean showCart = false;
@@ -90,7 +90,10 @@ public class HomeActivity extends AppCompatActivity
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.addDrawerListener(toggle);
             toggle.syncState();
-            setFragment(new HomeFragment(), HOME_FRAGMENT);
+            if (getIntent().getBooleanExtra("showAccount", false)){
+                navigationView.getMenu().getItem(ACCOUNT_FRAGMENT).setChecked(true);
+                gotoFragment("My account", new MyAccountFragment(), ACCOUNT_FRAGMENT);
+            }else setFragment(new HomeFragment(), HOME_FRAGMENT);
         }
 
 //        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -233,9 +236,9 @@ public class HomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle(title);
         invalidateOptionsMenu();
         setFragment(fragment, fragmentNo);
-        if (fragmentNo == CART_FRAGMENT){
-            navigationView.getMenu().getItem(2).setChecked(true);
-        }
+//        if (fragmentNo == CART_FRAGMENT){
+//            navigationView.getMenu().getItem(2).setChecked(true);
+//        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

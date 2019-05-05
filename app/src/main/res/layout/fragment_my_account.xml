@@ -17,17 +17,18 @@
            <include layout="@layout/my_address_layout"/>
 
            <Button
-               android:id="@+id/sign_out_btn"
+               android:id="@+id/add_address_btn"
                android:layout_width="match_parent"
                android:layout_height="60dp"
                android:layout_marginStart="16dp"
                android:layout_marginEnd="16dp"
                android:layout_marginBottom="16dp"
                android:backgroundTint="@color/colorPrimary"
-               android:text="Sign out"
+               android:text="Add checkout information"
                android:textColor="@color/colorAccent"
                android:textSize="14sp"
-               android:textStyle="bold" />
+               android:textStyle="bold"
+               android:visibility="gone" />
        </LinearLayout>
    </ScrollView>
 
