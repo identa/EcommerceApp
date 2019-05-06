@@ -1,7 +1,9 @@
 package com.example.ecommerceapp;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +26,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.constants.ValidationConst;
+import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.requests.SignUpRequest;
+import com.example.ecommerceapp.models.entities.responses.SignInResponse;
+import com.example.ecommerceapp.models.interfaces.SignUpAPI;
+import com.example.ecommerceapp.models.services.SignUpService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -35,11 +44,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SignUpFragment extends Fragment {
+public class SignUpFragment extends Fragment implements SignUpService {
 
 
     public SignUpFragment() {
@@ -51,6 +64,7 @@ public class SignUpFragment extends Fragment {
 
     private EditText email;
     private EditText fullName;
+    private EditText lastName;
     private EditText password;
     private EditText confirmPassword;
 
@@ -73,6 +87,7 @@ public class SignUpFragment extends Fragment {
 
         email = view.findViewById(R.id.sign_up_email);
         fullName = view.findViewById(R.id.sign_up_full_name);
+        lastName = view.findViewById(R.id.sign_up_last_name);
         password = view.findViewById(R.id.sign_up_password);
         confirmPassword = view.findViewById(R.id.sign_up_confirm);
 
@@ -234,41 +249,48 @@ public class SignUpFragment extends Fragment {
                 signUpBtn.setEnabled(false);
                 signUpBtn.setTextColor(Color.argb(50, 255, 255, 255));
 
-                firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Map<Object, String> userData = new HashMap<>();
-                                    userData.put("fullName", fullName.getText().toString());
+                SignUpRequest request = new SignUpRequest();
+                request.setEmail(email.getText().toString());
+                request.setFirstName(fullName.getText().toString());
+                request.setLastName(lastName.getText().toString());
+                request.setPassword(password.getText().toString());
 
-                                    firebaseFirestore.collection("USERS")
-                                            .document(firebaseAuth.getUid())
-                                            .set(userData)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        goHome();
-                                                    } else {
-                                                        progressBar.setVisibility(View.INVISIBLE);
-                                                        signUpBtn.setEnabled(true);
-                                                        signUpBtn.setTextColor(Color.rgb(255, 255, 255));
-                                                        String error = task.getException().getMessage();
-                                                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
-
-                                } else {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    signUpBtn.setEnabled(true);
-                                    signUpBtn.setTextColor(Color.rgb(255, 255, 255));
-                                    String error = task.getException().getMessage();
-                                    Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                doSignUp(request);
+//                firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+//                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<AuthResult> task) {
+//                                if (task.isSuccessful()) {
+//                                    Map<Object, String> userData = new HashMap<>();
+//                                    userData.put("fullName", fullName.getText().toString());
+//
+//                                    firebaseFirestore.collection("USERS")
+//                                            .document(firebaseAuth.getUid())
+//                                            .set(userData)
+//                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                @Override
+//                                                public void onComplete(@NonNull Task<Void> task) {
+//                                                    if (task.isSuccessful()) {
+//                                                        goHome();
+//                                                    } else {
+//                                                        progressBar.setVisibility(View.INVISIBLE);
+//                                                        signUpBtn.setEnabled(true);
+//                                                        signUpBtn.setTextColor(Color.rgb(255, 255, 255));
+//                                                        String error = task.getException().getMessage();
+//                                                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+//                                                    }
+//                                                }
+//                                            });
+//
+//                                } else {
+//                                    progressBar.setVisibility(View.INVISIBLE);
+//                                    signUpBtn.setEnabled(true);
+//                                    signUpBtn.setTextColor(Color.rgb(255, 255, 255));
+//                                    String error = task.getException().getMessage();
+//                                    Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
             } else {
                 confirmPassword.setError(ValidationConst.PWD_ERROR, customWarningIcon);
             }
@@ -281,5 +303,47 @@ public class SignUpFragment extends Fragment {
         Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
         startActivity(homeIntent);
         getActivity().finish();
+    }
+
+    @Override
+    public void doSignUp(SignUpRequest request) {
+        SignUpAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(SignUpAPI.class);
+        Call<SignInResponse> call = api.signUp(request);
+        call.enqueue(new Callback<SignInResponse>() {
+            @Override
+            public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("firstName", response.body().getData().getFirstName());
+                        editor.putString("lastName", response.body().getData().getLastName());
+                        editor.putString("imageURL", response.body().getData().getImageURL());
+                        editor.putString("token", response.body().getData().getToken());
+                        editor.putInt("id", response.body().getData().getId());
+                        editor.putString("email", email.getText().toString());
+
+                        editor.apply();
+                        goHome();
+                    } else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        signUpBtn.setEnabled(true);
+                        signUpBtn.setTextColor(Color.rgb(255, 255, 255));
+                        String error = response.body().getMessage();
+                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SignInResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                progressBar.setVisibility(View.INVISIBLE);
+                signUpBtn.setEnabled(true);
+                signUpBtn.setTextColor(Color.rgb(255, 255, 255));
+                String error = t.getMessage();
+                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

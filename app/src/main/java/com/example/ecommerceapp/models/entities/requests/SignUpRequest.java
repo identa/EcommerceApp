@@ -12,9 +12,13 @@ public class SignUpRequest {
     @Expose
     private String password;
 
-    @SerializedName("fullName")
+    @SerializedName("firstName")
     @Expose
-    private String fullName;
+    private String firstName;
+
+    @SerializedName("lastName")
+    @Expose
+    private String lastName;
 
     public String getEmail() {
         return email;
@@ -32,11 +36,19 @@ public class SignUpRequest {
         this.password = password;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

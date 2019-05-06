@@ -2,6 +2,7 @@ package com.example.ecommerceapp;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
@@ -87,6 +88,8 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private FirebaseUser currentUser;
     private Dialog signInDialog;
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +100,8 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        sharedPreferences = getSharedPreferences("signin_info", MODE_PRIVATE);
 
         productImageViewPager = findViewById(R.id.product_image_view_pager);
         viewPagerIndicator = findViewById(R.id.view_pager_indicator);
@@ -129,7 +134,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 //        ProductImageAdapter productImageAdapter = new ProductImageAdapter(productImages);
 //        productImageViewPager.setAdapter(productImageAdapter);
 //        productImageAdapter.notifyDataSetChanged();
-        doGetProductDetail(productID, 2);
+        doGetProductDetail(productID, sharedPreferences.getInt("id", 1));
 
         viewPagerIndicator.setupWithViewPager(productImageViewPager, true);
 
@@ -281,7 +286,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                                     if (currentUser == null) {
 //                        signInDialog.show();
                                     } else {
-                                        doAddToCart(productID, 2);
+                                        doAddToCart(productID, sharedPreferences.getInt("id", 1));
                                     }
                                 }
                             });
@@ -297,9 +302,9 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                             @Override
                             public void onClick(View v) {
                                 if (isAddedToWishlist) {
-                                    doDeleteWishlist(productID, 2);
+                                    doDeleteWishlist(productID, sharedPreferences.getInt("id", 1));
                                 } else {
-                                    doAddToWishlist(productID, 2);
+                                    doAddToWishlist(productID, sharedPreferences.getInt("id", 1));
                                 }
                             }
                         });

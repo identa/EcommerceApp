@@ -3,6 +3,7 @@ package com.example.ecommerceapp;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -23,8 +24,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -52,11 +55,15 @@ public class HomeActivity extends AppCompatActivity
 
     private FirebaseUser currentUser;
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        sharedPreferences = getSharedPreferences("signin_info", MODE_PRIVATE);
 
         searchView = findViewById(R.id.search_view);
         searchView.setCursorDrawable(R.drawable.search_view_custom_cursor);
@@ -77,6 +84,9 @@ public class HomeActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
+
+        ImageView homeProfileImage = navigationView.getHeaderView(0).findViewById(R.id.home_profile_image);
+        Glide.with(this).load(sharedPreferences.getString("imageURL", "a")).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(homeProfileImage);
 
         frameLayout = findViewById(R.id.home_frame_layout);
 //        noInternet = findViewById(R.id.no_internet);
@@ -260,7 +270,12 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_account) {
             gotoFragment("My account", new MyAccountFragment(), ACCOUNT_FRAGMENT);
         } else if (id == R.id.nav_sign_out) {
-
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear().apply();
+            Intent signInIntent = new Intent(this, SignUpActivity.class);
+            startActivity(signInIntent);
+            Toast.makeText(getApplicationContext(), "Sign out successfully", Toast.LENGTH_LONG).show();
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

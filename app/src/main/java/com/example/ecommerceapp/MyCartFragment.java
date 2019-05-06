@@ -1,7 +1,9 @@
 package com.example.ecommerceapp;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,8 +51,9 @@ public class MyCartFragment extends Fragment implements CartService {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_cart, container, false);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
         cartItemModelList = new ArrayList<>();
-        doGetCart(2);
+        doGetCart(sharedPreferences.getInt("id", 1));
 
         cartItemRecyclerView = view.findViewById(R.id.cart_item_recycler_view);
         continueBtn = view.findViewById(R.id.cart_continue_btn);

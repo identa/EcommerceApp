@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.AddAddressModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
@@ -50,6 +52,8 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
 
     private ConstraintLayout addressLayout;
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,8 +73,10 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
         addressLayout = view.findViewById(R.id.address_layout);
         editAddressBtn = view.findViewById(R.id.edit_address_btn);
 
-        doGetAddress(5);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
+        Glide.with(this).load(sharedPreferences.getString("imageURL", "a")).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(profileImage);
+
+        doGetAddress(sharedPreferences.getInt("id", 1));
         userName.setText(String.format("%s %s", sharedPreferences.getString("firstName", "a"), sharedPreferences.getString("lastName", "a")));
 //        editAddressBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override

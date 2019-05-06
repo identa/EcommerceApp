@@ -1,6 +1,8 @@
 package com.example.ecommerceapp;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +45,8 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
     private WishlistAdapter wishlistAdapter;
     private List<WishlistModel> wishlistModelList;
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,8 +57,9 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         wishlistRecyclerView.setLayoutManager(linearLayoutManager);
 
+        sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
         wishlistModelList = new ArrayList<>();
-        doGetWishlist(2);
+        doGetWishlist(sharedPreferences.getInt("id", 1));
 //        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
 //        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
 //        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));

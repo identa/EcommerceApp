@@ -1,6 +1,8 @@
 package com.example.ecommerceapp;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,12 +43,17 @@ public class MyOrderFragment extends Fragment implements OrderService {
     private List<MyOrderItemModel> myOrderItemModelList;
     private MyOrderAdapter myOrderAdapter;
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_order, container, false);
         myOrderRecyclerView = view.findViewById(R.id.my_order_recycler_view);
+
+        sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         myOrderRecyclerView.setLayoutManager(layoutManager);
@@ -57,7 +64,7 @@ public class MyOrderFragment extends Fragment implements OrderService {
 //        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
 //        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Cancelled"));
 //        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
-        doGetOrder(2);
+        doGetOrder(sharedPreferences.getInt("id", 1));
         myOrderAdapter = new MyOrderAdapter(myOrderItemModelList);
         myOrderRecyclerView.setAdapter(myOrderAdapter);
         myOrderAdapter.notifyDataSetChanged();

@@ -2,6 +2,7 @@ package com.example.ecommerceapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -97,6 +98,8 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
         private ImageButton deleteBtn;
         private int productID;
 
+        private SharedPreferences sharedPreferences;
+
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             producImage = itemView.findViewById(R.id.product_image);
@@ -107,6 +110,8 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
             productPrice = itemView.findViewById(R.id.product_price);
             cuttedPrice = itemView.findViewById(R.id.cutted_price);
             deleteBtn = itemView.findViewById(R.id.delete_btn);
+
+            sharedPreferences = itemView.getContext().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -132,7 +137,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
                 deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        doDeleteWishlist(productID, 2, position, itemView.getContext());
+                        doDeleteWishlist(productID, sharedPreferences.getInt("id", 1), position, itemView.getContext());
                     }
                 });
             } else {

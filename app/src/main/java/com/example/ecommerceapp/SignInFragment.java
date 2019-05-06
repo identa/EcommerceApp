@@ -249,6 +249,7 @@ public class SignInFragment extends Fragment implements SignInService {
                         editor.putString("imageURL", response.body().getData().getImageURL());
                         editor.putString("token", response.body().getData().getToken());
                         editor.putInt("id", response.body().getData().getId());
+                        editor.putString("email", email.getText().toString());
 
                         editor.apply();
                         goHome();
