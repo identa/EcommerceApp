@@ -1,16 +1,26 @@
 package com.example.ecommerceapp.models;
 
 public class MyOrderItemModel {
+    private int id;
     private int productImage;
     private int rating;
     private String productTitle;
     private String deliveryStatus;
 
-    public MyOrderItemModel(int productImage, int rating, String productTitle, String deliveryStatus) {
+    public MyOrderItemModel(int id, int productImage, int rating, String productTitle, String deliveryStatus) {
+        this.id = id;
         this.productImage = productImage;
         this.rating = rating;
         this.productTitle = productTitle;
         this.deliveryStatus = deliveryStatus;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getProductImage() {

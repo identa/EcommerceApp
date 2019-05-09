@@ -18,8 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddAddressActivity"
-            android:theme="@style/RedProgressBar"></activity>
+        <activity android:name=".OrderDetailsActivity"></activity>
+        <activity
+            android:name=".AddAddressActivity"
+            android:theme="@style/RedProgressBar" />
         <activity android:name=".DeliveryActivity" />
         <activity android:name=".ViewAllActivity" />
         <activity android:name=".ProductDetailActivity" />

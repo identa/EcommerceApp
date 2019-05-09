@@ -1,5 +1,6 @@
 package com.example.ecommerceapp.adapters;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.ecommerceapp.OrderDetailsActivity;
 import com.example.ecommerceapp.R;
 import com.example.ecommerceapp.models.MyOrderItemModel;
 
@@ -32,11 +34,12 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MyOrderAdapter.ViewHolder viewHolder, int i) {
+        int id = myOrderItemModelList.get(i).getId();
         int resource = myOrderItemModelList.get(i).getProductImage();
         int rating = myOrderItemModelList.get(i).getRating();
         String title = myOrderItemModelList.get(i).getProductTitle();
         String deliveryDate = myOrderItemModelList.get(i).getDeliveryStatus();
-        viewHolder.setData(resource, title, deliveryDate, rating);
+        viewHolder.setData(id, resource, title, deliveryDate, rating);
     }
 
     @Override
@@ -61,7 +64,7 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
             rateNowContainer = itemView.findViewById(R.id.rating_now_container);
         }
 
-        private void setData(int resource, String title, String deliveredDate, int rating) {
+        private void setData(final int id, int resource, String title, String deliveredDate, int rating) {
             productImage.setImageResource(resource);
             productTitle.setText(title);
             if (deliveredDate.equals("Cancelled")) {
@@ -70,6 +73,15 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
                 orderIndicator.setImageTintList(ColorStateList.valueOf(itemView.getContext().getResources().getColor(R.color.successGreen)));
             }
             deliveryStatus.setText(deliveredDate);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent orderDetailsIntent = new Intent(itemView.getContext(), OrderDetailsActivity.class);
+                    orderDetailsIntent.putExtra("orderID", id);
+                    itemView.getContext().startActivity(orderDetailsIntent);
+                }
+            });
 
             setRating(rating);
             for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
