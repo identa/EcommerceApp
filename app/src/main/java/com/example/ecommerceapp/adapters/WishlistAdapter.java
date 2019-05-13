@@ -117,7 +117,8 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                     Intent productDetailIntent = new Intent(itemView.getContext(), ProductDetailActivity.class);
-                    ProductDetailActivity.productID = productID;
+//                    ProductDetailActivity.productID = productID;
+                    productDetailIntent.putExtra("productID", productID);
                     itemView.getContext().startActivity(productDetailIntent);
                 }
             });

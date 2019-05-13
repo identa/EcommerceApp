@@ -1,12 +1,16 @@
 package com.example.ecommerceapp;
 
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -21,6 +25,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -28,8 +33,15 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import static com.example.ecommerceapp.SignUpActivity.setSignUpFragment;
@@ -56,7 +68,10 @@ public class HomeActivity extends AppCompatActivity
     private FirebaseUser currentUser;
 
     private SharedPreferences sharedPreferences;
+    private ImageView homeProfileImage;
+    private StorageReference storageReference;
 
+    private static final int IMAGE_REQUEST_CODE = 10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +100,19 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        ImageView homeProfileImage = navigationView.getHeaderView(0).findViewById(R.id.home_profile_image);
+        storageReference = FirebaseStorage.getInstance().getReference("avatars");
+
+        homeProfileImage = navigationView.getHeaderView(0).findViewById(R.id.home_profile_image);
         Glide.with(this).load(sharedPreferences.getString("imageURL", "a")).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(homeProfileImage);
+        homeProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent loadImageIntent = new Intent();
+                loadImageIntent.setType("image/*");
+                loadImageIntent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(loadImageIntent, IMAGE_REQUEST_CODE);
+            }
+        });
 
         frameLayout = findViewById(R.id.home_frame_layout);
 //        noInternet = findViewById(R.id.no_internet);
@@ -132,7 +158,7 @@ public class HomeActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) {
+        if (sharedPreferences.getString("email", "no_email").equals("no_email")) {
             navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(false);
         } else {
             navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(true);
@@ -290,6 +316,47 @@ public class HomeActivity extends AppCompatActivity
             transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
             transaction.replace(frameLayout.getId(), fragment);
             transaction.commit();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK){
+            if (data != null && data.getData() != null){
+                uploadImage(data.getData());
+            }
+        }
+    }
+
+    private String getFileExtension(Uri imageUri){
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(imageUri));
+    }
+
+    private void uploadImage(Uri imageUri){
+        if (imageUri != null){
+            final StorageReference reference = storageReference.child(sharedPreferences.getString("email", "no_email") + "." + System.currentTimeMillis() + "." + getFileExtension(imageUri));
+
+            Task<Uri> uriTask = reference.putFile(imageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()){
+                        throw task.getException();
+                    }
+                    return reference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()){
+                    Glide.with(HomeActivity.this).load(task.getResult()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(homeProfileImage);
+                    }
+                }
+            });
+        }else {
+            Toast.makeText(this, "No image selected", Toast.LENGTH_LONG).show();
         }
     }
 }

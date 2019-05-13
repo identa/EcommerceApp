@@ -82,6 +82,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private static boolean isAddedToWishlist = false;
     private static boolean isAddedToCart = false;
     public static int productID;
+    private int id;
     private FloatingActionButton addToWishlistBtn;
     private List<CartItemModel> cartItemModelList;
 
@@ -123,6 +124,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         avgRating = findViewById(R.id.avg_rating);
         addToCartTextView = findViewById(R.id.tv_add_to_cart);
 
+        id = getIntent().getIntExtra("productID", 1);
         productImages = new ArrayList<>();
         cartItemModelList = new ArrayList<>();
 //        productImages.add(R.mipmap.steakhouse);
@@ -134,7 +136,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 //        ProductImageAdapter productImageAdapter = new ProductImageAdapter(productImages);
 //        productImageViewPager.setAdapter(productImageAdapter);
 //        productImageAdapter.notifyDataSetChanged();
-        doGetProductDetail(productID, sharedPreferences.getInt("id", 1));
+        doGetProductDetail(id, sharedPreferences.getInt("id", 1));
 
         viewPagerIndicator.setupWithViewPager(productImageViewPager, true);
 
@@ -286,7 +288,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                                     if (currentUser == null) {
 //                        signInDialog.show();
                                     } else {
-                                        doAddToCart(productID, sharedPreferences.getInt("id", 1));
+                                        doAddToCart(id, sharedPreferences.getInt("id", 1));
                                     }
                                 }
                             });
@@ -302,9 +304,9 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                             @Override
                             public void onClick(View v) {
                                 if (isAddedToWishlist) {
-                                    doDeleteWishlist(productID, sharedPreferences.getInt("id", 1));
+                                    doDeleteWishlist(id, sharedPreferences.getInt("id", 1));
                                 } else {
-                                    doAddToWishlist(productID, sharedPreferences.getInt("id", 1));
+                                    doAddToWishlist(id, sharedPreferences.getInt("id", 1));
                                 }
                             }
                         });
