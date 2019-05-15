@@ -20,6 +20,18 @@ public class CartItemModel {
     private double productPrice;
     private double cuttedPrice;
     private int productQuantity;
+    private int limit;
+
+    public CartItemModel(int type, int productID, String productImage, String productTitle, double productPrice, double cuttedPrice, int productQuantity, int limit) {
+        this.type = type;
+        this.productID = productID;
+        this.productImage = productImage;
+        this.productTitle = productTitle;
+        this.productPrice = productPrice;
+        this.cuttedPrice = cuttedPrice;
+        this.productQuantity = productQuantity;
+        this.limit = limit;
+    }
 
     public CartItemModel(int type, int productID, String productImage, String productTitle, double productPrice, double cuttedPrice, int productQuantity) {
         this.type = type;
@@ -77,6 +89,14 @@ public class CartItemModel {
 
     public void setProductQuantity(int productQuantity) {
         this.productQuantity = productQuantity;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     //cart total

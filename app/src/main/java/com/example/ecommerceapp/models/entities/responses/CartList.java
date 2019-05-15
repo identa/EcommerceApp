@@ -24,6 +24,10 @@ public class CartList {
     @Expose
     private int quantity;
 
+    @SerializedName("limit")
+    @Expose
+    private int limit;
+
     @SerializedName("imageURL")
     @Expose
     private String imageURL;
@@ -66,6 +70,14 @@ public class CartList {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     public String getImageURL() {

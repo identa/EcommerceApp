@@ -80,7 +80,8 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                 double productPrice = cartItemModelList.get(i).getProductPrice();
                 double cuttedPrice = cartItemModelList.get(i).getCuttedPrice();
                 int quantity = cartItemModelList.get(i).getProductQuantity();
-                ((CartItemViewHolder) viewHolder).setItemDetails(id, resource, title, productPrice, cuttedPrice, quantity, i);
+                int limit = cartItemModelList.get(i).getLimit();
+                ((CartItemViewHolder) viewHolder).setItemDetails(id, resource, title, productPrice, cuttedPrice, quantity, limit, i);
                 break;
             case CartItemModel.TOTAL_AMOUNT:
                 int totalItems = cartItemModelList.get(i).getTotalItems();
@@ -186,7 +187,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
             deleteBtn = itemView.findViewById(R.id.remove_item_btn);
         }
 
-        private void setItemDetails(final int id, String resource, String title, double productPriceText, double cuttedPriceText, final int quantity, final int position) {
+        private void setItemDetails(final int id, String resource, String title, double productPriceText, double cuttedPriceText, final int quantity, final int limit, final int position) {
 //            productImage.setImageResource(resource);
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
             productTitle.setText(title);
@@ -202,7 +203,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                     quantityDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     quantityDialog.setCancelable(false);
                     final NumberPicker numberPicker = quantityDialog.findViewById(R.id.num_picker);
-                    numberPicker.setMaxValue(100);
+                    numberPicker.setMaxValue(limit);
                     numberPicker.setMinValue(1);
                     numberPicker.setWrapSelectorWheel(true);
                     numberPicker.setValue(quantity);

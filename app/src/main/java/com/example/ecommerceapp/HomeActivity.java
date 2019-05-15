@@ -137,27 +137,6 @@ public class HomeActivity extends AppCompatActivity
                 gotoFragment("My account", new MyAccountFragment(), ACCOUNT_FRAGMENT);
             } else setFragment(new HomeFragment(), HOME_FRAGMENT);
         }
-
-//        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-//
-//        if (networkInfo != null && networkInfo.isConnected()){
-//            noInternet.setVisibility(View.GONE);
-////        if (showCart) {
-////            drawer.setDrawerLockMode(1);
-////            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-////            gotoFragment("My cart", new MyCartFragment(), -2);
-////        } else {
-////            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-////                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-////            drawer.addDrawerListener(toggle);
-////            toggle.syncState();
-////            setFragment(new HomeFragment(), HOME_FRAGMENT);
-////        }
-//    } else {
-//            Glide.with(this).load(R.mipmap.no_internet).into(noInternet);
-//            noInternet.setVisibility(View.VISIBLE);
-//        }
     }
 
     @Override
@@ -166,6 +145,10 @@ public class HomeActivity extends AppCompatActivity
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (sharedPreferences.getString("email", "no_email").equals("no_email")) {
             navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(false);
+            navigationView.getMenu().getItem(WISHLIST_FRAGMENT).setEnabled(false);
+            navigationView.getMenu().getItem(CART_FRAGMENT).setEnabled(false);
+            navigationView.getMenu().getItem(ACCOUNT_FRAGMENT).setEnabled(false);
+            navigationView.getMenu().getItem(ORDER_FRAGMENT).setEnabled(false);
         } else {
             navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(true);
         }

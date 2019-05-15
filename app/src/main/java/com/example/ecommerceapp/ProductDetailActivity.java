@@ -277,22 +277,43 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                                 response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount() / 100),
                                 1));
 
-                        if (isAddedToCart) {
-                            addToCartTextView = findViewById(R.id.tv_add_to_cart);
-                            addToCartTextView.setText("ADREADY ADDED TO");
-                            addToCartBtn.setOnClickListener(null);
-                        } else {
-                            addToCartBtn.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (currentUser == null) {
-//                        signInDialog.show();
-                                    } else {
+                        if (response.body().getData().getQuantity() <= 0){
+                            buyNowBtn.setVisibility(View.GONE);
+                            TextView outOfStock = (TextView) addToCartBtn.getChildAt(0);
+                            outOfStock.setText("Out of stock");
+                            outOfStock.setTextColor(getResources().getColor(R.color.colorPrimary));
+                            outOfStock.setCompoundDrawables(null, null, null, null);
+                        }else {
+                            if (isAddedToCart) {
+                                addToCartTextView = findViewById(R.id.tv_add_to_cart);
+                                addToCartTextView.setText("ADREADY ADDED TO");
+                                addToCartBtn.setOnClickListener(null);
+                            } else {
+                                addToCartBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
                                         doAddToCart(id, sharedPreferences.getInt("id", 1));
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
+
+//                        if (isAddedToCart) {
+//                            addToCartTextView = findViewById(R.id.tv_add_to_cart);
+//                            addToCartTextView.setText("ADREADY ADDED TO");
+//                            addToCartBtn.setOnClickListener(null);
+//                        } else {
+//                            addToCartBtn.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    if (currentUser == null) {
+////                        signInDialog.show();
+//                                    } else {
+//                                        doAddToCart(id, sharedPreferences.getInt("id", 1));
+//                                    }
+//                                }
+//                            });
+//                        }
 
                         if (isAddedToWishlist) {
                             addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
@@ -324,6 +345,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             @Override
             public void onFailure(Call<ProductDetailResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                Toast.makeText(ProductDetailActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

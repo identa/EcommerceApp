@@ -38,6 +38,10 @@ public class ProductDetailData {
     @Expose
     private boolean inWishlist;
 
+    @SerializedName("quantity")
+    @Expose
+    private int quantity;
+
     @SerializedName("images")
     @Expose
     private List<ProductImageData> images;
@@ -104,6 +108,14 @@ public class ProductDetailData {
 
     public void setInWishlist(boolean inWishlist) {
         this.inWishlist = inWishlist;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public List<ProductImageData> getImages() {

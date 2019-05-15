@@ -102,7 +102,8 @@ public class MyCartFragment extends Fragment implements CartService {
                                     data.getName(),
                                     data.getPrice(),
                                     data.getCuttedPrice(),
-                                    data.getQuantity()));
+                                    data.getQuantity(),
+                                    data.getLimit()));
                         }
                         cartItemModelList.add(new CartItemModel(1,
                                 response.body().getData().getTotalItem(),
