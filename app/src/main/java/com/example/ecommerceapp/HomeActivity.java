@@ -44,6 +44,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import static com.example.ecommerceapp.SignUpActivity.setSignUpFragment;
 
 public class HomeActivity extends AppCompatActivity
@@ -194,23 +200,23 @@ public class HomeActivity extends AppCompatActivity
         if (currentFragment == HOME_FRAGMENT) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getMenuInflater().inflate(R.menu.home, menu);
-        }
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.home_search_icon) {
-            searchView.setMenuItem(item);
+            searchView.setMenuItem(menu.findItem(R.id.home_search_icon));
+            final SharedPreferences suggestPreferences = getSharedPreferences("suggest",MODE_PRIVATE);
+            Map<String, ?> fetchStringMap = suggestPreferences.getAll();
+            List<String> stringList = new ArrayList<>();
+            for (Map.Entry<String, ?> entry : fetchStringMap.entrySet()){
+                stringList.add(entry.getValue().toString());
+            }
+            searchView.setSuggestions(stringList.toArray(new String[0]));
             searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+                    SharedPreferences.Editor editor = suggestPreferences.edit();
+
+                    editor.putString(""+System.currentTimeMillis(), query);
+                    editor.apply();
+
                     Intent viewAllIntent = new Intent(HomeActivity.this, ViewAllActivity.class);
                     viewAllIntent.putExtra("layout_code", 2);
                     viewAllIntent.putExtra("search_query", query);
@@ -224,6 +230,48 @@ public class HomeActivity extends AppCompatActivity
                     return false;
                 }
             });
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.home_search_icon) {
+//            searchView.setMenuItem(item);
+//            final SharedPreferences suggestPreferences = getSharedPreferences("suggest",MODE_PRIVATE);
+//            Map<String, ?> fetchStringMap = suggestPreferences.getAll();
+//            List<String> stringList = new ArrayList<>();
+//            for (Map.Entry<String, ?> entry : fetchStringMap.entrySet()){
+//                stringList.add(entry.getValue().toString());
+//            }
+//            searchView.setSuggestions(stringList.toArray(new String[0]));
+//            searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+//                @Override
+//                public boolean onQueryTextSubmit(String query) {
+//                    SharedPreferences.Editor editor = suggestPreferences.edit();
+//
+//                    editor.putString(""+System.currentTimeMillis(), query);
+//                    editor.apply();
+//
+//                    Intent viewAllIntent = new Intent(HomeActivity.this, ViewAllActivity.class);
+//                    viewAllIntent.putExtra("layout_code", 2);
+//                    viewAllIntent.putExtra("search_query", query);
+//                    viewAllIntent.putExtra("title", "Search results");
+//                    startActivity(viewAllIntent);
+//                    return false;
+//                }
+//
+//                @Override
+//                public boolean onQueryTextChange(String newText) {
+//                    return false;
+//                }
+//            });
             return true;
         } else if (id == R.id.home_notification_icon) {
             return true;

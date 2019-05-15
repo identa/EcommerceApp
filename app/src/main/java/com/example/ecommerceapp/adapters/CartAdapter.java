@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -185,7 +186,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
             deleteBtn = itemView.findViewById(R.id.remove_item_btn);
         }
 
-        private void setItemDetails(final int id, String resource, String title, double productPriceText, double cuttedPriceText, int quantity, final int position) {
+        private void setItemDetails(final int id, String resource, String title, double productPriceText, double cuttedPriceText, final int quantity, final int position) {
 //            productImage.setImageResource(resource);
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
             productTitle.setText(title);
@@ -200,7 +201,12 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                     quantityDialog.setContentView(R.layout.quantity_dialog);
                     quantityDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     quantityDialog.setCancelable(false);
-                    final EditText quantityNo = quantityDialog.findViewById(R.id.quantity_no);
+                    final NumberPicker numberPicker = quantityDialog.findViewById(R.id.num_picker);
+                    numberPicker.setMaxValue(100);
+                    numberPicker.setMinValue(1);
+                    numberPicker.setWrapSelectorWheel(true);
+                    numberPicker.setValue(quantity);
+//                    final EditText quantityNo = quantityDialog.findViewById(R.id.quantity_no);
                     Button cancelBtn = quantityDialog.findViewById(R.id.cancel_btn);
                     Button okBtn = quantityDialog.findViewById(R.id.ok_btn);
 
@@ -214,7 +220,9 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                     okBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            doEditCart(id, Integer.parseInt(quantityNo.getText().toString()), position, itemView.getContext());
+//                            doEditCart(id, Integer.parseInt(quantityNo.getText().toString()), position, itemView.getContext());
+                            doEditCart(id, numberPicker.getValue(), position, itemView.getContext());
+
 //                            productQuantity.setText(String.format("Qty: %s", quantityNo.getText().toString()));
                             quantityDialog.dismiss();
                         }

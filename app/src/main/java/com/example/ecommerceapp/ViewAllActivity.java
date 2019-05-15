@@ -1,19 +1,28 @@
 package com.example.ecommerceapp;
 
+import android.app.Dialog;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
+import com.example.ecommerceapp.adapters.CatCheckboxAdapter;
 import com.example.ecommerceapp.adapters.GridProductLayoutAdapter;
 import com.example.ecommerceapp.adapters.HorizontalProductScrollAdapter;
 import com.example.ecommerceapp.adapters.WishlistAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
+import com.example.ecommerceapp.models.CheckboxModel;
 import com.example.ecommerceapp.models.HorizontalProductScrollModel;
 import com.example.ecommerceapp.models.WishlistModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
@@ -25,6 +34,7 @@ import com.example.ecommerceapp.models.interfaces.HomePageAPI;
 import com.example.ecommerceapp.models.interfaces.ViewAllAPI;
 import com.example.ecommerceapp.models.services.HomePageService;
 import com.example.ecommerceapp.models.services.ViewAllService;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +47,7 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
 
     private RecyclerView recyclerView;
     private GridView gridView;
+    private ListView listView;
     private List<HorizontalProductScrollModel> gridModelList;
     //    private List<HorizontalProductScrollModel> horizontalProductScrollModelList;
 //    private HorizontalProductScrollAdapter horizontalProductScrollAdapter;
@@ -44,8 +55,12 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
     private List<WishlistModel> searchModelList;
     private List<WishlistModel> categoryModelList;
 
+    private List<CheckboxModel> priceModelList;
+
     private WishlistAdapter horizontalAdapter;
     private GridProductLayoutAdapter gridProductLayoutAdapter;
+
+    private Dialog sortDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +112,47 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
             recyclerView.setAdapter(horizontalAdapter);
             horizontalAdapter.notifyDataSetChanged();
         } else if (layout_code == 3) {
+//            MaterialSpinner spinner = findViewById(R.id.spinner);
+//            spinner.setVisibility(View.VISIBLE);
+//            spinner.setItems("Newest", "Oldest", "Price: DESC", "Price: ASC", "Most popular", "Best seller");
+//            spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+//
+//                @Override
+//                public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+//                    Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
+//                }
+//            });
+
+//            listView.setVisibility(View.VISIBLE);
+            priceModelList = new ArrayList<>();
+
+//            CatCheckboxAdapter catCheckboxAdapter = new CatCheckboxAdapter(priceModelList);
+//            listView.setAdapter(catCheckboxAdapter);
+//            catCheckboxAdapter.notifyDataSetChanged();
+
+            sortDialog = new Dialog(ViewAllActivity.this);
+            sortDialog.setContentView(R.layout.sort_dialog);
+            sortDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            sortDialog.setCancelable(true);
+
+            LinearLayout priceLinearLayout = sortDialog.findViewById(R.id.price_checkbox_layout);
+
+            MaterialSpinner spinner = sortDialog.findViewById(R.id.spinner);
+            spinner.setItems("Newest", "Oldest", "Price: DESC", "Price: ASC", "Most popular", "Best seller");
+            spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                    Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
+                }
+            });
+            for (int i = 1; i <= priceLinearLayout.getChildCount(); i++){
+                View checkboxView = priceLinearLayout.getChildAt(i);
+                if (checkboxView instanceof CheckBox){
+                    ((CheckBox) checkboxView).setChecked(true);
+                }
+            }
+
             categoryModelList = new ArrayList<>();
             doShowCat(getIntent().getIntExtra("cat_id", 1));
             recyclerView.setVisibility(View.VISIBLE);
@@ -111,10 +167,19 @@ public class ViewAllActivity extends AppCompatActivity implements ViewAllService
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_icon, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
+        }else if (id == R.id.home_search_icon){
+            sortDialog.show();
         }
         return super.onOptionsItemSelected(item);
     }
