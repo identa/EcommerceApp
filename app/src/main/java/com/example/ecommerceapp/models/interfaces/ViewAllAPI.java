@@ -1,10 +1,14 @@
 package com.example.ecommerceapp.models.interfaces;
 
+import com.example.ecommerceapp.models.entities.requests.SortRequest;
+import com.example.ecommerceapp.models.entities.responses.GetCatResponse;
 import com.example.ecommerceapp.models.entities.responses.HomePageProductResponse;
 import com.example.ecommerceapp.models.entities.responses.HorizontalViewAllResponse;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -20,4 +24,10 @@ public interface ViewAllAPI {
 
     @GET("/api/public/cat/{id}")
     Call<HorizontalViewAllResponse> showCat(@Path("id") int id);
+
+    @GET("/api/public/cat")
+    Call<GetCatResponse> getCat();
+
+    @POST("/api/public/sort")
+    Call<HorizontalViewAllResponse> sort (@Body SortRequest request);
 }

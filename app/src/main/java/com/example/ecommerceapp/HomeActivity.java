@@ -29,6 +29,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -75,6 +76,8 @@ public class HomeActivity extends AppCompatActivity
 
     private SharedPreferences sharedPreferences;
     private ImageView homeProfileImage;
+    private TextView homeFullName;
+    private TextView homeEmail;
     private StorageReference storageReference;
 
     private static final int IMAGE_REQUEST_CODE = 10;
@@ -109,7 +112,11 @@ public class HomeActivity extends AppCompatActivity
         storageReference = FirebaseStorage.getInstance().getReference("avatars");
 
         homeProfileImage = navigationView.getHeaderView(0).findViewById(R.id.home_profile_image);
+        homeFullName = navigationView.getHeaderView(0).findViewById(R.id.home_full_name);
+        homeEmail = navigationView.getHeaderView(0).findViewById(R.id.home_email);
         Glide.with(this).load(sharedPreferences.getString("imageURL", "a")).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(homeProfileImage);
+        homeFullName.setText(String.format("%s %s", sharedPreferences.getString("firstName", "Not signed in"), sharedPreferences.getString("lastName", "")));
+        homeEmail.setText(sharedPreferences.getString("email", ""));
         homeProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

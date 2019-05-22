@@ -18,9 +18,9 @@ public class ProductDetailData {
     @Expose
     private double originalPrice;
 
-    @SerializedName("discount")
+    @SerializedName("currentPrice")
     @Expose
-    private int discount;
+    private double currentPrice;
 
     @SerializedName("description")
     @Expose
@@ -70,12 +70,12 @@ public class ProductDetailData {
         this.originalPrice = originalPrice;
     }
 
-    public int getDiscount() {
-        return discount;
+    public double getCurrentPrice() {
+        return currentPrice;
     }
 
-    public void setDiscount(int discount) {
-        this.discount = discount;
+    public void setCurrentPrice(double currentPrice) {
+        this.currentPrice = currentPrice;
     }
 
     public String getDescription() {

@@ -85,11 +85,14 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private int id;
     private FloatingActionButton addToWishlistBtn;
     private List<CartItemModel> cartItemModelList;
+    private LinearLayout tradeLayout;
+    private TextView quantityView;
 
     private FirebaseUser currentUser;
     private Dialog signInDialog;
 
     private SharedPreferences sharedPreferences;
+    private int qty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +126,13 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         ratingsProgressBarContainer = findViewById(R.id.ratings_progressbar_container);
         avgRating = findViewById(R.id.avg_rating);
         addToCartTextView = findViewById(R.id.tv_add_to_cart);
+        tradeLayout = findViewById(R.id.trade_layout);
+        quantityView = findViewById(R.id.quantity);
 
+        if (sharedPreferences.getString("email", "no_email").equals("no_email")){
+            tradeLayout.setVisibility(View.GONE);
+            addToWishlistBtn.hide();
+        }
         id = getIntent().getIntExtra("productID", 1);
         productImages = new ArrayList<>();
         cartItemModelList = new ArrayList<>();
@@ -258,23 +267,25 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                         }
 
                         productTitle.setText(response.body().getData().getName());
-                        productPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount() / 100)));
+                        productPrice.setText(String.format("$%s", response.body().getData().getCurrentPrice()));
                         cuttedPrice.setText(String.format("$%s", response.body().getData().getOriginalPrice()));
                         productDescription = response.body().getData().getDescription();
                         productOtherDetails = response.body().getData().getDescription();
                         isAddedToCart = response.body().getData().isInCart();
                         isAddedToWishlist = response.body().getData().isInWishlist();
+                        qty = response.body().getData().getQuantity();
+                        quantityView.setText(String.format("Quantity: %d", qty));
 
                         cartItemModelList.add(new CartItemModel(0, response.body().getData().getId(),
                                 response.body().getData().getImages().get(0).getImageURL(),
                                 response.body().getData().getName(),
-                                response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount() / 100),
+                                response.body().getData().getCurrentPrice(),
                                 response.body().getData().getOriginalPrice(),
                                 1));
 
                         cartItemModelList.add(new CartItemModel(1,
                                 1,
-                                response.body().getData().getOriginalPrice() * (1 - response.body().getData().getDiscount() / 100),
+                                response.body().getData().getCurrentPrice(),
                                 1));
 
                         if (response.body().getData().getQuantity() <= 0){
@@ -364,6 +375,16 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                         addToCartTextView.setText("ADREADY ADDED TO");
                         Toast.makeText(ProductDetailActivity.this, "Add to cart successfully!", Toast.LENGTH_SHORT).show();
                         addToCartBtn.setOnClickListener(null);
+                        qty --;
+                        quantityView.setText(String.format("Quantity: %d", qty));
+
+                        if (qty == 0){
+                            buyNowBtn.setVisibility(View.GONE);
+                            TextView outOfStock = (TextView) addToCartBtn.getChildAt(0);
+                            outOfStock.setText("Out of stock");
+                            outOfStock.setTextColor(getResources().getColor(R.color.colorPrimary));
+                            outOfStock.setCompoundDrawables(null, null, null, null);
+                        }
                     }
                 }
             }

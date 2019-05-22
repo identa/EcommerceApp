@@ -27,7 +27,7 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintBottom_toTopOf="@+id/trade_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
@@ -46,7 +46,7 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/trade_layout"
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:orientation="horizontal"

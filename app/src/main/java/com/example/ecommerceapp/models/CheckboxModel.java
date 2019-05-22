@@ -2,11 +2,11 @@ package com.example.ecommerceapp.models;
 
 public class CheckboxModel {
     private int id;
-    private String type;
+    private int type;
     private boolean isSelected;
     private String title;
 
-    public CheckboxModel(int id, String type, boolean isSelected, String title) {
+    public CheckboxModel(int id, int type, boolean isSelected, String title) {
         this.id = id;
         this.type = type;
         this.isSelected = isSelected;
@@ -21,11 +21,11 @@ public class CheckboxModel {
         this.id = id;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 

@@ -12,6 +12,10 @@ public class GetOrderData {
     @Expose
     private int userID;
 
+    @SerializedName("createAt")
+    @Expose
+    private String createAt;
+
     public int getId() {
         return id;
     }
@@ -26,5 +30,13 @@ public class GetOrderData {
 
     public void setUserID(int userID) {
         this.userID = userID;
+    }
+
+    public String getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(String createAt) {
+        this.createAt = createAt;
     }
 }
