@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
     private TextView city;
     private TextView state;
     private TextView postalCode;
+    private FloatingActionButton settingBtn;
 
     private ConstraintLayout addressLayout;
 
@@ -70,6 +72,7 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
         state = view.findViewById(R.id.address_state);
         postalCode = view.findViewById(R.id.address_postal_code);
 
+        settingBtn = view.findViewById(R.id.setting_btn);
         addressLayout = view.findViewById(R.id.address_layout);
         editAddressBtn = view.findViewById(R.id.edit_address_btn);
 
@@ -77,7 +80,8 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
         Glide.with(this).load(sharedPreferences.getString("imageURL", "a")).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(profileImage);
 
         doGetAddress(sharedPreferences.getInt("id", 1));
-        userName.setText(String.format("%s %s", sharedPreferences.getString("firstName", "a"), sharedPreferences.getString("lastName", "a")));
+        userName.setText(String.format("%s %s", sharedPreferences.getString("firstName", ""), sharedPreferences.getString("lastName", "")));
+        userEmail.setText(sharedPreferences.getString("email",""));
 //        editAddressBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -86,6 +90,17 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
 //                startActivity(addAddressIntent);
 //            }
 //        });
+
+        settingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent updateIntent = new Intent(getContext(), UpdateUserInfoActivity.class);
+                updateIntent.putExtra("firstName", sharedPreferences.getString("firstName", "no_firstName"));
+                updateIntent.putExtra("lastName", sharedPreferences.getString("lastName", "no_lastName"));
+                updateIntent.putExtra("photo", sharedPreferences.getString("imageURL", "no_photo"));
+                startActivity(updateIntent);
+            }
+        });
         return view;
     }
 

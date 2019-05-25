@@ -221,25 +221,6 @@ public class SignUpFragment extends Fragment implements SignUpService {
         }
     }
 
-    private TextWatcher textWatcher() {
-        return new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                checkInput();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        };
-    }
-
     private void checkEmailAndPassword() {
         Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
         customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());

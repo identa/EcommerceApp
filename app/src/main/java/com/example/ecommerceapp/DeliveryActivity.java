@@ -31,10 +31,13 @@ import com.example.ecommerceapp.models.entities.responses.GetAddressResponse;
 import com.example.ecommerceapp.models.interfaces.AddOrderAPI;
 import com.example.ecommerceapp.models.services.AddOrderService;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalItem;
 import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalPaymentDetails;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
+import com.paypal.android.sdk.payments.ShippingAddress;
 
 import org.json.JSONException;
 
@@ -245,7 +248,13 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                                         public void onClick(View v) {
                                             paymentMethodDialog.dismiss();
                                             PayPalPayment payment = new PayPalPayment(new BigDecimal(cartItemModelList.get(cartItemModelList.size() - 1).getTotalItemPrice()), "USD", "Anh", PayPalPayment.PAYMENT_INTENT_SALE);
-
+                                            ShippingAddress address = new ShippingAddress().recipientName(shippingName.getText().toString())
+                                                    .city(shippingCity.getText().toString())
+                                                    .line1(shippingAddress.getText().toString())
+                                                    .state(shippingState.getText().toString())
+                                                    .postalCode(shippingPostalCode.getText().toString())
+                                                    .countryCode("VN");
+                                            payment.providedShippingAddress(address);
                                             Intent paypalIntent = new Intent(DeliveryActivity.this, PaymentActivity.class);
                                             paypalIntent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
                                             paypalIntent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, configuration);

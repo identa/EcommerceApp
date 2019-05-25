@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,7 +68,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     //product desc
 
     //rating
-    private LinearLayout rateNowContainer;
+//    private LinearLayout rateNowContainer;
     private TextView totalRatings;
     private LinearLayout ratingsNoContainer;
     private TextView totalRatingsFigure;
@@ -87,6 +88,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private List<CartItemModel> cartItemModelList;
     private LinearLayout tradeLayout;
     private TextView quantityView;
+    private RatingBar ratingBar;
 
     private FirebaseUser currentUser;
     private Dialog signInDialog;
@@ -122,12 +124,20 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         productDetailsTabsContainer = findViewById(R.id.product_details_tabs_container);
         totalRatings = findViewById(R.id.total_ratings);
         ratingsNoContainer = findViewById(R.id.ratings_number_container);
-        totalRatingsFigure = findViewById(R.id.total_ratings_figure);
+//        totalRatingsFigure = findViewById(R.id.total_ratings_figure);
         ratingsProgressBarContainer = findViewById(R.id.ratings_progressbar_container);
         avgRating = findViewById(R.id.avg_rating);
         addToCartTextView = findViewById(R.id.tv_add_to_cart);
         tradeLayout = findViewById(R.id.trade_layout);
         quantityView = findViewById(R.id.quantity);
+        ratingBar = findViewById(R.id.rating_now_bar);
+
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                Toast.makeText(getApplicationContext(), ""+rating, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         if (sharedPreferences.getString("email", "no_email").equals("no_email")){
             tradeLayout.setVisibility(View.GONE);
@@ -192,16 +202,16 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             }
         });
 
-        rateNowContainer = findViewById(R.id.rating_now_container);
-        for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
-            final int starPosition = x;
-            rateNowContainer.getChildAt(x).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setRating(starPosition);
-                }
-            });
-        }
+//        rateNowContainer = findViewById(R.id.rating_now_container);
+//        for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
+//            final int starPosition = x;
+//            rateNowContainer.getChildAt(x).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    setRating(starPosition);
+//                }
+//            });
+//        }
 
         buyNowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,15 +223,15 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         });
     }
 
-    private void setRating(int starPosition) {
-        for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
-            ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
-            starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
-            if (x <= starPosition) {
-                starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
-            }
-        }
-    }
+//    private void setRating(int starPosition) {
+//        for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
+//            ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
+//            starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
+//            if (x <= starPosition) {
+//                starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
+//            }
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -440,5 +450,10 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 
             }
         });
+    }
+
+    @Override
+    public void doRating(int pid, int uid, float rating) {
+
     }
 }

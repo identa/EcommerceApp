@@ -72,8 +72,6 @@ public class HomeActivity extends AppCompatActivity
 
     private MaterialSearchView searchView;
 
-    private FirebaseUser currentUser;
-
     private SharedPreferences sharedPreferences;
     private ImageView homeProfileImage;
     private TextView homeFullName;
@@ -149,7 +147,6 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (sharedPreferences.getString("email", "no_email").equals("no_email")) {
             navigationView.getMenu().getItem(navigationView.getMenu().size() - 1).setEnabled(false);
             navigationView.getMenu().getItem(WISHLIST_FRAGMENT).setEnabled(false);
@@ -357,44 +354,44 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK){
-            if (data != null && data.getData() != null){
-                uploadImage(data.getData());
-            }
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK){
+//            if (data != null && data.getData() != null){
+//                uploadImage(data.getData());
+//            }
+//        }
+//    }
 
-    private String getFileExtension(Uri imageUri){
-        ContentResolver contentResolver = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(imageUri));
-    }
-
-    private void uploadImage(Uri imageUri){
-        if (imageUri != null){
-            final StorageReference reference = storageReference.child(sharedPreferences.getString("email", "no_email") + "." + System.currentTimeMillis() + "." + getFileExtension(imageUri));
-
-            Task<Uri> uriTask = reference.putFile(imageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()){
-                        throw task.getException();
-                    }
-                    return reference.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()){
-                    Glide.with(HomeActivity.this).load(task.getResult()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(homeProfileImage);
-                    }
-                }
-            });
-        }else {
-            Toast.makeText(this, "No image selected", Toast.LENGTH_LONG).show();
-        }
-    }
+//    private String getFileExtension(Uri imageUri){
+//        ContentResolver contentResolver = getContentResolver();
+//        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+//        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(imageUri));
+//    }
+//
+//    private void uploadImage(Uri imageUri){
+//        if (imageUri != null){
+//            final StorageReference reference = storageReference.child(sharedPreferences.getString("email", "no_email") + "." + System.currentTimeMillis() + "." + getFileExtension(imageUri));
+//
+//            Task<Uri> uriTask = reference.putFile(imageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+//                @Override
+//                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+//                    if (!task.isSuccessful()){
+//                        throw task.getException();
+//                    }
+//                    return reference.getDownloadUrl();
+//                }
+//            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Uri> task) {
+//                    if (task.isSuccessful()){
+//                    Glide.with(HomeActivity.this).load(task.getResult()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(homeProfileImage);
+//                    }
+//                }
+//            });
+//        }else {
+//            Toast.makeText(this, "No image selected", Toast.LENGTH_LONG).show();
+//        }
+//    }
 }

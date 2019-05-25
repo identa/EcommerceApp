@@ -305,90 +305,96 @@
         app:layout_constraintTop_toBottomOf="@+id/ratings_number_container" />
 
     <TextView
-        android:id="@+id/total_ratings_figure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="27"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="@+id/ratings_number_container"
-        app:layout_constraintStart_toStartOf="@+id/ratings_number_container"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
-
-    <TextView
         android:id="@+id/tv_your_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="Your rating"
         android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/total_ratings_figure" />
+        app:layout_constraintTop_toBottomOf="@+id/rating_linear_layout" />
 
-    <LinearLayout
-        android:id="@+id/rating_now_container"
-        android:layout_width="0dp"
+    <!--<LinearLayout-->
+        <!--android:id="@+id/rating_now_container"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="16dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginEnd="16dp"-->
+        <!--android:layout_marginBottom="16dp"-->
+        <!--android:orientation="horizontal"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/tv_your_rating">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView4"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:tint="#bebebe"-->
+            <!--app:srcCompat="@mipmap/star" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView5"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:tint="#bebebe"-->
+            <!--app:srcCompat="@mipmap/star" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView6"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:tint="#bebebe"-->
+            <!--app:srcCompat="@mipmap/star" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView7"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:tint="#bebebe"-->
+            <!--app:srcCompat="@mipmap/star" />-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView8"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:tint="#bebebe"-->
+            <!--app:srcCompat="@mipmap/star" />-->
+
+    <!--</LinearLayout>-->
+
+    <RatingBar
+        android:id="@+id/rating_now_bar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
+        android:background="@color/recyclerViewBackground"
+        android:numStars="5"
+        android:stepSize="1"
+        android:progressBackgroundTint="@color/colorAccent"
+        android:progressTint="@color/successGreen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_your_rating">
-
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:tint="#bebebe"
-            app:srcCompat="@mipmap/star" />
-
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:tint="#bebebe"
-            app:srcCompat="@mipmap/star" />
-
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:tint="#bebebe"
-            app:srcCompat="@mipmap/star" />
-
-        <ImageView
-            android:id="@+id/imageView7"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:tint="#bebebe"
-            app:srcCompat="@mipmap/star" />
-
-        <ImageView
-            android:id="@+id/imageView8"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:tint="#bebebe"
-            app:srcCompat="@mipmap/star" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/tv_your_rating" />
 </android.support.constraint.ConstraintLayout>
