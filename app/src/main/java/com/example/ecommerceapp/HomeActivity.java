@@ -3,6 +3,7 @@ package com.example.ecommerceapp;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -331,12 +333,31 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_account) {
             gotoFragment("My account", new MyAccountFragment(), ACCOUNT_FRAGMENT);
         } else if (id == R.id.nav_sign_out) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.clear().apply();
-            Intent signInIntent = new Intent(this, SignUpActivity.class);
-            startActivity(signInIntent);
-            Toast.makeText(getApplicationContext(), "Sign out successfully", Toast.LENGTH_LONG).show();
-            finish();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+            builder.setTitle("Are you sure?");
+            builder.setMessage("Do you want to sign out?");
+            builder.setCancelable(false);
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.clear().apply();
+                    Intent signInIntent = new Intent(HomeActivity.this, SignUpActivity.class);
+                    startActivity(signInIntent);
+                    Toast.makeText(getApplicationContext(), "Sign out successfully", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

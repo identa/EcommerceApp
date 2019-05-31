@@ -70,6 +70,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
     private ImageButton continueShoppingBtn;
     private TextView orderID;
     private int orderNoID;
+    private boolean isBuyNow;
 
     private static final int REQUEST_CODE = 0;
 
@@ -86,6 +87,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         getSupportActionBar().setTitle("Delivery");
         sharedPreferences = getSharedPreferences("signin_info", MODE_PRIVATE);
 
+        isBuyNow = getIntent().getBooleanExtra("buyNow", false);
         deliveryRecyclerView = findViewById(R.id.delivery_recycler_view);
         totalAmount = findViewById(R.id.total_cart_amount);
         include = findViewById(R.id.include);
@@ -99,6 +101,12 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         orderConfirmationLayout = findViewById(R.id.order_confirm_layout);
         continueShoppingBtn = findViewById(R.id.continue_shopping_btn);
         orderID = findViewById(R.id.order_id);
+
+        loadingDialog = new Dialog(DeliveryActivity.this);
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         getAddress(sharedPreferences.getInt("id", 1));
         Intent intent = new Intent(this, PayPalService.class);
@@ -126,25 +134,31 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         if (resultCode == Activity.RESULT_OK) {
             PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
             if (confirmation != null) {
-                try {
-                    doAddOrder(sharedPreferences.getInt("id", 1));
-                    String paymentDetails = confirmation.toJSONObject().toString(4);
-                    Log.i("payment", paymentDetails);
-                    Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
-                    orderConfirmationLayout.setVisibility(View.VISIBLE);
-                    orderID.setText("Order ID " + orderNoID);
-                    continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            HomeActivity.showCart = false;
-                            Intent homeIntent = new Intent(DeliveryActivity.this, HomeActivity.class);
-                            startActivity(homeIntent);
-                        }
-                    });
-                    Toast.makeText(this, "Payment is successful", Toast.LENGTH_SHORT).show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                try {
+                loadingDialog.show();
+                    if (!isBuyNow) {
+                        doAddOrder(sharedPreferences.getInt("id", 1), confirmation);
+                    } else {
+                        buyNow(sharedPreferences.getInt("id", 1), confirmation);
+                    }
+
+//                    String paymentDetails = confirmation.toJSONObject().toString(4);
+//                    Log.i("payment", paymentDetails);
+//                    Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
+//                    orderConfirmationLayout.setVisibility(View.VISIBLE);
+//                    orderID.setText("Order ID " + orderNoID);
+//                    continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            HomeActivity.showCart = false;
+//                            Intent homeIntent = new Intent(DeliveryActivity.this, HomeActivity.class);
+//                            startActivity(homeIntent);
+//                        }
+//                    });
+//                    Toast.makeText(this, "Payment is successful", Toast.LENGTH_SHORT).show();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Toast.makeText(this, "Payment is cancelled", Toast.LENGTH_SHORT).show();
@@ -169,7 +183,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
             .clientId("ATn5fXIAjF-ITaCoG5AnlDL2B4NqwzVgJElPov-HzAlqBNRrQy2LEOPQWjgCVlXla7cp-_GCO1esALmv");
 
     @Override
-    public void doAddOrder(int id) {
+    public void doAddOrder(int id, final PaymentConfirmation confirmation) {
         AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
         List<AddOrderRequest> requests = new ArrayList<>();
         for (int i = 0; i < cartItemModelList.size() - 1; i++) {
@@ -190,6 +204,21 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
                         orderNoID = response.body().getData().getId();
+//                        String paymentDetails = confirmation.toJSONObject().toString(4);
+//                        Log.i("payment", paymentDetails);
+//                        Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
+                        orderConfirmationLayout.setVisibility(View.VISIBLE);
+                        orderID.setText("Order ID " + orderNoID);
+                        continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                HomeActivity.showCart = false;
+                                Intent homeIntent = new Intent(DeliveryActivity.this, HomeActivity.class);
+                                startActivity(homeIntent);
+                            }
+                        });
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Payment is successful", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -197,6 +226,8 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
             @Override
             public void onFailure(Call<AddOrderResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
             }
         });
     }
@@ -248,13 +279,13 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                                         public void onClick(View v) {
                                             paymentMethodDialog.dismiss();
                                             PayPalPayment payment = new PayPalPayment(new BigDecimal(cartItemModelList.get(cartItemModelList.size() - 1).getTotalItemPrice()), "USD", "Anh", PayPalPayment.PAYMENT_INTENT_SALE);
-                                            ShippingAddress address = new ShippingAddress().recipientName(shippingName.getText().toString())
-                                                    .city(shippingCity.getText().toString())
-                                                    .line1(shippingAddress.getText().toString())
-                                                    .state(shippingState.getText().toString())
-                                                    .postalCode(shippingPostalCode.getText().toString())
-                                                    .countryCode("VN");
-                                            payment.providedShippingAddress(address);
+//                                            ShippingAddress address = new ShippingAddress().recipientName(shippingName.getText().toString())
+//                                                    .city(shippingCity.getText().toString())
+//                                                    .line1(shippingAddress.getText().toString())
+//                                                    .state(shippingState.getText().toString())
+//                                                    .postalCode(shippingPostalCode.getText().toString())
+//                                                    .countryCode("VN");
+//                                            payment.providedShippingAddress(address);
                                             Intent paypalIntent = new Intent(DeliveryActivity.this, PaymentActivity.class);
                                             paypalIntent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
                                             paypalIntent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, configuration);
@@ -271,6 +302,57 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
             @Override
             public void onFailure(Call<GetAddressResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void buyNow(int id, PaymentConfirmation confirmation) {
+        AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
+        List<AddOrderRequest> requests = new ArrayList<>();
+        for (int i = 0; i < cartItemModelList.size() - 1; i++) {
+            AddOrderRequest request = new AddOrderRequest();
+            request.setId(cartItemModelList.get(i).getProductID());
+            request.setPrice(cartItemModelList.get(i).getProductPrice());
+            request.setCuttedPrice(cartItemModelList.get(i).getCuttedPrice());
+            request.setQuantity(cartItemModelList.get(i).getProductQuantity());
+            requests.add(request);
+        }
+
+        AddOrderReq req = new AddOrderReq();
+        req.setOrders(requests);
+        Call<AddOrderResponse> call = api.buyNow(id, req);
+        call.enqueue(new Callback<AddOrderResponse>() {
+            @Override
+            public void onResponse(Call<AddOrderResponse> call, Response<AddOrderResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        orderNoID = response.body().getData().getId();
+
+                        orderConfirmationLayout.setVisibility(View.VISIBLE);
+                        orderID.setText("Order ID " + orderNoID);
+                        continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                HomeActivity.showCart = false;
+                                Intent homeIntent = new Intent(DeliveryActivity.this, HomeActivity.class);
+                                startActivity(homeIntent);
+                            }
+                        });
+                        loadingDialog.dismiss();
+                        Toast.makeText(DeliveryActivity.this, "Payment is successful", Toast.LENGTH_SHORT).show();
+                    } else if (response.body().getStatus().equals("FAILED")){
+                        loadingDialog.dismiss();
+                        Toast.makeText(DeliveryActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddOrderResponse> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                loadingDialog.dismiss();
+                Toast.makeText(DeliveryActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

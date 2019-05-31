@@ -2,7 +2,9 @@ package com.example.ecommerceapp.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,9 +125,9 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
 
                         if (cartItemModelList.size() == 1) {
                             cartItemModelList.remove(cartItemModelList.get(cartItemModelList.size() - 1));
-                            MyCartFragment.cartAdapter.notifyDataSetChanged();
+                            notifyDataSetChanged();
                         } else {
-                            MyCartFragment.cartAdapter.notifyDataSetChanged();
+                            notifyDataSetChanged();
                         }
 
                         Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -154,7 +156,7 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                         totalAmountModel.setTotalItemPrice(totalAmountModel.getTotalItemPrice() - cartItemModelList.get(position).getProductQuantity() * cartItemModelList.get(position).getProductPrice() + response.body().getData().getQuantity() * response.body().getData().getPrice());
                         cartItemModelList.get(position).setProductQuantity(response.body().getData().getQuantity());
 
-                        MyCartFragment.cartAdapter.notifyDataSetChanged();
+                        notifyDataSetChanged();
                         Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -188,7 +190,6 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
         }
 
         private void setItemDetails(final int id, String resource, String title, double productPriceText, double cuttedPriceText, final int quantity, final int limit, final int position) {
-//            productImage.setImageResource(resource);
             Glide.with(itemView.getContext()).load(resource).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(productImage);
             productTitle.setText(title);
             productPrice.setText(String.format("$%s", productPriceText));
@@ -235,7 +236,25 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
             deleteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    doDeleteCart(id, position, itemView.getContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext(), R.style.AlertDialogTheme);
+                    builder.setCancelable(false);
+                    builder.setTitle("Are you sure?");
+                    builder.setMessage("Do you want to delete this product from your cart?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            doDeleteCart(id, position, itemView.getContext());
+                        }
+                    });
+
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                 }
             });
         }
@@ -245,7 +264,6 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
 
         private TextView totalItems;
         private TextView totalItemPrice;
-        private TextView deliveryPrice;
         private TextView totalAmount;
 
         public CartTotalAmountViewHolder(@NonNull View itemView) {
@@ -253,12 +271,11 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
 
             totalItems = itemView.findViewById(R.id.total_items);
             totalItemPrice = itemView.findViewById(R.id.total_items_price);
-            deliveryPrice = itemView.findViewById(R.id.delivery_price);
             totalAmount = itemView.findViewById(R.id.total_price);
         }
 
         private void setTotalAmount(int totalItemText, double totalItemPriceText, int totalAmountText) {
-            totalItems.setText(String.format("Price(%d items)", totalItemText));
+            totalItems.setText(String.format("Price (%d items)", totalItemText));
             totalItemPrice.setText(String.format("$%s", totalItemPriceText));
             totalAmount.setText(String.format("%d", totalAmountText));
         }

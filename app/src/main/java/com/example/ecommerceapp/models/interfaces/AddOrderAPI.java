@@ -17,6 +17,9 @@ public interface AddOrderAPI {
     @POST("/api/public/order/{id}")
     Call<AddOrderResponse> addOrder(@Path("id") int id, @Body AddOrderReq request);
 
+    @POST("/api/public/buy/{id}")
+    Call<AddOrderResponse> buyNow(@Path("id") int id, @Body AddOrderReq request);
+
     @GET("/api/public/address/{id}")
     Call<GetAddressResponse> getAddress(@Path("id") int id);
 }

@@ -43,7 +43,7 @@ public class MyCartFragment extends Fragment implements CartService {
 
     private RecyclerView cartItemRecyclerView;
     private List<CartItemModel> cartItemModelList;
-    public static CartAdapter cartAdapter;
+    private CartAdapter cartAdapter;
     private Button continueBtn;
 
     @Override
@@ -71,18 +71,6 @@ public class MyCartFragment extends Fragment implements CartService {
             }
         });
 
-//        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
-//        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
-//        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
-//        cartItemModelList.add(new CartItemModel(0, R.mipmap.steakhouse, "Samsung Galaxy s10", 2000, 1000, 3));
-
-
-//        cartItemModelList.add(new CartItemModel(1, "Price (4 items)", 2000, 2000));
-
-//        cartAdapter = new CartAdapter(cartItemModelList);
-//        cartItemRecyclerView.setAdapter(cartAdapter);
-//        cartAdapter.notifyDataSetChanged();
-
         return view;
     }
 
@@ -105,11 +93,13 @@ public class MyCartFragment extends Fragment implements CartService {
                                     data.getQuantity(),
                                     data.getLimit()));
                         }
-                        cartItemModelList.add(new CartItemModel(1,
-                                response.body().getData().getTotalItem(),
-                                response.body().getData().getTotalPrice(),
-                                response.body().getData().getItemAmount()));
 
+                        if (response.body().getData().getCartData().size() != 0) {
+                            cartItemModelList.add(new CartItemModel(1,
+                                    response.body().getData().getTotalItem(),
+                                    response.body().getData().getTotalPrice(),
+                                    response.body().getData().getItemAmount()));
+                        }
                         cartAdapter = new CartAdapter(cartItemModelList);
                         cartItemRecyclerView.setAdapter(cartAdapter);
                         cartAdapter.notifyDataSetChanged();

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -92,6 +93,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 
     private FirebaseUser currentUser;
     private Dialog signInDialog;
+    private Dialog loadingDialog;
 
     private SharedPreferences sharedPreferences;
     private int qty;
@@ -131,6 +133,13 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         tradeLayout = findViewById(R.id.trade_layout);
         quantityView = findViewById(R.id.quantity);
         ratingBar = findViewById(R.id.rating_now_bar);
+
+        loadingDialog = new Dialog(ProductDetailActivity.this);
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
 
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -218,6 +227,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             public void onClick(View v) {
                 DeliveryActivity.cartItemModelList = cartItemModelList;
                 Intent deliveryIntent = new Intent(ProductDetailActivity.this, DeliveryActivity.class);
+                deliveryIntent.putExtra("buyNow", true);
                 startActivity(deliveryIntent);
             }
         });
@@ -358,7 +368,10 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
 
                         productImageAdapter.notifyDataSetChanged();
                         productDetailsViewPager.setAdapter(new ProductDetailsAdapter(getSupportFragmentManager(), productDetailsTabLayout.getTabCount(), productDescription, productOtherDetails));
+                        loadingDialog.dismiss();
                     } else if (response.body().getStatus().equals("FAILED")) {
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -366,6 +379,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             @Override
             public void onFailure(Call<ProductDetailResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                loadingDialog.dismiss();
                 Toast.makeText(ProductDetailActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
