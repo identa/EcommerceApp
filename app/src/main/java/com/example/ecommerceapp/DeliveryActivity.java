@@ -2,10 +2,12 @@ package com.example.ecommerceapp;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,10 +62,11 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
     private TextView shippingState;
     private TextView shippingPostalCode;
 
-    private Button continuewBtn;
+    private Button continueBtn;
     private Dialog loadingDialog;
     private Dialog paymentMethodDialog;
     private ImageButton paytm;
+    private ImageButton cod;
     private View include;
 
     private ConstraintLayout orderConfirmationLayout;
@@ -97,7 +100,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         shippingState = findViewById(R.id.shipping_state);
         shippingPostalCode = findViewById(R.id.shipping_postal_code);
 
-        continuewBtn = findViewById(R.id.cart_continue_btn);
+        continueBtn = findViewById(R.id.cart_continue_btn);
         orderConfirmationLayout = findViewById(R.id.order_confirm_layout);
         continueShoppingBtn = findViewById(R.id.continue_shopping_btn);
         orderID = findViewById(R.id.order_id);
@@ -118,7 +121,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         deliveryRecyclerView.setLayoutManager(layoutManager);
 
-        CartAdapter cartAdapter = new CartAdapter(cartItemModelList);
+        CartAdapter cartAdapter = new CartAdapter(cartItemModelList, true);
         deliveryRecyclerView.setAdapter(cartAdapter);
         cartAdapter.notifyDataSetChanged();
     }
@@ -137,9 +140,9 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
 //                try {
                 loadingDialog.show();
                     if (!isBuyNow) {
-                        doAddOrder(sharedPreferences.getInt("id", 1), confirmation);
+                        doAddOrder(sharedPreferences.getInt("id", 1));
                     } else {
-                        buyNow(sharedPreferences.getInt("id", 1), confirmation);
+                        buyNow(sharedPreferences.getInt("id", 1));
                     }
 
 //                    String paymentDetails = confirmation.toJSONObject().toString(4);
@@ -183,7 +186,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
             .clientId("ATn5fXIAjF-ITaCoG5AnlDL2B4NqwzVgJElPov-HzAlqBNRrQy2LEOPQWjgCVlXla7cp-_GCO1esALmv");
 
     @Override
-    public void doAddOrder(int id, final PaymentConfirmation confirmation) {
+    public void doAddOrder(int id) {
         AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
         List<AddOrderRequest> requests = new ArrayList<>();
         for (int i = 0; i < cartItemModelList.size() - 1; i++) {
@@ -204,9 +207,6 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
                         orderNoID = response.body().getData().getId();
-//                        String paymentDetails = confirmation.toJSONObject().toString(4);
-//                        Log.i("payment", paymentDetails);
-//                        Log.i("payment", confirmation.getPayment().toJSONObject().toString(4));
                         orderConfirmationLayout.setVisibility(View.VISIBLE);
                         orderID.setText("Order ID " + orderNoID);
                         continueShoppingBtn.setOnClickListener(new View.OnClickListener() {
@@ -243,8 +243,8 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                     if (response.body().getStatus().equals("SUCCESS")) {
                         if (response.body().getData() == null) {
                             include.setVisibility(View.GONE);
-                            continuewBtn.setText("ADD ADDRESS");
-                            continuewBtn.setOnClickListener(new View.OnClickListener() {
+                            continueBtn.setText("ADD ADDRESS");
+                            continueBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Intent addAddressIntent = new Intent(getApplicationContext(), AddAddressActivity.class);
@@ -267,9 +267,10 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                             paymentMethodDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
                             paymentMethodDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                             paytm = paymentMethodDialog.findViewById(R.id.paytm);
+                            cod = paymentMethodDialog.findViewById(R.id.cod_btn);
                             //payment
 
-                            continuewBtn.setOnClickListener(new View.OnClickListener() {
+                            continueBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     paymentMethodDialog.show();
@@ -279,17 +280,42 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                                         public void onClick(View v) {
                                             paymentMethodDialog.dismiss();
                                             PayPalPayment payment = new PayPalPayment(new BigDecimal(cartItemModelList.get(cartItemModelList.size() - 1).getTotalItemPrice()), "USD", "Anh", PayPalPayment.PAYMENT_INTENT_SALE);
-//                                            ShippingAddress address = new ShippingAddress().recipientName(shippingName.getText().toString())
-//                                                    .city(shippingCity.getText().toString())
-//                                                    .line1(shippingAddress.getText().toString())
-//                                                    .state(shippingState.getText().toString())
-//                                                    .postalCode(shippingPostalCode.getText().toString())
-//                                                    .countryCode("VN");
-//                                            payment.providedShippingAddress(address);
                                             Intent paypalIntent = new Intent(DeliveryActivity.this, PaymentActivity.class);
                                             paypalIntent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
                                             paypalIntent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, configuration);
                                             startActivityForResult(paypalIntent, REQUEST_CODE);
+                                        }
+                                    });
+
+                                    cod.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            paymentMethodDialog.dismiss();
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(DeliveryActivity.this, R.style.AlertDialogTheme);
+                                            builder.setTitle("Are you sure?");
+                                            builder.setMessage("Do you want to checkout?");
+                                            builder.setCancelable(false);
+                                            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    loadingDialog.show();
+                                                    if (!isBuyNow) {
+                                                        doAddOrder(sharedPreferences.getInt("id", 1));
+                                                    } else {
+                                                        buyNow(sharedPreferences.getInt("id", 1));
+                                                    }
+                                                }
+                                            });
+
+                                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+
+                                            AlertDialog alertDialog = builder.create();
+                                            alertDialog.show();
                                         }
                                     });
                                 }
@@ -307,7 +333,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
     }
 
     @Override
-    public void buyNow(int id, PaymentConfirmation confirmation) {
+    public void buyNow(int id) {
         AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
         List<AddOrderRequest> requests = new ArrayList<>();
         for (int i = 0; i < cartItemModelList.size() - 1; i++) {

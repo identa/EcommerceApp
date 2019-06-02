@@ -40,9 +40,15 @@ import retrofit2.Response;
 public class CartAdapter extends RecyclerView.Adapter implements DeleteCartService {
     private List<CartItemModel> cartItemModelList;
     private int lastPosition = -1;
+    private boolean inDelivery;
 
     public CartAdapter(List<CartItemModel> cartItemModelList) {
         this.cartItemModelList = cartItemModelList;
+    }
+
+    public CartAdapter(List<CartItemModel> cartItemModelList, boolean inDelivery) {
+        this.cartItemModelList = cartItemModelList;
+        this.inDelivery = inDelivery;
     }
 
     @Override
@@ -175,7 +181,6 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
         private TextView productPrice;
         private TextView cuttedPrice;
         private TextView productQuantity;
-
         private LinearLayout deleteBtn;
 
         public CartItemViewHolder(@NonNull View itemView) {
@@ -196,67 +201,70 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
             cuttedPrice.setText(String.format("$%s", cuttedPriceText));
             productQuantity.setText(String.format("Qty: %s", quantity));
 
-            productQuantity.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Dialog quantityDialog = new Dialog(itemView.getContext());
-                    quantityDialog.setContentView(R.layout.quantity_dialog);
-                    quantityDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    quantityDialog.setCancelable(false);
-                    final NumberPicker numberPicker = quantityDialog.findViewById(R.id.num_picker);
-                    numberPicker.setMaxValue(limit);
-                    numberPicker.setMinValue(1);
-                    numberPicker.setWrapSelectorWheel(true);
-                    numberPicker.setValue(quantity);
-//                    final EditText quantityNo = quantityDialog.findViewById(R.id.quantity_no);
-                    Button cancelBtn = quantityDialog.findViewById(R.id.cancel_btn);
-                    Button okBtn = quantityDialog.findViewById(R.id.ok_btn);
+            if (inDelivery){
+                productQuantity.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                productQuantity.setOnClickListener(null);
+                deleteBtn.setVisibility(View.GONE);
+                deleteBtn.setOnClickListener(null);
+            }else {
+                productQuantity.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Dialog quantityDialog = new Dialog(itemView.getContext());
+                        quantityDialog.setContentView(R.layout.quantity_dialog);
+                        quantityDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        quantityDialog.setCancelable(false);
+                        final NumberPicker numberPicker = quantityDialog.findViewById(R.id.num_picker);
+                        numberPicker.setMaxValue(limit);
+                        numberPicker.setMinValue(1);
+                        numberPicker.setWrapSelectorWheel(true);
+                        numberPicker.setValue(quantity);
+                        Button cancelBtn = quantityDialog.findViewById(R.id.cancel_btn);
+                        Button okBtn = quantityDialog.findViewById(R.id.ok_btn);
 
-                    cancelBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            quantityDialog.dismiss();
-                        }
-                    });
+                        cancelBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                quantityDialog.dismiss();
+                            }
+                        });
 
-                    okBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-//                            doEditCart(id, Integer.parseInt(quantityNo.getText().toString()), position, itemView.getContext());
-                            doEditCart(id, numberPicker.getValue(), position, itemView.getContext());
+                        okBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                doEditCart(id, numberPicker.getValue(), position, itemView.getContext());
+                                quantityDialog.dismiss();
+                            }
+                        });
+                        quantityDialog.show();
+                    }
+                });
 
-//                            productQuantity.setText(String.format("Qty: %s", quantityNo.getText().toString()));
-                            quantityDialog.dismiss();
-                        }
-                    });
-                    quantityDialog.show();
-                }
-            });
+                deleteBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext(), R.style.AlertDialogTheme);
+                        builder.setCancelable(false);
+                        builder.setTitle("Are you sure?");
+                        builder.setMessage("Do you want to delete this product from your cart?");
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                doDeleteCart(id, position, itemView.getContext());
+                            }
+                        });
 
-            deleteBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext(), R.style.AlertDialogTheme);
-                    builder.setCancelable(false);
-                    builder.setTitle("Are you sure?");
-                    builder.setMessage("Do you want to delete this product from your cart?");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            doDeleteCart(id, position, itemView.getContext());
-                        }
-                    });
-
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                }
-            });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                });
+            }
         }
     }
 

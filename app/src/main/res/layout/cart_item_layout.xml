@@ -15,6 +15,8 @@
         android:layout_height="100dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/remove_item_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/steakhouse" />
@@ -58,10 +60,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:text="$1000.00"
         android:textColor="#000000"
         android:textSize="22sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/remove_item_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_free_coupon" />
 
@@ -86,28 +90,6 @@
         app:layout_constraintTop_toTopOf="@+id/cutted_price" />
 
     <TextView
-        android:id="@+id/offer_applied"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Offers applied"
-        android:textColor="@color/successGreen"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/product_price" />
-
-    <TextView
-        android:id="@+id/textView20"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Coupons applied"
-        android:textColor="@color/colorPrimary"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/offer_applied" />
-
-    <TextView
         android:id="@+id/product_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,40 +101,9 @@
         android:padding="3dp"
         android:text="Qty: 1"
         android:textColor="#000000"
-        app:layout_constraintBottom_toBottomOf="@+id/textView20"
+        app:layout_constraintBottom_toBottomOf="@+id/product_price"
         app:layout_constraintStart_toEndOf="@+id/product_image"
-        app:layout_constraintTop_toBottomOf="@+id/price_cut_divider" />
-
-    <LinearLayout
-        android:id="@+id/coupon_redemption"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="#FF3030"
-        android:gravity="right"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView20">
-
-        <TextView
-            android:id="@+id/tv_coupon_redemption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Check price after coupon redemption"
-            android:textAlignment="center"
-            android:textColor="@color/colorAccent" />
-
-        <Button
-            android:layout_width="75dp"
-            android:layout_height="30dp"
-            android:background="@drawable/border_background"
-            android:text="Redeem"
-            android:textColor="@color/colorAccent"
-            android:textSize="12sp" />
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="@+id/product_price" />
 
     <LinearLayout
         android:id="@+id/remove_item_btn"
@@ -162,9 +113,9 @@
         android:elevation="3dp"
         android:gravity="center"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/coupon_redemption">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:layout_width="wrap_content"

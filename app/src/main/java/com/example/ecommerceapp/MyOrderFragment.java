@@ -1,6 +1,7 @@
 package com.example.ecommerceapp;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ public class MyOrderFragment extends Fragment implements OrderService {
     private MyOrderAdapter myOrderAdapter;
 
     private SharedPreferences sharedPreferences;
+    private Dialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +54,13 @@ public class MyOrderFragment extends Fragment implements OrderService {
         View view = inflater.inflate(R.layout.fragment_my_order, container, false);
         myOrderRecyclerView = view.findViewById(R.id.my_order_recycler_view);
 
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
+
         sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -59,11 +68,6 @@ public class MyOrderFragment extends Fragment implements OrderService {
         myOrderRecyclerView.setLayoutManager(layoutManager);
 
         myOrderItemModelList = new ArrayList<>();
-//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
-//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
-//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
-//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Cancelled"));
-//        myOrderItemModelList.add(new MyOrderItemModel(R.mipmap.steakhouse, 2,"Samsung Galaxy S10", "Delivered on Mon, 15th Jan 2018"));
         doGetOrder(sharedPreferences.getInt("id", 1));
         myOrderAdapter = new MyOrderAdapter(myOrderItemModelList);
         myOrderRecyclerView.setAdapter(myOrderAdapter);
@@ -85,13 +89,18 @@ public class MyOrderFragment extends Fragment implements OrderService {
                             myOrderItemModelList.add(new MyOrderItemModel(data.getId(),R.mipmap.steakhouse, 2, "Order no " + data.getId(), "Order on " + data.getCreateAt()));
                         }
                         myOrderAdapter.notifyDataSetChanged();
-                    }
+                        loadingDialog.dismiss();
+                    } else if (response.body().getStatus().equals("FAILED")) {
+                    Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
+                }
                 }
             }
 
             @Override
             public void onFailure(Call<GetOrderResponse> call, Throwable t) {
-
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
             }
         });
     }

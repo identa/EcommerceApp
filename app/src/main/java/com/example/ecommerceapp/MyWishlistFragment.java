@@ -1,6 +1,7 @@
 package com.example.ecommerceapp;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.WishlistAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
@@ -46,6 +48,7 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
     private List<WishlistModel> wishlistModelList;
 
     private SharedPreferences sharedPreferences;
+    private Dialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +56,14 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_wishlist, container, false);
         wishlistRecyclerView = view.findViewById(R.id.my_wishlist_recycler_view);
+
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         wishlistRecyclerView.setLayoutManager(linearLayoutManager);
@@ -60,11 +71,6 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
         sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
         wishlistModelList = new ArrayList<>();
         doGetWishlist(sharedPreferences.getInt("id", 1));
-//        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
-//        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
-//        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
-//        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
-//        wishlistModelList.add(new WishlistModel(1,"a", "a", 4.5, 212, 2000,3000));
 
         wishlistAdapter = new WishlistAdapter(wishlistModelList, true);
         wishlistRecyclerView.setAdapter(wishlistAdapter);
@@ -90,9 +96,11 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
                                     data.getPrice(),
                                     data.getCuttedPrice()));
                         }
-
                         wishlistAdapter.notifyDataSetChanged();
+                        loadingDialog.dismiss();
                     } else if (response.body().getStatus().equals("FAILED")) {
+                        Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                     }
                 }
             }
@@ -100,6 +108,8 @@ public class MyWishlistFragment extends Fragment implements WishlistService {
             @Override
             public void onFailure(Call<GetWishlistResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
             }
         });
     }

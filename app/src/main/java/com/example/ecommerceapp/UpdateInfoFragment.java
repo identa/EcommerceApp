@@ -1,6 +1,7 @@
 package com.example.ecommerceapp;
 
 
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -62,6 +63,7 @@ public class UpdateInfoFragment extends Fragment implements UpdateInfoService {
     private String lastName;
     private StorageReference storageReference;
     private SharedPreferences sharedPreferences;
+    private Dialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,6 +87,12 @@ public class UpdateInfoFragment extends Fragment implements UpdateInfoService {
         Glide.with(getContext()).load(photo).into(circleImageView);
         firstNameField.setText(firstName);
         lastNameField.setText(lastName);
+
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         firstNameField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -220,6 +228,7 @@ public class UpdateInfoFragment extends Fragment implements UpdateInfoService {
 
     private void uploadImage(Uri imageUri){
         if (imageUri != null){
+            loadingDialog.show();
             final StorageReference reference = storageReference.child(sharedPreferences.getString("email", "no_email") + "." + System.currentTimeMillis() + "." + getFileExtension(imageUri));
 
             Task<Uri> uriTask = reference.putFile(imageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -235,6 +244,7 @@ public class UpdateInfoFragment extends Fragment implements UpdateInfoService {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()){
                         photo = task.getResult().toString();
+                        loadingDialog.dismiss();
                         Toast.makeText(getContext(), "Get image uri successfully", Toast.LENGTH_LONG).show();
                     }
                 }

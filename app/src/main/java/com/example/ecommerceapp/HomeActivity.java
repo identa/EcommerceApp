@@ -36,6 +36,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.ecommerceapp.constants.BaseURLConst;
+import com.example.ecommerceapp.models.client.RetrofitClient;
+import com.example.ecommerceapp.models.entities.responses.DeleteCartResponse;
+import com.example.ecommerceapp.models.interfaces.SignOutAPI;
+import com.example.ecommerceapp.models.services.SignOutService;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,10 +58,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static com.example.ecommerceapp.SignUpActivity.setSignUpFragment;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SignOutService {
 
     private static final int HOME_FRAGMENT = 0;
     private static final int CART_FRAGMENT = 2;
@@ -340,12 +349,13 @@ public class HomeActivity extends AppCompatActivity
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.clear().apply();
-                    Intent signInIntent = new Intent(HomeActivity.this, SignUpActivity.class);
-                    startActivity(signInIntent);
-                    Toast.makeText(getApplicationContext(), "Sign out successfully", Toast.LENGTH_LONG).show();
-                    finish();
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.clear().apply();
+//                    Intent signInIntent = new Intent(HomeActivity.this, SignUpActivity.class);
+//                    startActivity(signInIntent);
+//                    Toast.makeText(getApplicationContext(), "Sign out successfully", Toast.LENGTH_LONG).show();
+//                    finish();
+                    doSignOut(sharedPreferences.getString("token", ""));
                 }
             });
 
@@ -375,44 +385,31 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK){
-//            if (data != null && data.getData() != null){
-//                uploadImage(data.getData());
-//            }
-//        }
-//    }
+    @Override
+    public void doSignOut(String token) {
+        SignOutAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(SignOutAPI.class);
+        Call<DeleteCartResponse> call = api.signOut(token);
+        call.enqueue(new Callback<DeleteCartResponse>() {
+            @Override
+            public void onResponse(Call<DeleteCartResponse> call, Response<DeleteCartResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.clear().apply();
+                        Intent signInIntent = new Intent(HomeActivity.this, SignUpActivity.class);
+                        startActivity(signInIntent);
+                        Toast.makeText(getApplicationContext(), "Sign out successfully", Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
 
-//    private String getFileExtension(Uri imageUri){
-//        ContentResolver contentResolver = getContentResolver();
-//        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-//        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(imageUri));
-//    }
-//
-//    private void uploadImage(Uri imageUri){
-//        if (imageUri != null){
-//            final StorageReference reference = storageReference.child(sharedPreferences.getString("email", "no_email") + "." + System.currentTimeMillis() + "." + getFileExtension(imageUri));
-//
-//            Task<Uri> uriTask = reference.putFile(imageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//                @Override
-//                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                    if (!task.isSuccessful()){
-//                        throw task.getException();
-//                    }
-//                    return reference.getDownloadUrl();
-//                }
-//            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Uri> task) {
-//                    if (task.isSuccessful()){
-//                    Glide.with(HomeActivity.this).load(task.getResult()).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(homeProfileImage);
-//                    }
-//                }
-//            });
-//        }else {
-//            Toast.makeText(this, "No image selected", Toast.LENGTH_LONG).show();
-//        }
-//    }
+            @Override
+            public void onFailure(Call<DeleteCartResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 }

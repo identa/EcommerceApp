@@ -61,7 +61,7 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
             productTitle = itemView.findViewById(R.id.product_title);
             orderIndicator = itemView.findViewById(R.id.order_indicator);
             deliveryStatus = itemView.findViewById(R.id.order_delivered_date);
-            rateNowContainer = itemView.findViewById(R.id.rating_now_container);
+//            rateNowContainer = itemView.findViewById(R.id.rating_now_container);
         }
 
         private void setData(final int id, int resource, String title, String deliveredDate, int rating) {
@@ -83,26 +83,26 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
                 }
             });
 
-            setRating(rating);
-            for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
-                final int starPosition = x;
-                rateNowContainer.getChildAt(x).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        setRating(starPosition);
-                    }
-                });
-            }
+//            setRating(rating);
+//            for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
+//                final int starPosition = x;
+//                rateNowContainer.getChildAt(x).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        setRating(starPosition);
+//                    }
+//                });
+//            }
         }
 
-        private void setRating(int starPosition) {
-            for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
-                ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
-                starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
-                if (x <= starPosition) {
-                    starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
-                }
-            }
-        }
+//        private void setRating(int starPosition) {
+//            for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
+//                ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
+//                starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
+//                if (x <= starPosition) {
+//                    starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
+//                }
+//            }
+//        }
     }
 }

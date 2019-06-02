@@ -113,6 +113,7 @@ public class SignInFragment extends Fragment implements SignInService {
                 setFragment(new ForgotPasswordFragment());
             }
         });
+
         email.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -129,6 +130,7 @@ public class SignInFragment extends Fragment implements SignInService {
 
             }
         });
+
         password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -145,12 +147,14 @@ public class SignInFragment extends Fragment implements SignInService {
 
             }
         });
+
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checkEmailAndPassword();
             }
         });
+
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,11 +171,25 @@ public class SignInFragment extends Fragment implements SignInService {
     }
 
     private void checkInput() {
+        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
+        customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
         if (!TextUtils.isEmpty(email.getText())) {
-            if (!TextUtils.isEmpty(password.getText())) {
-                signInBtn.setEnabled(true);
-                signInBtn.setTextColor(Color.rgb(255, 255, 255));
+            if (email.getText().toString().matches(ValidationConst.EMAIL)) {
+                if (!TextUtils.isEmpty(password.getText())) {
+                    if (password.getText().toString().matches(ValidationConst.PW)) {
+                        signInBtn.setEnabled(true);
+                        signInBtn.setTextColor(Color.rgb(255, 255, 255));
+                    } else {
+                        password.setError("Password doesn't format right", customWarningIcon);
+                        signInBtn.setEnabled(false);
+                        signInBtn.setTextColor(Color.argb(50, 255, 255, 255));
+                    }
+                } else {
+                    signInBtn.setEnabled(false);
+                    signInBtn.setTextColor(Color.argb(50, 255, 255, 255));
+                }
             } else {
+                email.setError("Email doesn't format right", customWarningIcon);
                 signInBtn.setEnabled(false);
                 signInBtn.setTextColor(Color.argb(50, 255, 255, 255));
             }
@@ -195,30 +213,6 @@ public class SignInFragment extends Fragment implements SignInService {
                 request.setPassword(password.getText().toString());
 
                 doSignIn(request);
-//                storageReference.child("categories/cable.png").getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Uri> task) {
-//                        if (task.isSuccessful()){
-//                            String a = task.getResult().toString();
-//                            goHome();
-//                        }
-//                    }
-//                });
-//                firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if (task.isSuccessful()){
-//                            goHome();
-//                        } else {
-//                            progressBar.setVisibility(View.INVISIBLE);
-//                            signInBtn.setEnabled(true);
-//                            signInBtn.setTextColor(Color.rgb(255,255,255));
-//                            String error = task.getException().getMessage();
-//                            Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-
             } else {
                 Toast.makeText(getActivity(), ValidationConst.INCORRECT, Toast.LENGTH_SHORT).show();
             }

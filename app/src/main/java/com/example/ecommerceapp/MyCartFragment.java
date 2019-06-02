@@ -1,6 +1,7 @@
 package com.example.ecommerceapp;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.CartAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
@@ -45,6 +47,7 @@ public class MyCartFragment extends Fragment implements CartService {
     private List<CartItemModel> cartItemModelList;
     private CartAdapter cartAdapter;
     private Button continueBtn;
+    private Dialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +60,13 @@ public class MyCartFragment extends Fragment implements CartService {
 
         cartItemRecyclerView = view.findViewById(R.id.cart_item_recycler_view);
         continueBtn = view.findViewById(R.id.cart_continue_btn);
+
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -100,9 +110,13 @@ public class MyCartFragment extends Fragment implements CartService {
                                     response.body().getData().getTotalPrice(),
                                     response.body().getData().getItemAmount()));
                         }
-                        cartAdapter = new CartAdapter(cartItemModelList);
+                        cartAdapter = new CartAdapter(cartItemModelList, false);
                         cartItemRecyclerView.setAdapter(cartAdapter);
                         cartAdapter.notifyDataSetChanged();
+                        loadingDialog.dismiss();
+                    }else if (response.body().getStatus().equals("FAILED")){
+                        Toast.makeText(getContext(), response.body().getMessage(),Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                     }
                 }
             }
@@ -110,6 +124,8 @@ public class MyCartFragment extends Fragment implements CartService {
             @Override
             public void onFailure(Call<CartResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                Toast.makeText(getContext(), t.getMessage(),Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
             }
         });
     }
