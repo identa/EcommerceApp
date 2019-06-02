@@ -170,6 +170,23 @@ public class SignInFragment extends Fragment implements SignInService {
         transaction.commit();
     }
 
+//    private void checkInput() {
+//        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
+//        customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
+//        if (!TextUtils.isEmpty(email.getText())) {
+//            if (!TextUtils.isEmpty(password.getText())) {
+//                signInBtn.setEnabled(true);
+//                signInBtn.setTextColor(Color.rgb(255, 255, 255));
+//            } else {
+//                signInBtn.setEnabled(false);
+//                signInBtn.setTextColor(Color.argb(50, 255, 255, 255));
+//            }
+//        } else {
+//            signInBtn.setEnabled(false);
+//            signInBtn.setTextColor(Color.argb(50, 255, 255, 255));
+//        }
+//    }
+
     private void checkInput() {
         Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
         customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());

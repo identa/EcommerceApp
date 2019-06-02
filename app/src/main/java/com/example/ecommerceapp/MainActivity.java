@@ -47,21 +47,6 @@ public class MainActivity extends AppCompatActivity implements SessionService {
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        if (sharedPreferences.getInt("id", -1) == -1) {
-//            Intent signUpIntent = new Intent(MainActivity.this, SignUpActivity.class);
-//            startActivity(signUpIntent);
-//            finish();
-//        } else {
-//            doCheckSession(sharedPreferences.getString("token",""));
-////            Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
-////            startActivity(homeIntent);
-////            finish();
-//        }
-//    }
-
     @Override
     public void doCheckSession(String token) {
         SessionAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(SessionAPI.class);
