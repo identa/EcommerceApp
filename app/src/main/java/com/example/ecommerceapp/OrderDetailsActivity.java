@@ -1,5 +1,6 @@
 package com.example.ecommerceapp;
 
+import android.app.Dialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ecommerceapp.adapters.OrderDetailsAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
@@ -29,6 +33,13 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderDeta
 
     private RecyclerView orderDetailsRecyclerView;
     private OrderDetailsAdapter orderDetailsAdapter;
+    private TextView shippingName;
+    private TextView shippingAddress;
+    private TextView shippingCity;
+    private TextView shippingState;
+    private TextView shippingPostalCode;
+    private TextView shippingPhone;
+    private Dialog loadingDialog;
 
     private int orderID;
 
@@ -44,6 +55,20 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderDeta
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         orderDetailsRecyclerView = findViewById(R.id.order_details_recycler_view);
+        shippingName = findViewById(R.id.shipping_name);
+        shippingAddress = findViewById(R.id.shipping_address);
+        shippingCity = findViewById(R.id.shipping_city);
+        shippingState = findViewById(R.id.shipping_state);
+        shippingPostalCode = findViewById(R.id.shipping_postal_code);
+        shippingPhone = findViewById(R.id.shipping_phone);
+
+        loadingDialog = new Dialog(OrderDetailsActivity.this);
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
+
         orderID = getIntent().getIntExtra("orderID", 1);
 
         orderDetailsModelList = new ArrayList<>();
@@ -52,9 +77,6 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderDeta
         orderDetailsRecyclerView.setLayoutManager(layoutManager);
 
         doGetOrderDetails(orderID);
-//        orderDetailsAdapter = new OrderDetailsAdapter(orderDetailsModelList);
-//        orderDetailsRecyclerView.setAdapter(orderDetailsAdapter);
-//        orderDetailsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -75,16 +97,28 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderDeta
             public void onResponse(Call<OrderDetailsResponse> call, Response<OrderDetailsResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        for (OrderDetailsData data : response.body().getData()) {
+                        for (OrderDetailsData data : response.body().getData().getOrderDetails()) {
                             orderDetailsModelList.add(new OrderDetailsModel(data.getId(),
                                     data.getName(),
                                     data.getImage(),
                                     data.getPrice(),
                                     data.getQuantity()));
                         }
+
+                        shippingName.setText(response.body().getData().getRecipientName());
+                        shippingCity.setText(response.body().getData().getCity());
+                        shippingState.setText(response.body().getData().getState());
+                        shippingAddress.setText(response.body().getData().getAddress());
+                        shippingPostalCode.setText(String.format("%d", response.body().getData().getPostalCode()));
+                        shippingPhone.setText(response.body().getData().getPhone());
+
                         orderDetailsAdapter = new OrderDetailsAdapter(orderDetailsModelList);
                         orderDetailsRecyclerView.setAdapter(orderDetailsAdapter);
                         orderDetailsAdapter.notifyDataSetChanged();
+                        loadingDialog.dismiss();
+                    } else {
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -92,6 +126,8 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderDeta
             @Override
             public void onFailure(Call<OrderDetailsResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                loadingDialog.dismiss();
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

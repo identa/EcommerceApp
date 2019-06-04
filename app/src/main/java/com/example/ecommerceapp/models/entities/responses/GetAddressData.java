@@ -24,6 +24,10 @@ public class GetAddressData {
     @Expose
     private int postalCode;
 
+    @SerializedName("phone")
+    @Expose
+    private String phone;
+
     public String getRecipientName() {
         return recipientName;
     }
@@ -62,5 +66,13 @@ public class GetAddressData {
 
     public void setPostalCode(int postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

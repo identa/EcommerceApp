@@ -119,20 +119,20 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         buyNowBtn = findViewById(R.id.buy_now_btn);
         addToCartBtn = findViewById(R.id.add_to_cart_btn);
         productTitle = findViewById(R.id.product_title);
-        avgRatingMiniView = findViewById(R.id.tv_product_rating_miniview);
-        totalRatingMiniView = findViewById(R.id.total_rating_miniview);
+//        avgRatingMiniView = findViewById(R.id.tv_product_rating_miniview);
+//        totalRatingMiniView = findViewById(R.id.total_rating_miniview);
         productPrice = findViewById(R.id.product_price);
         cuttedPrice = findViewById(R.id.cutted_price);
         productDetailsTabsContainer = findViewById(R.id.product_details_tabs_container);
-        totalRatings = findViewById(R.id.total_ratings);
-        ratingsNoContainer = findViewById(R.id.ratings_number_container);
+//        totalRatings = findViewById(R.id.total_ratings);
+//        ratingsNoContainer = findViewById(R.id.ratings_number_container);
 //        totalRatingsFigure = findViewById(R.id.total_ratings_figure);
-        ratingsProgressBarContainer = findViewById(R.id.ratings_progressbar_container);
-        avgRating = findViewById(R.id.avg_rating);
+//        ratingsProgressBarContainer = findViewById(R.id.ratings_progressbar_container);
+//        avgRating = findViewById(R.id.avg_rating);
         addToCartTextView = findViewById(R.id.tv_add_to_cart);
         tradeLayout = findViewById(R.id.trade_layout);
         quantityView = findViewById(R.id.quantity);
-        ratingBar = findViewById(R.id.rating_now_bar);
+//        ratingBar = findViewById(R.id.rating_now_bar);
 
         loadingDialog = new Dialog(ProductDetailActivity.this);
         loadingDialog.setContentView(R.layout.loading_progress_dialog);
@@ -141,12 +141,12 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         loadingDialog.show();
 
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                Toast.makeText(getApplicationContext(), ""+rating, Toast.LENGTH_SHORT).show();
-            }
-        });
+//        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+//            @Override
+//            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+//                Toast.makeText(getApplicationContext(), ""+rating, Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         if (sharedPreferences.getString("email", "no_email").equals("no_email")){
             tradeLayout.setVisibility(View.GONE);

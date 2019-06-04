@@ -184,6 +184,7 @@ public class UpdateInfoFragment extends Fragment implements UpdateInfoService {
 
     @Override
     public void updateInfo(int id, UpdateInfoRequest request) {
+        loadingDialog.show();
         UpdateInfoAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(UpdateInfoAPI.class);
         Call<UpdateInfoResponse> call = api.updateInfo(id, request);
         call.enqueue(new Callback<UpdateInfoResponse>() {
@@ -200,9 +201,10 @@ public class UpdateInfoFragment extends Fragment implements UpdateInfoService {
                         Intent accountIntent = new Intent(getContext(), HomeActivity.class);
                         accountIntent.putExtra("showAccount", true);
                         startActivity(accountIntent);
-
+                        loadingDialog.dismiss();
                         Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     } else if (response.body().getStatus().equals("FAILED")){
+                        loadingDialog.dismiss();
                         Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -210,7 +212,8 @@ public class UpdateInfoFragment extends Fragment implements UpdateInfoService {
 
             @Override
             public void onFailure(Call<UpdateInfoResponse> call, Throwable t) {
-
+                loadingDialog.dismiss();
+                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

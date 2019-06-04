@@ -1,6 +1,7 @@
 package com.example.ecommerceapp;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,6 +46,7 @@ public class UpdatePasswordFragment extends Fragment implements UpdateInfoServic
     private EditText oldPass, newPass, confirmPass;
     private Button updateBtn;
     private SharedPreferences sharedPreferences;
+    private Dialog loadingDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +57,12 @@ public class UpdatePasswordFragment extends Fragment implements UpdateInfoServic
         newPass = view.findViewById(R.id.new_password);
         confirmPass = view.findViewById(R.id.confirm_password);
         updateBtn = view.findViewById(R.id.update_password_btn);
+
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
         oldPass.addTextChangedListener(new TextWatcher() {
@@ -161,6 +169,7 @@ public class UpdatePasswordFragment extends Fragment implements UpdateInfoServic
 
     @Override
     public void updatePass(int id, UpdatePassRequest request) {
+        loadingDialog.show();
         UpdateInfoAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(UpdateInfoAPI.class);
         Call<UpdatePassResponse> call = api.updatePass(id, request);
         call.enqueue(new Callback<UpdatePassResponse>() {
@@ -171,9 +180,10 @@ public class UpdatePasswordFragment extends Fragment implements UpdateInfoServic
                         Intent accountIntent = new Intent(getContext(), HomeActivity.class);
                         accountIntent.putExtra("showAccount", true);
                         startActivity(accountIntent);
-
+                        loadingDialog.dismiss();
                         Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     } else if (response.body().getStatus().equals("FAILED")){
+                        loadingDialog.dismiss();
                         Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -181,7 +191,8 @@ public class UpdatePasswordFragment extends Fragment implements UpdateInfoServic
 
             @Override
             public void onFailure(Call<UpdatePassResponse> call, Throwable t) {
-
+                loadingDialog.dismiss();
+                Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -8,13 +8,13 @@ import java.util.List;
 public class OrderDetailsResponse extends GeneralResponse{
     @SerializedName("data")
     @Expose
-    private List<OrderDetailsData> data;
+    private OrderDetailResponse data;
 
-    public List<OrderDetailsData> getData() {
+    public OrderDetailResponse getData() {
         return data;
     }
 
-    public void setData(List<OrderDetailsData> data) {
+    public void setData(OrderDetailResponse data) {
         this.data = data;
     }
 }

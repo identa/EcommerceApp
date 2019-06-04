@@ -6,13 +6,15 @@ public class MyOrderItemModel {
     private int rating;
     private String productTitle;
     private String deliveryStatus;
+    private String method;
 
-    public MyOrderItemModel(int id, int productImage, int rating, String productTitle, String deliveryStatus) {
+    public MyOrderItemModel(int id, int productImage, int rating, String productTitle, String deliveryStatus, String method) {
         this.id = id;
         this.productImage = productImage;
         this.rating = rating;
         this.productTitle = productTitle;
         this.deliveryStatus = deliveryStatus;
+        this.method = method;
     }
 
     public int getId() {
@@ -53,5 +55,13 @@ public class MyOrderItemModel {
 
     public void setDeliveryStatus(String deliveryStatus) {
         this.deliveryStatus = deliveryStatus;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.ecommerceapp;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,7 +35,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
     private EditText state;
     private EditText recipientName;
     private EditText mobilePhone;
-
+    private Dialog loadingDialog;
     private int mode;
 
     public static AddAddressModel addAddressModel;
@@ -55,6 +57,12 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
         state = findViewById(R.id.state);
         recipientName = findViewById(R.id.name);
         mobilePhone = findViewById(R.id.mobile_no);
+
+        loadingDialog = new Dialog(AddAddressActivity.this);
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         final SharedPreferences sharedPreferences = getSharedPreferences("signin_info", MODE_PRIVATE);
 
@@ -78,10 +86,11 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
             postalCode.setText(String.format("%d", addAddressModel.getPostalCode()));
             state.setText(addAddressModel.getState());
             recipientName.setText(addAddressModel.getRecipientName());
-
+            mobilePhone.setText(addAddressModel.getPhone());
             saveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    loadingDialog.show();
                     doEditAddress(sharedPreferences.getInt("id", 1));
 //                    Intent deliveryIntent = new Intent(AddAddressActivity.this, HomeActivity.class);
 //                    deliveryIntent.putExtra("showAccount", true);
@@ -93,6 +102,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
             saveBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    loadingDialog.show();
                     doAddAddress(sharedPreferences.getInt("id", 1));
 //                    Intent deliveryIntent = new Intent(AddAddressActivity.this, DeliveryActivity.class);
 //                    startActivity(deliveryIntent);
@@ -129,6 +139,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
         request.setPostalCode(Integer.parseInt(postalCode.getText().toString()));
         request.setRecipientName(recipientName.getText().toString());
         request.setState(state.getText().toString());
+        request.setPhone(mobilePhone.getText().toString());
 
         Call<GetAddressResponse> call = api.addAddress(id, request);
         call.enqueue(new Callback<GetAddressResponse>() {
@@ -147,6 +158,10 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
                             finish();
                         }
                         Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
+                    }else {
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -154,6 +169,8 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
             @Override
             public void onFailure(Call<GetAddressResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                loadingDialog.dismiss();
+                Toast.makeText(AddAddressActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -167,6 +184,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
         request.setPostalCode(Integer.parseInt(postalCode.getText().toString()));
         request.setRecipientName(recipientName.getText().toString());
         request.setState(state.getText().toString());
+        request.setPhone(mobilePhone.getText().toString());
 
         Call<GetAddressResponse> call = api.editAddress(id, request);
         call.enqueue(new Callback<GetAddressResponse>() {
@@ -180,6 +198,10 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
                         finish();
 
                         Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
+                    } else {
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -187,6 +209,8 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
             @Override
             public void onFailure(Call<GetAddressResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                loadingDialog.dismiss();
+                Toast.makeText(AddAddressActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

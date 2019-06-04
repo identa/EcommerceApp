@@ -11,12 +11,15 @@ public class AddAddressModel {
 
     private int postalCode;
 
-    public AddAddressModel(String recipientName, String city, String address, String state, int postalCode) {
+    private String phone;
+
+    public AddAddressModel(String recipientName, String city, String address, String state, int postalCode, String phone) {
         this.recipientName = recipientName;
         this.city = city;
         this.address = address;
         this.state = state;
         this.postalCode = postalCode;
+        this.phone = phone;
     }
 
     public String getRecipientName() {
@@ -57,5 +60,13 @@ public class AddAddressModel {
 
     public void setPostalCode(int postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

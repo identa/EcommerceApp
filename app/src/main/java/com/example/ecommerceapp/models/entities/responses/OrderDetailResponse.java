@@ -1,9 +1,11 @@
-package com.example.ecommerceapp.models.entities.requests;
+package com.example.ecommerceapp.models.entities.responses;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AddressRequest {
+import java.util.List;
+
+public class OrderDetailResponse {
     @SerializedName("recipientName")
     @Expose
     private String recipientName;
@@ -27,6 +29,10 @@ public class AddressRequest {
     @SerializedName("phone")
     @Expose
     private String phone;
+
+    @SerializedName("orderDetails")
+    @Expose
+    private List<OrderDetailsData> orderDetails;
 
     public String getRecipientName() {
         return recipientName;
@@ -74,5 +80,13 @@ public class AddressRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public List<OrderDetailsData> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetailsData> orderDetails) {
+        this.orderDetails = orderDetails;
     }
 }

@@ -39,7 +39,8 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
         int rating = myOrderItemModelList.get(i).getRating();
         String title = myOrderItemModelList.get(i).getProductTitle();
         String deliveryDate = myOrderItemModelList.get(i).getDeliveryStatus();
-        viewHolder.setData(id, resource, title, deliveryDate, rating);
+        String method = myOrderItemModelList.get(i).getMethod();
+        viewHolder.setData(id, resource, title, deliveryDate, rating, method);
     }
 
     @Override
@@ -52,8 +53,7 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
         private ImageView orderIndicator;
         private TextView productTitle;
         private TextView deliveryStatus;
-
-        private LinearLayout rateNowContainer;
+        private TextView method;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,10 +61,10 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
             productTitle = itemView.findViewById(R.id.product_title);
             orderIndicator = itemView.findViewById(R.id.order_indicator);
             deliveryStatus = itemView.findViewById(R.id.order_delivered_date);
-//            rateNowContainer = itemView.findViewById(R.id.rating_now_container);
+            method = itemView.findViewById(R.id.order_method);
         }
 
-        private void setData(final int id, int resource, String title, String deliveredDate, int rating) {
+        private void setData(final int id, int resource, String title, String deliveredDate, int rating, String orderMethod) {
             productImage.setImageResource(resource);
             productTitle.setText(title);
             if (deliveredDate.equals("Cancelled")) {
@@ -73,7 +73,7 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
                 orderIndicator.setImageTintList(ColorStateList.valueOf(itemView.getContext().getResources().getColor(R.color.successGreen)));
             }
             deliveryStatus.setText(deliveredDate);
-
+            method.setText(orderMethod);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -82,27 +82,6 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.ViewHold
                     itemView.getContext().startActivity(orderDetailsIntent);
                 }
             });
-
-//            setRating(rating);
-//            for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
-//                final int starPosition = x;
-//                rateNowContainer.getChildAt(x).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        setRating(starPosition);
-//                    }
-//                });
-//            }
         }
-
-//        private void setRating(int starPosition) {
-//            for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
-//                ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
-//                starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
-//                if (x <= starPosition) {
-//                    starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
-//                }
-//            }
-//        }
     }
 }

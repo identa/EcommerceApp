@@ -61,6 +61,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
     private TextView shippingCity;
     private TextView shippingState;
     private TextView shippingPostalCode;
+    private TextView shippingPhone;
 
     private Button continueBtn;
     private Dialog loadingDialog;
@@ -99,6 +100,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         shippingCity = findViewById(R.id.shipping_city);
         shippingState = findViewById(R.id.shipping_state);
         shippingPostalCode = findViewById(R.id.shipping_postal_code);
+        shippingPhone = findViewById(R.id.shipping_phone);
 
         continueBtn = findViewById(R.id.cart_continue_btn);
         orderConfirmationLayout = findViewById(R.id.order_confirm_layout);
@@ -110,6 +112,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         loadingDialog.setCancelable(false);
         loadingDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.slider_background));
         loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
 
         getAddress(sharedPreferences.getInt("id", 1));
         Intent intent = new Intent(this, PayPalService.class);
@@ -140,9 +143,9 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
 //                try {
                 loadingDialog.show();
                     if (!isBuyNow) {
-                        doAddOrder(sharedPreferences.getInt("id", 1));
+                        doAddOrder(sharedPreferences.getInt("id", 1), "PAYPAL");
                     } else {
-                        buyNow(sharedPreferences.getInt("id", 1));
+                        buyNow(sharedPreferences.getInt("id", 1), "PAYPAL");
                     }
 
 //                    String paymentDetails = confirmation.toJSONObject().toString(4);
@@ -186,7 +189,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
             .clientId("ATn5fXIAjF-ITaCoG5AnlDL2B4NqwzVgJElPov-HzAlqBNRrQy2LEOPQWjgCVlXla7cp-_GCO1esALmv");
 
     @Override
-    public void doAddOrder(int id) {
+    public void doAddOrder(int id, String method) {
         AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
         List<AddOrderRequest> requests = new ArrayList<>();
         for (int i = 0; i < cartItemModelList.size() - 1; i++) {
@@ -199,7 +202,15 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         }
 
         AddOrderReq req = new AddOrderReq();
+        req.setRecipientName(shippingName.getText().toString());
+        req.setCity(shippingCity.getText().toString());
+        req.setAddress(shippingAddress.getText().toString());
+        req.setState(shippingState.getText().toString());
+        req.setPostalCode(Integer.parseInt(shippingPostalCode.getText().toString()));
+        req.setPhone(shippingPhone.getText().toString());
+        req.setMethod(method);
         req.setOrders(requests);
+
         Call<AddOrderResponse> call = api.addOrder(id, req);
         call.enqueue(new Callback<AddOrderResponse>() {
             @Override
@@ -259,6 +270,7 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                             shippingState.setText(response.body().getData().getState());
                             shippingAddress.setText(response.body().getData().getAddress());
                             shippingPostalCode.setText(String.format("%d", response.body().getData().getPostalCode()));
+                            shippingPhone.setText(response.body().getData().getPhone());
 
                             //payment
                             paymentMethodDialog = new Dialog(DeliveryActivity.this);
@@ -300,9 +312,9 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     loadingDialog.show();
                                                     if (!isBuyNow) {
-                                                        doAddOrder(sharedPreferences.getInt("id", 1));
+                                                        doAddOrder(sharedPreferences.getInt("id", 1), "COD");
                                                     } else {
-                                                        buyNow(sharedPreferences.getInt("id", 1));
+                                                        buyNow(sharedPreferences.getInt("id", 1), "COD");
                                                     }
                                                 }
                                             });
@@ -321,6 +333,10 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
                                 }
                             });
                         }
+                        loadingDialog.dismiss();
+                    }else {
+                        loadingDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -328,12 +344,14 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
             @Override
             public void onFailure(Call<GetAddressResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                loadingDialog.dismiss();
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
     @Override
-    public void buyNow(int id) {
+    public void buyNow(int id, String method) {
         AddOrderAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(AddOrderAPI.class);
         List<AddOrderRequest> requests = new ArrayList<>();
         for (int i = 0; i < cartItemModelList.size() - 1; i++) {
@@ -346,7 +364,15 @@ public class DeliveryActivity extends AppCompatActivity implements AddOrderServi
         }
 
         AddOrderReq req = new AddOrderReq();
+        req.setRecipientName(shippingName.getText().toString());
+        req.setCity(shippingCity.getText().toString());
+        req.setAddress(shippingAddress.getText().toString());
+        req.setState(shippingState.getText().toString());
+        req.setPostalCode(Integer.parseInt(shippingPostalCode.getText().toString()));
+        req.setPhone(shippingPhone.getText().toString());
+        req.setMethod(method);
         req.setOrders(requests);
+
         Call<AddOrderResponse> call = api.buyNow(id, req);
         call.enqueue(new Callback<AddOrderResponse>() {
             @Override

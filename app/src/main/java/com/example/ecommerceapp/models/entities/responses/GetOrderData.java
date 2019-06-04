@@ -12,6 +12,10 @@ public class GetOrderData {
     @Expose
     private int userID;
 
+    @SerializedName("method")
+    @Expose
+    private String method;
+
     @SerializedName("createAt")
     @Expose
     private String createAt;
@@ -30,6 +34,14 @@ public class GetOrderData {
 
     public void setUserID(int userID) {
         this.userID = userID;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public String getCreateAt() {

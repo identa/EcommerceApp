@@ -1,6 +1,7 @@
 package com.example.ecommerceapp;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -50,8 +52,10 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
     private TextView city;
     private TextView state;
     private TextView postalCode;
+    private TextView phone;
     private FloatingActionButton settingBtn;
 
+    private Dialog loadingDialog;
     private ConstraintLayout addressLayout;
 
     private SharedPreferences sharedPreferences;
@@ -71,10 +75,18 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
         city = view.findViewById(R.id.address_city);
         state = view.findViewById(R.id.address_state);
         postalCode = view.findViewById(R.id.address_postal_code);
+        phone = view.findViewById(R.id.address_phone);
 
         settingBtn = view.findViewById(R.id.setting_btn);
         addressLayout = view.findViewById(R.id.address_layout);
         editAddressBtn = view.findViewById(R.id.edit_address_btn);
+
+        loadingDialog = new Dialog(getContext());
+        loadingDialog.setContentView(R.layout.loading_progress_dialog);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingDialog.show();
 
         sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
         Glide.with(this).load(sharedPreferences.getString("imageURL", "a")).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(profileImage);
@@ -82,14 +94,6 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
         doGetAddress(sharedPreferences.getInt("id", 1));
         userName.setText(String.format("%s %s", sharedPreferences.getString("firstName", ""), sharedPreferences.getString("lastName", "")));
         userEmail.setText(sharedPreferences.getString("email",""));
-//        editAddressBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent addAddressIntent = new Intent(getContext(), AddAddressActivity.class);
-//                addAddressIntent.putExtra("mode", 0);
-//                startActivity(addAddressIntent);
-//            }
-//        });
 
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,12 +137,14 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
                             state.setText(response.body().getData().getState());
                             apartmentNumber.setText(response.body().getData().getAddress());
                             postalCode.setText(String.format("%d", response.body().getData().getPostalCode()));
+                            phone.setText(response.body().getData().getPhone());
 
                             AddAddressActivity.addAddressModel = new AddAddressModel(response.body().getData().getRecipientName(),
                                     response.body().getData().getCity(),
                                     response.body().getData().getAddress(),
                                     response.body().getData().getState(),
-                                    response.body().getData().getPostalCode());
+                                    response.body().getData().getPostalCode(),
+                                    response.body().getData().getPhone());
 
                             editAddressBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -148,7 +154,11 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
                                     startActivity(addAddressIntent);
                                 }
                             });
+                            loadingDialog.dismiss();
                         }
+                    } else {
+                        loadingDialog.dismiss();
+                        Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -156,6 +166,8 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
             @Override
             public void onFailure(Call<GetAddressResponse> call, Throwable t) {
                 Log.d("Error", t.getMessage());
+                loadingDialog.dismiss();
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
