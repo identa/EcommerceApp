@@ -3,9 +3,14 @@ package com.example.ecommerceapp;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +62,111 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
         state = findViewById(R.id.state);
         recipientName = findViewById(R.id.name);
         mobilePhone = findViewById(R.id.mobile_no);
+
+        saveBtn.setEnabled(false);
+        saveBtn.setTextColor(Color.argb(50, 255, 255, 255));
+
+        city.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkInput();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        locality.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkInput();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        postalCode.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkInput();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        state.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkInput();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        recipientName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkInput();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        mobilePhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkInput();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         loadingDialog = new Dialog(AddAddressActivity.this);
         loadingDialog.setContentView(R.layout.loading_progress_dialog);
@@ -159,7 +269,7 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
                         }
                         Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                         loadingDialog.dismiss();
-                    }else {
+                    } else {
                         loadingDialog.dismiss();
                         Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -213,5 +323,64 @@ public class AddAddressActivity extends AppCompatActivity implements AddAddressS
                 Toast.makeText(AddAddressActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void checkInput() {
+        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
+        customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
+        if (city.length() >0) {
+            if (locality.length() >0) {
+                if (postalCode.length() == 6) {
+                        if (state.length() == 2) {
+                            if (recipientName.length() > 0) {
+                                if (mobilePhone.length() == 10) {
+                                    saveBtn.setEnabled(true);
+                                    saveBtn.setTextColor(Color.rgb(255, 255, 255));
+                                } else {
+                                    saveBtn.setEnabled(false);
+                                    saveBtn.setTextColor(Color.argb(50, 255, 255, 255));
+//                                    mobilePhone.setError("Password doesn't match", customWarningIcon);
+                                }
+                            } else {
+                                saveBtn.setEnabled(false);
+                                saveBtn.setTextColor(Color.argb(50, 255, 255, 255));
+                            }
+                        } else {
+                            saveBtn.setEnabled(false);
+                            saveBtn.setTextColor(Color.argb(50, 255, 255, 255));
+//                            state.setError("Password doesn't match", customWarningIcon);
+                        }
+                } else {
+                    saveBtn.setEnabled(false);
+                    saveBtn.setTextColor(Color.argb(50, 255, 255, 255));
+//                    postalCode.setError("Password doesn't match", customWarningIcon);
+                }
+            } else {
+                saveBtn.setEnabled(false);
+                saveBtn.setTextColor(Color.argb(50, 255, 255, 255));
+            }
+        } else {
+            saveBtn.setEnabled(false);
+            saveBtn.setTextColor(Color.argb(50, 255, 255, 255));
+        }
+    }
+
+    private void doSignin() {
+        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
+        customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
+        if (postalCode.length() == 6) {
+            if (state.length() == 2) {
+                if (mobilePhone.length() == 10) {
+                    saveBtn.setEnabled(false);
+                    saveBtn.setTextColor(Color.argb(50, 255, 255, 255));
+                } else {
+                    Toast.makeText(getApplicationContext(), "Mobile phone doesn't matched", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "State doesn't matched", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Postal code doesn't matched", Toast.LENGTH_SHORT).show();
+        }
     }
 }

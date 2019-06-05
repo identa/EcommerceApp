@@ -64,6 +64,9 @@ public class UpdatePasswordFragment extends Fragment implements UpdateInfoServic
         loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
         loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
+        updateBtn.setEnabled(false);
+        updateBtn.setTextColor(Color.argb(50, 255, 255, 255));
+
         sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
         oldPass.addTextChangedListener(new TextWatcher() {
             @Override
@@ -128,22 +131,27 @@ public class UpdatePasswordFragment extends Fragment implements UpdateInfoServic
     }
 
     private void checkInput() {
-        if (!TextUtils.isEmpty(oldPass.getText()) && oldPass.length() >= 8) {
-            if (!TextUtils.isEmpty(newPass.getText()) && newPass.length() >= 8) {
-                if (!TextUtils.isEmpty(confirmPass.getText()) && confirmPass.length() >= 8) {
+        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
+        customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
+        if (!TextUtils.isEmpty(oldPass.getText()) && oldPass.getText().toString().matches(ValidationConst.PW)) {
+            if (!TextUtils.isEmpty(newPass.getText()) && newPass.getText().toString().matches(ValidationConst.PW)) {
+                if (!TextUtils.isEmpty(confirmPass.getText()) && newPass.getText().toString().equals(confirmPass.getText().toString())) {
                     updateBtn.setEnabled(true);
                     updateBtn.setTextColor(Color.rgb(255, 255, 255));
                 } else {
                     updateBtn.setEnabled(false);
                     updateBtn.setTextColor(Color.argb(50, 255, 255, 255));
+                    confirmPass.setError("Password doesn't match", customWarningIcon);
                 }
             } else {
                 updateBtn.setEnabled(false);
                 updateBtn.setTextColor(Color.argb(50, 255, 255, 255));
+                newPass.setError("Password doesn't match", customWarningIcon);
             }
         } else {
             updateBtn.setEnabled(false);
             updateBtn.setTextColor(Color.argb(50, 255, 255, 255));
+            oldPass.setError("Password doesn't match", customWarningIcon);
         }
     }
 

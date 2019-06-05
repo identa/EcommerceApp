@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,7 +47,7 @@ public class MyCartFragment extends Fragment implements CartService {
     private RecyclerView cartItemRecyclerView;
     private List<CartItemModel> cartItemModelList;
     private CartAdapter cartAdapter;
-    private Button continueBtn;
+    public static Button continueBtn;
     private Dialog loadingDialog;
 
     @Override
@@ -72,15 +73,16 @@ public class MyCartFragment extends Fragment implements CartService {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         cartItemRecyclerView.setLayoutManager(layoutManager);
 
-        continueBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DeliveryActivity.cartItemModelList = cartItemModelList;
-                Intent deliveryIntent = new Intent(getContext(), DeliveryActivity.class);
-                getContext().startActivity(deliveryIntent);
-            }
-        });
+//        continueBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DeliveryActivity.cartItemModelList = cartItemModelList;
+//                Intent deliveryIntent = new Intent(getContext(), DeliveryActivity.class);
+//                getContext().startActivity(deliveryIntent);
+//            }
+//        });
 
+        continueBtn.setTextColor(Color.argb(50, 255, 255, 255));
         return view;
     }
 
@@ -109,6 +111,16 @@ public class MyCartFragment extends Fragment implements CartService {
                                     response.body().getData().getTotalItem(),
                                     response.body().getData().getTotalPrice(),
                                     response.body().getData().getItemAmount()));
+
+                            continueBtn.setTextColor(Color.rgb(255, 255, 255));
+                            continueBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DeliveryActivity.cartItemModelList = cartItemModelList;
+                                    Intent deliveryIntent = new Intent(getContext(), DeliveryActivity.class);
+                                    getContext().startActivity(deliveryIntent);
+                                }
+                            });
                         }
                         cartAdapter = new CartAdapter(cartItemModelList, false);
                         cartItemRecyclerView.setAdapter(cartAdapter);

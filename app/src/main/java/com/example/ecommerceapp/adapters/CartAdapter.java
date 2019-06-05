@@ -3,6 +3,7 @@ package com.example.ecommerceapp.adapters;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -132,6 +133,8 @@ public class CartAdapter extends RecyclerView.Adapter implements DeleteCartServi
                         if (cartItemModelList.size() == 1) {
                             cartItemModelList.remove(cartItemModelList.get(cartItemModelList.size() - 1));
                             notifyDataSetChanged();
+                            MyCartFragment.continueBtn.setTextColor(Color.argb(50, 255, 255, 255));
+                            MyCartFragment.continueBtn.setOnClickListener(null);
                         } else {
                             notifyDataSetChanged();
                         }

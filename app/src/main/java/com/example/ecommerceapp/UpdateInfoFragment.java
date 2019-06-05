@@ -151,17 +151,21 @@ public class UpdateInfoFragment extends Fragment implements UpdateInfoService {
     }
 
     private void checkInput() {
-        if (!TextUtils.isEmpty(firstNameField.getText())) {
-            if (!TextUtils.isEmpty(lastNameField.getText())) {
+        Drawable customWarningIcon = getResources().getDrawable(R.mipmap.warning);
+        customWarningIcon.setBounds(0, 0, customWarningIcon.getIntrinsicWidth(), customWarningIcon.getIntrinsicHeight());
+        if (!TextUtils.isEmpty(firstNameField.getText()) && firstNameField.length() >= 1) {
+            if (!TextUtils.isEmpty(lastNameField.getText()) && lastNameField.length() >= 1) {
                 updateBtn.setEnabled(true);
                 updateBtn.setTextColor(Color.rgb(255, 255, 255));
             } else {
                 updateBtn.setEnabled(false);
                 updateBtn.setTextColor(Color.argb(50, 255, 255, 255));
+                lastNameField.setError("Last name is not formatted right", customWarningIcon);
             }
         } else {
             updateBtn.setEnabled(false);
             updateBtn.setTextColor(Color.argb(50, 255, 255, 255));
+            firstNameField.setError("First name is not formatted right", customWarningIcon);;
         }
     }
 

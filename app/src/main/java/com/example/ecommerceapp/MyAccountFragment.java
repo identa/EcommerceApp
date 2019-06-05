@@ -86,7 +86,6 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
         loadingDialog.setCancelable(false);
         loadingDialog.getWindow().setBackgroundDrawable(getContext().getDrawable(R.drawable.slider_background));
         loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        loadingDialog.show();
 
         sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
         Glide.with(this).load(sharedPreferences.getString("imageURL", "a")).apply(new RequestOptions().placeholder(R.mipmap.steakhouse)).into(profileImage);
@@ -110,6 +109,7 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
 
     @Override
     public void doGetAddress(int id) {
+        loadingDialog.show();
         GetAddressAPI api = RetrofitClient.getClient(BaseURLConst.BASE_URL).create(GetAddressAPI.class);
         Call<GetAddressResponse> call = api.getAddress(id);
         call.enqueue(new Callback<GetAddressResponse>() {
@@ -129,6 +129,7 @@ public class MyAccountFragment extends Fragment implements GetAddressService {
                                     startActivity(addAddressIntent);
                                 }
                             });
+                            loadingDialog.dismiss();
                         } else {
                             addAddressBtn.setVisibility(View.GONE);
                             addressLayout.setVisibility(View.VISIBLE);

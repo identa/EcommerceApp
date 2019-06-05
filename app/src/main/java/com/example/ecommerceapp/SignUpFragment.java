@@ -307,17 +307,19 @@ public class SignUpFragment extends Fragment implements SignUpService {
             public void onResponse(Call<SignInResponse> call, Response<SignInResponse> response) {
                 if (response.code() == 200) {
                     if (response.body().getStatus().equals("SUCCESS")) {
-                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("firstName", response.body().getData().getFirstName());
-                        editor.putString("lastName", response.body().getData().getLastName());
-                        editor.putString("imageURL", response.body().getData().getImageURL());
-                        editor.putString("token", response.body().getData().getToken());
-                        editor.putInt("id", response.body().getData().getId());
-                        editor.putString("email", email.getText().toString());
-
-                        editor.apply();
-                        goHome();
+//                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("signin_info", Context.MODE_PRIVATE);
+//                        SharedPreferences.Editor editor = sharedPreferences.edit();
+//                        editor.putString("firstName", response.body().getData().getFirstName());
+//                        editor.putString("lastName", response.body().getData().getLastName());
+//                        editor.putString("imageURL", response.body().getData().getImageURL());
+//                        editor.putString("token", response.body().getData().getToken());
+//                        editor.putInt("id", response.body().getData().getId());
+//                        editor.putString("email", email.getText().toString());
+//
+//                        editor.apply();
+//                        goHome();
+                        setFragment(new SignInFragment());
+                        Toast.makeText(getActivity(), "Sign up successfully, please check your email", Toast.LENGTH_SHORT).show();
                     } else {
                         progressBar.setVisibility(View.INVISIBLE);
                         signUpBtn.setEnabled(true);
