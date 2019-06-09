@@ -11,6 +11,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -18,21 +20,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ecommerceapp.adapters.GetRatingAdapter;
 import com.example.ecommerceapp.adapters.ProductDetailsAdapter;
 import com.example.ecommerceapp.adapters.ProductImageAdapter;
 import com.example.ecommerceapp.constants.BaseURLConst;
 import com.example.ecommerceapp.models.CartItemModel;
+import com.example.ecommerceapp.models.GetRatingModel;
 import com.example.ecommerceapp.models.client.RetrofitClient;
 import com.example.ecommerceapp.models.entities.responses.AddCartResponse;
 import com.example.ecommerceapp.models.entities.responses.AddWishlistResponse;
 import com.example.ecommerceapp.models.entities.responses.DeleteCartResponse;
-import com.example.ecommerceapp.models.entities.responses.ProductDetailData;
+import com.example.ecommerceapp.models.entities.responses.GetRatingData;
+import com.example.ecommerceapp.models.entities.responses.GetRatingResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductDetailResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductImageData;
 import com.example.ecommerceapp.models.interfaces.ProductDetailAPI;
@@ -43,6 +46,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -89,7 +93,7 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private List<CartItemModel> cartItemModelList;
     private LinearLayout tradeLayout;
     private TextView quantityView;
-    private RatingBar ratingBar;
+//    private RatingBar ratingBar;
 
     private FirebaseUser currentUser;
     private Dialog signInDialog;
@@ -98,6 +102,12 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     private SharedPreferences sharedPreferences;
     private int qty;
 
+    private MaterialRatingBar ratingBar;
+    private RecyclerView ratingRecyclerView;
+    private TextView ratingTextView;
+    private Button addRatingBtn;
+
+    private List<GetRatingModel> getRatingModelList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +143,11 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         tradeLayout = findViewById(R.id.trade_layout);
         quantityView = findViewById(R.id.quantity);
 //        ratingBar = findViewById(R.id.rating_now_bar);
+        ratingRecyclerView = findViewById(R.id.get_rating_recycler_view);
+        ratingBar = findViewById(R.id.rating_now_bar);
+        ratingTextView = findViewById(R.id.rating_text_view);
+        addRatingBtn = findViewById(R.id.add_rating_btn);
+
 
         loadingDialog = new Dialog(ProductDetailActivity.this);
         loadingDialog.setContentView(R.layout.loading_progress_dialog);
@@ -141,13 +156,6 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         loadingDialog.show();
 
-//        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-//            @Override
-//            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-//                Toast.makeText(getApplicationContext(), ""+rating, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         if (sharedPreferences.getString("email", "no_email").equals("no_email")){
             tradeLayout.setVisibility(View.GONE);
             addToWishlistBtn.hide();
@@ -155,43 +163,18 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
         id = getIntent().getIntExtra("productID", 1);
         productImages = new ArrayList<>();
         cartItemModelList = new ArrayList<>();
-//        productImages.add(R.mipmap.steakhouse);
-//        productImages.add(R.mipmap.steakhouse);
-//        productImages.add(R.mipmap.steakhouse);
-//        productImages.add(R.mipmap.steakhouse);
-//        productImages.add(R.mipmap.steakhouse);
 
-//        ProductImageAdapter productImageAdapter = new ProductImageAdapter(productImages);
-//        productImageViewPager.setAdapter(productImageAdapter);
-//        productImageAdapter.notifyDataSetChanged();
         doGetProductDetail(id, sharedPreferences.getInt("id", 1));
 
         viewPagerIndicator.setupWithViewPager(productImageViewPager, true);
 
-//        if (isAddedToWishlist){
-//            addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
-//
-//        }else {
-//            addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
-//
-//        }
+        getRatingModelList = new ArrayList<>();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        ratingRecyclerView.setLayoutManager(layoutManager);
 
-//        addToWishlistBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (isAddedToWishlist) {
-//                    doDeleteWishlist(productID, 2);
-////                    isAddedToWishlist = false;
-////                    addToWishlistBtn.setSupportImageTintList(ColorStateList.valueOf(Color.parseColor("#9e9e9e")));
-//                } else {
-//                    doAddToWishlist(productID, 2);
-////                    isAddedToWishlist = true;
-////                    addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
-//                }
-//            }
-//        });
+        doGetRating(id, sharedPreferences.getInt("id", 0));
 
-//        productDetailsViewPager.setAdapter(new ProductDetailsAdapter(getSupportFragmentManager(), productDetailsTabLayout.getTabCount()));
         productDetailsViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(productDetailsTabLayout));
         productDetailsTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -211,17 +194,6 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             }
         });
 
-//        rateNowContainer = findViewById(R.id.rating_now_container);
-//        for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
-//            final int starPosition = x;
-//            rateNowContainer.getChildAt(x).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    setRating(starPosition);
-//                }
-//            });
-//        }
-
         buyNowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,16 +204,6 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
             }
         });
     }
-
-//    private void setRating(int starPosition) {
-//        for (int x = 0; x < rateNowContainer.getChildCount(); x++) {
-//            ImageView starBtn = (ImageView) rateNowContainer.getChildAt(x);
-//            starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#bebebe")));
-//            if (x <= starPosition) {
-//                starBtn.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffbb00")));
-//            }
-//        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -328,23 +290,6 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
                                 });
                             }
                         }
-
-//                        if (isAddedToCart) {
-//                            addToCartTextView = findViewById(R.id.tv_add_to_cart);
-//                            addToCartTextView.setText("ADREADY ADDED TO");
-//                            addToCartBtn.setOnClickListener(null);
-//                        } else {
-//                            addToCartBtn.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    if (currentUser == null) {
-////                        signInDialog.show();
-//                                    } else {
-//                                        doAddToCart(id, sharedPreferences.getInt("id", 1));
-//                                    }
-//                                }
-//                            });
-//                        }
 
                         if (isAddedToWishlist) {
                             addToWishlistBtn.setSupportImageTintList(getResources().getColorStateList(R.color.colorPrimary));
@@ -467,7 +412,68 @@ public class ProductDetailActivity extends AppCompatActivity implements ProductD
     }
 
     @Override
-    public void doRating(int pid, int uid, float rating) {
+    public void doGetRating(int pid, int uid) {
+        ProductDetailAPI api = RetrofitClient.getClient(BaseURLConst.ALT_URL).create(ProductDetailAPI.class);
+        Call<GetRatingResponse> call = api.getRating(pid, uid);
+        call.enqueue(new Callback<GetRatingResponse>() {
+            @Override
+            public void onResponse(Call<GetRatingResponse> call, final Response<GetRatingResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getStatus().equals("SUCCESS")) {
+                        if (response.body().getData().getRatings().size() != 0) {
+                            ratingTextView.setVisibility(View.GONE);
+                            ratingRecyclerView.setVisibility(View.VISIBLE);
+                            for (GetRatingData data : response.body().getData().getRatings()) {
+                                getRatingModelList.add(new GetRatingModel(data.getName(),
+                                        data.getRating(),
+                                        data.getCmt()));
+                            }
+                            GetRatingAdapter getRatingAdapter = new GetRatingAdapter(getRatingModelList);
+                            ratingRecyclerView.setAdapter(getRatingAdapter);
 
+                            getRatingAdapter.notifyDataSetChanged();
+                        } else {
+                            ratingRecyclerView.setVisibility(View.GONE);
+                            ratingTextView.setVisibility(View.VISIBLE);
+                        }
+
+                        if (response.body().getData().getRating() != null){
+                            ratingBar.setIsIndicator(true);
+                            ratingBar.setRating(response.body().getData().getRating());
+                            addRatingBtn.setText("Update your rating");
+                            addRatingBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent addRaIntent = new Intent(ProductDetailActivity.this, RatingActivity.class);
+                                    addRaIntent.putExtra("code", 1);
+                                    addRaIntent.putExtra("pid", id);
+                                    addRaIntent.putExtra("rating", response.body().getData().getRating().floatValue());
+                                    addRaIntent.putExtra("cmt", response.body().getData().getCmt());
+                                    startActivity(addRaIntent);
+                                }
+                            });
+                        }
+                        else {
+                            ratingBar.setVisibility(View.GONE);
+                            addRatingBtn.setText("Add your rating");
+                            addRatingBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent addRaIntent = new Intent(ProductDetailActivity.this, RatingActivity.class);
+                                    addRaIntent.putExtra("pid", id);
+                                    startActivity(addRaIntent);
+                                }
+                            });
+
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetRatingResponse> call, Throwable t) {
+
+            }
+        });
     }
 }

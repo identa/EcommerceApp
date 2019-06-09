@@ -3,6 +3,7 @@ package com.example.ecommerceapp.models.interfaces;
 import com.example.ecommerceapp.models.entities.responses.AddCartResponse;
 import com.example.ecommerceapp.models.entities.responses.AddWishlistResponse;
 import com.example.ecommerceapp.models.entities.responses.DeleteCartResponse;
+import com.example.ecommerceapp.models.entities.responses.GetRatingResponse;
 import com.example.ecommerceapp.models.entities.responses.ProductDetailResponse;
 
 import retrofit2.Call;
@@ -23,4 +24,7 @@ public interface ProductDetailAPI {
 
     @DELETE("/api/public/wishlist/{pid}/{uid}")
     Call<DeleteCartResponse> deleteWishlist(@Path("pid") int pid, @Path("uid") int uid);
+
+    @GET("/api/public/rating/{pid}/{uid}")
+    Call<GetRatingResponse> getRating(@Path("pid") int pid, @Path("uid") int uid);
 }
